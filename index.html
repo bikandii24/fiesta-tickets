@@ -543,43 +543,58 @@ async function init() {
   if (window._db && window._fb) {
     lm.textContent = 'Cargando eventos...';
     try {
-      const [gSnap, eSnap] = await Promise.all([
-        window._fb.getDoc(window._fb.doc(window._db, GCOL, 'config')),
-        window._fb.getDocs(window._fb.collection(window._db, ECOL))
-      ]);
-      if (gSnap.exists()) aplicarGlobal(gSnap.data());
-      eventos = [];
-      eSnap.forEach(d => aplicarEvento(d.id, d.data()));
+      // Intentar cargar datos nuevos
+      let gSnap, eSnap;
+      try {
+        [gSnap, eSnap] = await Promise.all([
+          window._fb.getDoc(window._fb.doc(window._db, GCOL, 'config')),
+          window._fb.getDocs(window._fb.collection(window._db, ECOL))
+        ]);
+        if (gSnap.exists()) aplicarGlobal(gSnap.data());
+        eventos = [];
+        eSnap.forEach(d => {
+          const data = d.data();
+          if (!data._deleted) aplicarEvento(d.id, data);
+        });
+      } catch(e) { console.warn('Error cargando nuevo formato:', e); }
 
       // ── MIGRACIÓN DATOS ANTIGUOS ──
-      if (!eSnap.size) {
+      // Se ejecuta si no hay eventos en el nuevo formato
+      if (eventos.length === 0) {
         lm.textContent = 'Migrando datos anteriores...';
+        console.log('Iniciando migración desde fiesta/datos...');
         try {
           const oldSnap = await window._fb.getDoc(window._fb.doc(window._db, 'fiesta', 'datos'));
+          console.log('Documento antiguo existe:', oldSnap.exists());
           if (oldSnap.exists()) {
             const old = oldSnap.data();
+            console.log('Datos antiguos:', old);
             const cfg = old.config || {};
             // Migrar config global
             G = {
               ...DEF_GLOBAL,
-              pass:           cfg.pass         || DEF_GLOBAL.pass,
-              passDiscoteca:  cfg.passDiscoteca || DEF_GLOBAL.passDiscoteca,
-              localNombre:    cfg.nombre        || DEF_GLOBAL.localNombre,
-              org1: cfg.org1 || DEF_GLOBAL.org1, wa1: (cfg.wa1||DEF_GLOBAL.wa1).replace(/\D/g,''),
-              org2: cfg.org2 || DEF_GLOBAL.org2, wa2: (cfg.wa2||DEF_GLOBAL.wa2).replace(/\D/g,''),
-              org3: cfg.org3 || DEF_GLOBAL.org3, wa3: (cfg.wa3||DEF_GLOBAL.wa3).replace(/\D/g,''),
+              pass:          cfg.pass          || 'jon26',
+              passDiscoteca: cfg.passDiscoteca  || 'discoteca2026',
+              localNombre:   cfg.nombre         || 'Entradas',
+              org1: cfg.org1 || DEF_GLOBAL.org1,
+              wa1:  (cfg.wa1 || DEF_GLOBAL.wa1).toString().replace(/\D/g,''),
+              org2: cfg.org2 || DEF_GLOBAL.org2,
+              wa2:  (cfg.wa2 || DEF_GLOBAL.wa2).toString().replace(/\D/g,''),
+              org3: cfg.org3 || DEF_GLOBAL.org3,
+              wa3:  (cfg.wa3 || DEF_GLOBAL.wa3).toString().replace(/\D/g,''),
               orgsExtra: cfg.orgsExtra || []
             };
             await guardarGlobal();
+            console.log('Config global migrada:', G);
             // Migrar evento único
-            const evId = 'ev_' + Date.now();
+            const evId = 'ev_migrado';
             const ev = {
-              id: evId,
-              ...DEF_EVENTO,
-              nombre:   cfg.nombre || 'La Fiesta',
-              fecha:    cfg.fecha  || 'Marzo 2026',
-              precio:   cfg.precio || 15,
-              aforo:    cfg.aforo  || 200,
+              id:       evId,
+              nombre:   cfg.nombre  || 'La Fiesta',
+              fecha:    cfg.fecha   || 'Marzo 2026',
+              desc:     cfg.desc    || '',
+              precio:   cfg.precio  || 15,
+              aforo:    cfg.aforo   || 200,
               activo:   true,
               reservas: old.reservas  || [],
               slots:    old.slots     || [],
@@ -587,11 +602,22 @@ async function init() {
               turnoOrg: old.turnoOrg  || 0,
               nextId:   old.nextId    || 100
             };
-            eventos.push(ev);
+            eventos = [ev];
             await guardarEvento(ev);
+            console.log('Evento migrado:', ev.nombre, '— Reservas:', ev.reservas.length);
             lm.textContent = '¡Migración completada!';
+          } else {
+            console.log('No se encontró fiesta/datos, creando evento por defecto');
           }
-        } catch(me) { console.warn('Migración:', me); }
+        } catch(me) { console.warn('Error en migración:', me); }
+      }
+
+      // Si sigue sin haber eventos, crear uno por defecto
+      if (eventos.length === 0) {
+        const evId = 'ev_' + Date.now();
+        const defEv = { id: evId, ...DEF_EVENTO, nombre:'La Fiesta', fecha:'Marzo 2026' };
+        eventos.push(defEv);
+        await guardarEvento(defEv);
       }
 
       try {
@@ -599,7 +625,7 @@ async function init() {
         localStorage.setItem('fd_eventos', JSON.stringify(cache));
       } catch(e){}
       suscribir();
-    } catch(e) { lm.textContent = 'Usando datos locales'; }
+    } catch(e) { lm.textContent = 'Usando datos locales'; console.warn('Error general init:', e); }
   }
   if (!eventos.length) {
     const defId = 'ev_' + Date.now();
