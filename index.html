@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entradas — La Fiesta</title>
+<title>Entradas</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const FB = { apiKey:"AIzaSyB7cieuYJ_6vEJQ0GuYqL9X8e3vIyyot40", authDomain:"web-fiestas-uni.firebaseapp.com", projectId:"web-fiestas-uni", storageBucket:"web-fiestas-uni.firebasestorage.app", messagingSenderId:"1014488336321", appId:"1:1014488336321:web:8864e24890d1e7ef699140" };
 try {
   const app = initializeApp(FB);
   window._db = getFirestore(app);
-  window._fb = { doc, getDoc, setDoc, onSnapshot };
-} catch(e) { console.warn('Firebase error:', e); }
+  window._fb = { doc, getDoc, setDoc, onSnapshot, collection, getDocs };
+} catch(e) { console.warn('Firebase:', e); }
 window._fbReady = true;
 document.dispatchEvent(new Event('fb-ready'));
 </script>
@@ -25,16 +25,7 @@ document.dispatchEvent(new Event('fb-ready'));
   --fd:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;
 }
 html,body{background:var(--bg);color:var(--fg);font-family:var(--fb);font-size:15px;line-height:1.6;overflow-x:hidden}
-
-/* RESERVAS dual layout */
-.res-table-wrap{display:block}
-.res-cards{display:none}
-@media(max-width:700px){
-  .res-table-wrap{display:none!important}
-  .res-cards{display:flex!important}
-}
-.page{display:none}
-.page.on{display:block}
+.page{display:none}.page.on{display:block}
 
 /* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--g2);background:var(--bg);position:sticky;top:0;z-index:10}
@@ -44,15 +35,29 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 2
 .nbtn.hi{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:500}
 .nbtn.hi:hover{background:var(--fg);border-color:var(--fg)}
 
-/* BANNER */
-.banner{background:var(--acc);color:var(--bg);text-align:center;padding:9px 20px;font-size:13px;font-weight:500;letter-spacing:.5px}
+/* HOME — SELECTOR EVENTOS */
+.home-header{text-align:center;padding:48px 24px 32px;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(232,255,71,.08) 0%,transparent 70%)}
+.home-title{font-family:var(--fd);font-size:clamp(48px,10vw,100px);line-height:.9;letter-spacing:4px;color:var(--fg);margin-bottom:8px}
+.home-sub{font-size:14px;color:var(--mu);margin-bottom:40px}
+.eventos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 24px 48px;max-width:1000px;margin:0 auto}
+.evento-card{background:var(--g1);border:1px solid var(--g2);border-radius:16px;padding:24px;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;overflow:hidden}
+.evento-card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.evento-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc);opacity:0;transition:opacity .2s}
+.evento-card:hover::before{opacity:1}
+.ev-nombre{font-family:var(--fd);font-size:28px;letter-spacing:2px;margin-bottom:4px;color:var(--fg)}
+.ev-fecha{font-size:13px;color:var(--acc);margin-bottom:12px;letter-spacing:1px}
+.ev-info{font-size:13px;color:var(--mu);margin-bottom:4px}
+.ev-precio{font-family:var(--fd);font-size:22px;color:var(--acc);margin-top:12px}
+.ev-aforo{margin-top:10px}
+.ev-bar-bg{height:3px;background:var(--g2);border-radius:2px;margin-top:4px}
+.ev-bar-fill{height:100%;border-radius:2px;background:var(--acc);transition:width .5s}
+.no-eventos{text-align:center;padding:60px 24px;color:var(--mu);font-size:14px}
 
-/* HOME */
-.hero{text-align:center;padding:48px 24px 64px;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(232,255,71,.08) 0%,transparent 70%);min-height:calc(100vh - 105px);display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* HERO evento individual */
+.hero{text-align:center;padding:48px 24px 56px;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(232,255,71,.08) 0%,transparent 70%);min-height:calc(100vh - 105px);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .eyebrow{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--acc);margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:12px}
 .eyebrow::before,.eyebrow::after{content:'';width:40px;height:1px;background:var(--acc);opacity:.4}
-.hero h1{font-family:var(--fd);font-size:clamp(72px,14vw,140px);line-height:.9;letter-spacing:4px;margin-bottom:8px}
-.hero h1 span{color:var(--acc)}
+.hero h1{font-family:var(--fd);font-size:clamp(60px,12vw,130px);line-height:.9;letter-spacing:4px;margin-bottom:8px;color:var(--fg)}
 .herosub{font-size:15px;color:var(--mu);margin:24px auto 40px;max-width:380px;text-align:center}
 .heroprice{font-family:var(--fd);font-size:26px;letter-spacing:2px;margin-bottom:36px}
 .heroprice span{color:var(--acc);font-size:48px}
@@ -82,8 +87,6 @@ select option{background:var(--g2)}
 .total-box strong{font-family:var(--fd);font-size:28px;color:var(--acc);letter-spacing:1px}
 .sbtn{width:100%;background:var(--acc);color:var(--bg);border:none;padding:14px;border-radius:8px;font-family:var(--fb);font-weight:500;font-size:15px;cursor:pointer;transition:background .15s,transform .15s;margin-top:8px}
 .sbtn:hover{background:var(--fg);transform:translateY(-1px)}
-
-/* SLOTS */
 .slots-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .slot{background:var(--g2);border:1px solid var(--g3);border-radius:8px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s}
 .slot:hover{border-color:var(--acc);background:rgba(232,255,71,.05)}
@@ -91,7 +94,6 @@ select option{background:var(--g2)}
 .slot-time{font-weight:500;font-size:14px}
 .slot-date,.slot-org{font-size:12px;color:var(--mu)}
 .slot-place{font-size:11px;color:var(--acc);margin-top:2px}
-.noslots{font-size:13px;color:var(--mu);margin-top:12px;display:none}
 
 /* CONFIRM */
 .cicon{width:56px;height:56px;background:rgba(232,255,71,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
@@ -107,53 +109,57 @@ select option{background:var(--g2)}
 .lerr{font-size:13px;color:var(--red);margin-top:8px;display:none}
 
 /* ADMIN */
+/* Dual layout reservas */
+.res-table-wrap{display:block}
+.res-cards{display:none}
+@media(max-width:700px){
+  .res-table-wrap{display:none!important}
+  .res-cards{display:flex!important;flex-direction:column;gap:10px}
+}
+.res-card{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:14px}
+.res-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.res-card-name{font-weight:500;font-size:14px}
+.res-card-info{font-size:12px;color:var(--mu);margin-bottom:2px}
+.res-card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--g2);gap:8px;flex-wrap:wrap}
+
 .admin{display:flex;min-height:calc(100vh - 57px)}
 .sidebar{width:220px;min-width:220px;background:var(--g1);border-right:1px solid var(--g2);display:flex;flex-direction:column;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto}
-.slogo{font-family:var(--fd);font-size:22px;color:var(--acc);padding:22px 20px;border-bottom:1px solid var(--g2);letter-spacing:3px}
-.snav{padding:10px 12px;flex:1;display:flex;flex-direction:column;gap:2px}
-.slink{display:block;padding:8px 14px;font-size:14px;color:var(--mu);cursor:pointer;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:var(--fb);border-radius:8px;transition:all .15s}
+.slogo{font-family:var(--fd);font-size:20px;color:var(--acc);padding:20px 16px;border-bottom:1px solid var(--g2);letter-spacing:3px}
+.snav{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:2px}
+.slink{display:block;padding:8px 12px;font-size:14px;color:var(--mu);cursor:pointer;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:var(--fb);border-radius:8px;transition:all .15s}
 .slink:hover{color:var(--fg);background:var(--g2);border-color:var(--g3)}
 .slink.on{color:var(--acc);background:rgba(232,255,71,.08);border-color:rgba(232,255,71,.2);font-weight:500}
-.sout{padding:12px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--g2)}
-.amain{flex:1;padding:32px 36px;overflow-y:auto}
-.asec{display:none}
-.asec.on{display:block}
-.ahead{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
-.ahead h2{font-family:var(--fd);font-size:32px;letter-spacing:2px}
-
-/* Metricas */
-.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px}
+.sout{padding:10px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--g2)}
+.amain{flex:1;padding:28px 32px;overflow-y:auto}
+.asec{display:none}.asec.on{display:block}
+.ahead{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.ahead h2{font-family:var(--fd);font-size:28px;letter-spacing:2px}
+.ev-selector{background:var(--g2);border:1px solid var(--g3);color:var(--fg);padding:8px 14px;border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer;outline:none}
+.ev-selector:focus{border-color:var(--acc)}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}
 .mcard{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px}
 .ml{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:8px}
-.mv{font-family:var(--fd);font-size:36px;color:var(--acc);letter-spacing:1px;line-height:1}
+.mv{font-family:var(--fd);font-size:32px;color:var(--acc);letter-spacing:1px;line-height:1}
 .ms{font-size:12px;color:var(--mu);margin-top:4px}
-
-/* Tabla */
 .twrap{background:var(--g1);border:1px solid var(--g2);border-radius:12px;overflow:hidden}
 .tbl{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
-.tbl th{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);padding:13px 14px;border-bottom:1px solid var(--g2);text-align:left;font-weight:500}
-.tbl td{padding:12px 14px;border-bottom:1px solid var(--g2);vertical-align:middle;color:var(--fg)}
+.tbl th{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);padding:12px 14px;border-bottom:1px solid var(--g2);text-align:left;font-weight:500}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--g2);vertical-align:middle;color:var(--fg)}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:var(--g2)}
 .badge{display:inline-block;font-size:10px;font-weight:500;padding:3px 10px;border-radius:999px}
 .b-ok{background:rgba(100,200,100,.15);color:#6dc96d;border:1px solid rgba(100,200,100,.3)}
 .b-pend{background:rgba(255,180,0,.1);color:#f5a623;border:1px solid rgba(255,180,0,.25)}
 .b-cancel{background:rgba(255,71,71,.1);color:#ff7070;border:1px solid rgba(255,71,71,.2)}
-.acbtn{font-size:12px;padding:4px 11px;border-radius:999px;border:1px solid var(--g3);background:none;color:var(--fg);cursor:pointer;font-family:var(--fb);transition:all .15s;margin-right:3px}
+.acbtn{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--g3);background:none;color:var(--fg);cursor:pointer;font-family:var(--fb);transition:all .15s;margin-right:3px}
 .acbtn:hover{border-color:var(--acc);color:var(--acc)}
 .acbtn.del:hover{border-color:var(--red);color:var(--red)}
-
-/* Filtros */
 .frow{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .fchip{font-size:12px;padding:5px 14px;border-radius:999px;border:1px solid var(--g3);background:none;color:var(--mu);cursor:pointer;font-family:var(--fb);transition:all .15s}
 .fchip.on{background:rgba(232,255,71,.1);border-color:var(--acc);color:var(--acc)}
-
-/* Barra aforo */
 .abar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .abar{flex:1;height:4px;background:var(--g2);border-radius:2px}
 .abar-fill{height:100%;border-radius:2px;background:var(--acc);transition:width .4s}
-
-/* Disponibilidad */
 .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .dcard{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:16px}
 .dcard h4{font-size:13px;font-weight:500;margin-bottom:10px}
@@ -166,8 +172,6 @@ select option{background:var(--g2)}
 .addform{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .addform input,.addform select{flex:1;min-width:110px;font-size:13px;padding:8px 11px}
 .addform button{padding:8px 14px;background:var(--acc);color:var(--bg);border:none;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer}
-
-/* Config */
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .ccard{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:22px}
 .ccard h4{font-family:var(--fd);font-size:18px;letter-spacing:1px;margin-bottom:14px}
@@ -175,52 +179,43 @@ select option{background:var(--g2)}
 .crow2:last-child{border-bottom:none}
 .crow2 label{font-size:13px;color:var(--mu);margin:0;text-transform:none;letter-spacing:0}
 .cinput{width:130px;text-align:right;font-size:13px;padding:6px 10px}
-
-/* TicketBot */
 .tbcard{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:22px;margin-bottom:14px}
 .tbcard h4{font-size:13px;font-weight:500;margin-bottom:4px}
 .tbcard p{font-size:12px;color:var(--mu);margin-bottom:14px}
 .botout{background:var(--bg);border:1px solid var(--g3);border-radius:8px;padding:13px 15px;font-size:13px;color:var(--acc);font-family:monospace;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-.copybtn{margin-top:10px;font-size:12px;padding:6px 14px;border-radius:999px;border:1px solid var(--acc);background:none;color:var(--acc);cursor:pointer;font-family:var(--fb);transition:background .15s}
-.copybtn:hover{background:rgba(232,255,71,.1)}
+.copybtn{margin-top:10px;font-size:12px;padding:6px 14px;border-radius:999px;border:1px solid var(--acc);background:none;color:var(--acc);cursor:pointer;font-family:var(--fb)}
 
-/* Toast */
+/* TOAST / LOADING */
 .toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--acc);color:var(--bg);padding:11px 20px;border-radius:8px;font-size:13px;font-weight:500;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
-
-/* Loading */
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;gap:14px}
-#loading .ll{font-family:var(--fd);font-size:36px;color:var(--acc);letter-spacing:4px}
-#loading .lm{font-size:13px;color:var(--mu)}
+.ll{font-family:var(--fd);font-size:36px;color:var(--acc);letter-spacing:4px}
+.lm{font-size:13px;color:var(--mu)}
 .lb-wrap{width:200px;height:2px;background:var(--g2);border-radius:2px;overflow:hidden}
 .lb{height:100%;background:var(--acc);border-radius:2px;transition:width .4s;width:0%}
 
-/* Modal */
+/* MODAL */
 .modal{display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px}
 .modal.open{display:flex}
-.mbox{background:var(--g1);border:1px solid var(--g3);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.mhead{padding:26px 28px 18px;border-bottom:1px solid var(--g2)}
-.mhead h3{font-family:var(--fd);font-size:26px;color:var(--acc);letter-spacing:2px;margin-bottom:4px}
+.mbox{background:var(--g1);border:1px solid var(--g3);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.mhead{padding:24px 26px 16px;border-bottom:1px solid var(--g2)}
+.mhead h3{font-family:var(--fd);font-size:24px;color:var(--acc);letter-spacing:2px;margin-bottom:4px}
 .mhead p{font-size:13px;color:var(--mu)}
-.msteps{display:flex;gap:5px;padding:16px 28px 0}
+.msteps{display:flex;gap:5px;padding:14px 26px 0}
 .mstep{flex:1;height:3px;background:var(--g2);border-radius:2px;transition:background .3s}
-.mstep.done{background:var(--acc)}
-.mstep.cur{background:rgba(232,255,71,.5)}
-.mbody{padding:22px 28px}
-.mfoot{padding:0 28px 24px;display:flex;gap:10px;justify-content:flex-end}
-.msec{display:none}
-.msec.on{display:block}
-.msect{font-size:12px;font-weight:500;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
-.mback{padding:9px 18px;background:none;border:1px solid var(--g3);color:var(--mu);border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer;transition:all .15s}
-.mback:hover{border-color:var(--fg);color:var(--fg)}
-.mnext{padding:9px 22px;background:var(--acc);border:none;color:var(--bg);border-radius:8px;font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s}
-.mnext:hover{background:var(--fg)}
+.mstep.done{background:var(--acc)}.mstep.cur{background:rgba(232,255,71,.5)}
+.mbody{padding:20px 26px}
+.mfoot{padding:0 26px 22px;display:flex;gap:10px;justify-content:flex-end}
+.msec{display:none}.msec.on{display:block}
+.msect{font-size:12px;font-weight:500;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.mback{padding:9px 18px;background:none;border:1px solid var(--g3);color:var(--mu);border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer}
+.mnext{padding:9px 22px;background:var(--acc);border:none;color:var(--bg);border-radius:8px;font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer}
 .prev-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g2);font-size:13px}
 .prev-row:last-child{border-bottom:none}
 .prev-row span:first-child{color:var(--mu)}
 .warn-box{margin-top:14px;padding:11px 14px;background:rgba(255,71,71,.08);border:1px solid rgba(255,71,71,.2);border-radius:8px;font-size:12px;color:#ff7070}
 
-/* Móvil */
+/* MÓVIL */
 .mob-top{display:none;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--g1);border-bottom:1px solid var(--g2);position:sticky;top:0;z-index:50}
 .mob-logo{font-family:var(--fd);font-size:20px;color:var(--acc);letter-spacing:3px}
 .ham{width:36px;height:36px;background:none;border:1px solid var(--g3);border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0}
@@ -233,32 +228,23 @@ select option{background:var(--g2)}
 .d-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7)}
 .d-panel{position:absolute;top:0;left:0;width:260px;height:100%;background:var(--g1);border-right:1px solid var(--g2);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .25s}
 .drawer.open .d-panel{transform:translateX(0)}
-.d-logo{font-family:var(--fd);font-size:22px;color:var(--acc);padding:22px 20px;border-bottom:1px solid var(--g2);letter-spacing:3px}
-.d-nav{padding:10px 12px;flex:1;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
-.d-link{display:block;padding:9px 14px;font-size:15px;color:var(--mu);cursor:pointer;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:var(--fb);border-radius:8px;transition:all .15s}
-.d-link:hover{color:var(--fg);background:var(--g2);border-color:var(--g3)}
+.d-logo{font-family:var(--fd);font-size:20px;color:var(--acc);padding:20px;border-bottom:1px solid var(--g2);letter-spacing:3px}
+.d-nav{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.d-link{display:block;padding:9px 12px;font-size:15px;color:var(--mu);cursor:pointer;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:var(--fb);border-radius:8px;transition:all .15s}
+.d-link:hover{color:var(--fg);background:var(--g2)}
 .d-link.on{color:var(--acc);background:rgba(232,255,71,.08);border-color:rgba(232,255,71,.2);font-weight:500}
-.d-out{padding:12px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--g2)}
+.d-out{padding:10px;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--g2)}
 
 @media(max-width:700px){
   .sidebar{display:none!important}
   .mob-top{display:flex}
-  .admin{min-height:calc(100vh - 57px)}
   .mgrid{grid-template-columns:1fr 1fr}
   .cgrid{grid-template-columns:1fr}
   .dgrid{grid-template-columns:1fr}
-  .amain{padding:20px 14px}
-  .fcard{padding:28px 20px}
+  .amain{padding:16px 12px}
+  .fcard{padding:24px 18px}
   .slots-grid{grid-template-columns:1fr}
-  .res-table-wrap{display:none}
-  .res-cards{display:flex;flex-direction:column;gap:10px}
-  .res-card{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:14px}
-  .res-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-  .res-card-name{font-weight:500;font-size:14px}
-  .res-card-info{font-size:12px;color:var(--mu);margin-bottom:2px}
-  .res-card-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--g2);gap:8px;flex-wrap:wrap}
-  .res-card-cant{display:flex;align-items:center;gap:6px}
-  .res-card-btns{display:flex;gap:6px}
+  .eventos-grid{grid-template-columns:1fr;padding:0 16px 32px}
 }
 </style>
 </head>
@@ -266,22 +252,21 @@ select option{background:var(--g2)}
 
 <div id="loading">
   <div class="ll">TICKETS</div>
-  <div class="lm" id="lmsg">Conectando...</div>
+  <div class="lm" id="lmsg">Cargando eventos...</div>
   <div class="lb-wrap"><div class="lb" id="lbar"></div></div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <!-- Modal nueva fiesta -->
 <div class="modal" id="modal-nf" onclick="if(event.target===this)cerrarNF()">
   <div class="mbox">
-    <div class="mhead"><h3>NUEVA FIESTA</h3><p>Configura el nuevo evento. Los organizadores se mantienen.</p></div>
+    <div class="mhead"><h3>NUEVO EVENTO</h3><p>Configura un nuevo evento independiente.</p></div>
     <div class="msteps"><div class="mstep cur" id="ns0"></div><div class="mstep" id="ns1"></div><div class="mstep" id="ns2"></div><div class="mstep" id="ns3"></div></div>
     <div class="mbody">
       <div class="msec on" id="nf0">
         <div class="msect">El evento</div>
-        <div class="fg"><label>Nombre de la fiesta</label><input type="text" id="nf-nom" placeholder="Ej. La Fiesta Vol. 2"></div>
-        <div class="fg"><label>Fecha del evento</label><input type="text" id="nf-fec" placeholder="Ej. Abril 2026"></div>
+        <div class="fg"><label>Nombre del evento</label><input type="text" id="nf-nom" placeholder="Ej. Fiesta Viernes"></div>
+        <div class="fg"><label>Fecha</label><input type="text" id="nf-fec" placeholder="Ej. Viernes 21 Mar"></div>
       </div>
       <div class="msec" id="nf1">
         <div class="msect">Entradas y aforo</div>
@@ -289,13 +274,12 @@ select option{background:var(--g2)}
         <div class="fg"><label>Aforo máximo</label><input type="number" id="nf-afo" placeholder="200" min="1"></div>
       </div>
       <div class="msec" id="nf2">
-        <div class="msect">Acceso al panel</div>
-        <div class="fg"><label>Nueva contraseña (vacío = mantener actual)</label><input type="text" id="nf-pas" placeholder="Deja vacío para no cambiar"></div>
+        <div class="msect">Descripción (opcional)</div>
+        <div class="fg"><label>Descripción corta</label><input type="text" id="nf-desc" placeholder="Ej. Noche de reggaeton y trap"></div>
       </div>
       <div class="msec" id="nf3">
-        <div class="msect">Confirma los datos</div>
+        <div class="msect">Confirma</div>
         <div id="nf-prev"></div>
-        <div class="warn-box">Se borrarán todas las reservas y huecos. Esta acción no se puede deshacer.</div>
       </div>
     </div>
     <div class="mfoot">
@@ -305,60 +289,72 @@ select option{background:var(--g2)}
   </div>
 </div>
 
-<!-- HOME -->
+<!-- ══ HOME — SELECTOR DE EVENTOS ══ -->
 <div class="page on" id="p-home">
   <nav>
     <span class="logo" onclick="show('p-home')">TICKETS</span>
     <div style="display:flex;gap:8px">
       <button class="nbtn" onclick="show('p-misreservas')">Mis reservas</button>
-      <button class="nbtn hi" onclick="show('p-login')">Panel organizadores</button>
+      <button class="nbtn hi" onclick="show('p-login')">Panel</button>
     </div>
   </nav>
-  <div class="hero">
-    <div class="eyebrow">Universidad · <span id="h-fecha-ev">Marzo 2026</span></div>
-    <h1><span id="h-nombre-ev">LA FIESTA</span></h1>
-    <p class="herosub">La noche que estabas esperando. Entradas limitadas, pago en efectivo.</p>
-    <div class="heroprice">Precio por entrada: <span id="h-precio">15 €</span></div>
-    <button class="ctabtn" onclick="show('p-reservar')">Quiero mi entrada →</button>
-    <div class="stats">
-      <div style="text-align:center"><div class="stat-num" id="h-vend">0</div><div class="stat-lbl">Entradas vendidas</div></div>
-      <div style="text-align:center">
-        <div class="stat-num" id="h-disp">200</div><div class="stat-lbl">Disponibles</div>
-        <div class="bar-bg"><div class="bar-fill" id="h-bar" style="width:0%"></div></div>
-      </div>
-    </div>
-    <div class="urgency">
-      <span class="dot"></span>
-      <span>Aforo <strong>limitado</strong> — las entradas se agotan rápido. Reserva ya antes de quedarte sin.</span>
-    </div>
+  <div class="home-header">
+    <div class="home-title" id="h-local-nombre">ENTRADAS</div>
+    <p class="home-sub">Selecciona el evento al que quieres ir</p>
+  </div>
+  <div class="eventos-grid" id="eventos-grid">
+    <div class="no-eventos">Cargando eventos...</div>
   </div>
 </div>
 
-<!-- RESERVAR -->
+<!-- ══ EVENTO — DETALLE ══ -->
+<div class="page" id="p-evento">
+  <nav>
+    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <button class="nbtn" onclick="show('p-home')">← Eventos</button>
+  </nav>
+  <div class="hero">
+    <div class="eyebrow">Universidad · <span id="ev-fecha">Marzo 2026</span></div>
+    <h1 id="ev-nombre">LA FIESTA</h1>
+    <p class="herosub" id="ev-desc">La noche que estabas esperando. Entradas limitadas, pago en efectivo.</p>
+    <div class="heroprice">Precio: <span id="ev-precio">15 €</span></div>
+    <button class="ctabtn" onclick="show('p-reservar')">Quiero mi entrada →</button>
+    <div class="stats">
+      <div style="text-align:center"><div class="stat-num" id="ev-vend">0</div><div class="stat-lbl">Vendidas</div></div>
+      <div style="text-align:center">
+        <div class="stat-num" id="ev-disp">200</div><div class="stat-lbl">Disponibles</div>
+        <div class="bar-bg"><div class="bar-fill" id="ev-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="urgency"><span class="dot"></span><span>Aforo <strong>limitado</strong> — reserva ya antes de quedarte sin.</span></div>
+  </div>
+</div>
+
+<!-- ══ RESERVAR ══ -->
 <div class="page" id="p-reservar">
   <nav>
     <span class="logo" onclick="show('p-home')">TICKETS</span>
-    <button class="nbtn" onclick="show('p-home')">← Volver</button>
+    <button class="nbtn" onclick="show('p-evento')">← Volver</button>
   </nav>
   <div class="fwrap">
     <div class="fcard">
       <div class="ftitle">Reserva tu entrada</div>
-      <div class="fsub">Rellena el formulario y elige cuándo quedamos.</div>
+      <div class="fsub" id="res-evento-nombre">Rellena el formulario y elige cuándo quedamos.</div>
       <div class="fg"><label>Tu nombre completo</label><input type="text" id="r-nom" placeholder="Ej. Lucía Fernández"></div>
       <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="tu@email.com"></div>
-      <div class="fg"><label>Número de entradas</label><input type="number" id="r-cant" min="1" max="12" value="1" oninput="calcTotal()"></div>
+      <div class="fg"><label>Número de entradas (máx. 12)</label><input type="number" id="r-cant" min="1" max="12" value="1" oninput="calcTotal()"></div>
       <div class="total-box"><span>Total a pagar en efectivo</span><strong id="r-total">15 €</strong></div>
       <div class="fg">
         <label>Selecciona horario de quedada</label>
         <div class="slots-grid" id="slots-grid"></div>
-        <p class="noslots" id="no-slots">No hay huecos disponibles. Contacta por WhatsApp.</p>
+        <p style="font-size:13px;color:var(--mu);margin-top:12px;display:none" id="no-slots">No hay huecos disponibles. Contacta por WhatsApp.</p>
       </div>
       <button class="sbtn" onclick="hacerReserva()">Confirmar reserva</button>
     </div>
   </div>
 </div>
 
-<!-- CONFIRMACION -->
+<!-- ══ CONFIRMACIÓN ══ -->
 <div class="page" id="p-confirm">
   <nav><span class="logo" onclick="show('p-home')">TICKETS</span></nav>
   <div class="fwrap">
@@ -373,12 +369,12 @@ select option{background:var(--g2)}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         Avisar al organizador por WhatsApp
       </button>
-      <button class="sbtn" style="background:none;border:1px solid var(--g3);color:var(--mu);margin-top:8px" onclick="show('p-modificar')">Modificar mi reserva</button>
+      <button class="sbtn" style="background:none;border:1px solid var(--g3);color:var(--mu);margin-top:8px" onclick="show('p-misreservas')">Ver / modificar mis reservas</button>
     </div>
   </div>
 </div>
 
-<!-- MIS RESERVAS -->
+<!-- ══ MIS RESERVAS ══ -->
 <div class="page" id="p-misreservas">
   <nav>
     <span class="logo" onclick="show('p-home')">TICKETS</span>
@@ -387,18 +383,15 @@ select option{background:var(--g2)}
   <div class="fwrap">
     <div class="fcard">
       <div class="ftitle">Mis reservas</div>
-      <div class="fsub">Introduce tu email para ver y modificar tus reservas.</div>
-      <div class="fg">
-        <label>Tu email</label>
-        <input type="email" id="mr-email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')buscarMisReservas()">
-      </div>
+      <div class="fsub">Introduce tu email para ver y modificar tus reservas en todos los eventos.</div>
+      <div class="fg"><label>Tu email</label><input type="email" id="mr-email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')buscarMisReservas()"></div>
       <button class="sbtn" onclick="buscarMisReservas()">Ver mis reservas</button>
       <div id="mr-result" style="margin-top:24px"></div>
     </div>
   </div>
 </div>
 
-<!-- LOGIN -->
+<!-- ══ LOGIN ══ -->
 <div class="page" id="p-login">
   <nav>
     <span class="logo" onclick="show('p-home')">TICKETS</span>
@@ -407,89 +400,168 @@ select option{background:var(--g2)}
   <div class="lwrap">
     <div class="fcard" style="max-width:380px">
       <div class="ftitle" style="color:var(--acc)">PANEL</div>
-      <div class="fsub">Acceso solo para organizadores</div>
+      <div class="fsub">Acceso para organizadores</div>
       <div class="fg"><label>Contraseña</label><input type="password" id="l-pass" placeholder="Contraseña del equipo" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="sbtn" onclick="doLogin()">Entrar</button>
       <div class="lerr" id="l-err">Contraseña incorrecta.</div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--g2);text-align:center">
+        <button class="nbtn" onclick="show('p-login-disco')" style="font-size:12px">Acceso discoteca →</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ADMIN (vacío, se rellena en JS al hacer login) -->
+<!-- ══ LOGIN DISCOTECA ══ -->
+<div class="page" id="p-login-disco">
+  <nav>
+    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <button class="nbtn" onclick="show('p-login')">← Volver</button>
+  </nav>
+  <div class="lwrap">
+    <div class="fcard" style="max-width:380px">
+      <div class="ftitle" style="color:var(--acc)">LOCAL</div>
+      <div class="fsub">Panel de solo lectura para el local</div>
+      <div class="fg"><label>Contraseña</label><input type="password" id="ld-pass" placeholder="Contraseña del local" onkeydown="if(event.key==='Enter')doLoginDisco()"></div>
+      <button class="sbtn" onclick="doLoginDisco()">Entrar</button>
+      <div class="lerr" id="ld-err">Contraseña incorrecta.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL DISCOTECA ══ -->
+<div class="page" id="p-discoteca">
+  <nav>
+    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:12px;color:var(--mu)">Solo lectura</span>
+      <button class="nbtn" onclick="logoutDisco()">Cerrar sesión</button>
+    </div>
+  </nav>
+  <div style="padding:28px 24px;max-width:1000px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:var(--fd);font-size:24px;letter-spacing:2px" id="disco-titulo">EVENTOS</div>
+        <div style="font-size:13px;color:var(--mu)" id="disco-subtitulo">Vista del local</div>
+      </div>
+      <select id="disco-ev-sel" class="ev-selector" onchange="renderDiscoteca()">
+        <option value="">Todos los eventos</option>
+      </select>
+    </div>
+    <div class="mgrid" id="disco-metrics" style="margin-bottom:24px"></div>
+    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Reservas</div>
+    <div class="twrap"><table class="tbl"><thead><tr><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>Cita</th><th>Estado</th></tr></thead><tbody id="disco-tabla"></tbody></table></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="ctabtn" style="padding:10px 18px;font-size:13px" onclick="exportEmailsCSV()">Exportar emails</button>
+      <button class="ctabtn" style="padding:10px 18px;font-size:13px;background:var(--g2);color:var(--fg)" onclick="exportCSVDisco()">Exportar contabilidad</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
 <div class="page" id="p-admin"></div>
 
 <script>
-// ══ ESTADO ══
-const DEF = {
-  reservas:[], slots:[], lugares:['Entrada facultad'],
-  config:{ nombre:'La Fiesta', fecha:'Marzo 2026', precio:15, aforo:200, pass:'fiesta2026',
-    org1:'Tú', wa1:'34600000001', org2:'Marcos', wa2:'34600000002', org3:'Sara', wa3:'34600000003' },
+// ════════════════════════════════════════
+// ESTADO GLOBAL
+// ════════════════════════════════════════
+const DEF_GLOBAL = {
+  pass:'fiesta2026', passDiscoteca:'discoteca2026', localNombre:'Entradas',
+  org1:'Org 1', wa1:'34600000001',
+  org2:'Org 2', wa2:'34600000002',
+  org3:'Org 3', wa3:'34600000003',
+  orgsExtra:[]
+};
+
+const DEF_EVENTO = {
+  nombre:'Nuevo Evento', fecha:'Próximamente', desc:'', precio:15, aforo:200,
+  activo:true, reservas:[], slots:[], lugares:['Entrada facultad'],
   turnoOrg:0, nextId:100
 };
-let S = { ...JSON.parse(JSON.stringify(DEF)), loggedIn:false, reservaActual:null, slotSel:null, filtro:'todos' };
-let nextId = 100;
+
+let G = { ...DEF_GLOBAL }; // config global
+let eventos = [];           // lista de eventos [{id, ...DEF_EVENTO}]
+let evActual = null;        // evento seleccionado por el comprador
+let evAdmin = null;         // evento seleccionado en el panel admin
+let loggedIn = false;
+let discoLoggedIn = false;
+let reservaActual = null;
+let slotSel = null;
+let filtroAdmin = 'todos';
 let nfN = 0;
 
-// ══ ROUTER ══
-function show(id) {
-  if (id === 'p-admin' && !S.loggedIn) { show('p-login'); return; }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-  window.scrollTo(0, 0);
-  if (id === 'p-reservar') renderSlots();
-  if (id === 'p-admin')    renderAdmin();
-  if (id === 'p-home')     renderHome();
-  if (id === 'p-misreservas') { document.getElementById('mr-email').value=''; document.getElementById('mr-result').innerHTML=''; }
+// ════════════════════════════════════════
+// FIREBASE
+// ════════════════════════════════════════
+const GCOL = 'global';
+const ECOL = 'eventos';
+
+async function guardarGlobal() {
+  try { localStorage.setItem('fd_global', JSON.stringify(G)); } catch(e){}
+  if (window._db && window._fb)
+    try { await window._fb.setDoc(window._fb.doc(window._db, GCOL, 'config'), G); } catch(e){}
 }
 
-// ══ FIREBASE ══
-const FDOC = 'fiesta/datos';
-
-async function guardar() {
-  const d = { reservas:S.reservas, slots:S.slots, lugares:S.lugares, config:S.config, turnoOrg:S.turnoOrg, nextId };
-  try { localStorage.setItem('fd', JSON.stringify(d)); } catch(e){}
-  if (window._db && window._fb) {
-    try { await window._fb.setDoc(window._fb.doc(window._db, FDOC), d); } catch(e){}
-  }
+async function guardarEvento(ev) {
+  const data = { nombre:ev.nombre, fecha:ev.fecha, desc:ev.desc, precio:ev.precio, aforo:ev.aforo, activo:ev.activo, reservas:ev.reservas, slots:ev.slots, lugares:ev.lugares, turnoOrg:ev.turnoOrg, nextId:ev.nextId };
+  try {
+    const cache = JSON.parse(localStorage.getItem('fd_eventos')||'{}');
+    cache[ev.id] = data; localStorage.setItem('fd_eventos', JSON.stringify(cache));
+  } catch(e){}
+  if (window._db && window._fb)
+    try { await window._fb.setDoc(window._fb.doc(window._db, ECOL, ev.id), data); } catch(e){}
 }
 
-function aplicar(d) {
-  if (!d) return;
-  S.reservas = d.reservas  ?? [];
-  S.slots    = d.slots     ?? [];
-  S.lugares  = d.lugares   ?? ['Entrada facultad'];
-  S.config   = { ...DEF.config, ...(d.config ?? {}) };
-  S.turnoOrg = d.turnoOrg  ?? 0;
-  nextId     = d.nextId    ?? 100;
+function aplicarGlobal(d) { G = { ...DEF_GLOBAL, ...d }; }
+
+function aplicarEvento(id, d) {
+  const idx = eventos.findIndex(e => e.id === id);
+  const ev = { id, ...DEF_EVENTO, ...d };
+  if (idx >= 0) eventos[idx] = ev; else eventos.push(ev);
 }
 
 function suscribir() {
   if (!window._db || !window._fb) return;
-  window._fb.onSnapshot(window._fb.doc(window._db, FDOC), snap => {
-    if (snap.exists()) {
-      aplicar(snap.data());
-      try { localStorage.setItem('fd', JSON.stringify(snap.data())); } catch(e){}
-      renderHome();
-      if (S.loggedIn) renderAdmin();
-    }
+  window._fb.onSnapshot(window._fb.doc(window._db, GCOL, 'config'), snap => {
+    if (snap.exists()) { aplicarGlobal(snap.data()); guardarLocalGlobal(); renderHome(); if (loggedIn) renderAdmin(); }
   });
 }
+
+function guardarLocalGlobal() { try { localStorage.setItem('fd_global', JSON.stringify(G)); } catch(e){} }
 
 async function init() {
   const lb = document.getElementById('lbar');
   const lm = document.getElementById('lmsg');
-  lb.style.width = '20%';
-  try { const r = localStorage.getItem('fd'); if (r) aplicar(JSON.parse(r)); } catch(e){}
-  lb.style.width = '50%';
+  lb.style.width = '15%';
+  try { const r = localStorage.getItem('fd_global'); if (r) aplicarGlobal(JSON.parse(r)); } catch(e){}
+  try {
+    const cache = JSON.parse(localStorage.getItem('fd_eventos')||'{}');
+    Object.entries(cache).forEach(([id,d]) => aplicarEvento(id,d));
+  } catch(e){}
+  lb.style.width = '40%';
   await new Promise(r => { if (window._fbReady) return r(); document.addEventListener('fb-ready', r, {once:true}); setTimeout(r, 3000); });
-  lb.style.width = '75%';
+  lb.style.width = '60%';
   if (window._db && window._fb) {
-    lm.textContent = 'Cargando datos...';
+    lm.textContent = 'Cargando eventos...';
     try {
-      const snap = await window._fb.getDoc(window._fb.doc(window._db, FDOC));
-      if (snap.exists()) { aplicar(snap.data()); try{localStorage.setItem('fd',JSON.stringify(snap.data()));}catch(e){} }
+      const [gSnap, eSnap] = await Promise.all([
+        window._fb.getDoc(window._fb.doc(window._db, GCOL, 'config')),
+        window._fb.getDocs(window._fb.collection(window._db, ECOL))
+      ]);
+      if (gSnap.exists()) aplicarGlobal(gSnap.data());
+      eventos = [];
+      eSnap.forEach(d => aplicarEvento(d.id, d.data()));
+      try {
+        const cache = {}; eventos.forEach(e => { const {id,...rest}=e; cache[id]=rest; });
+        localStorage.setItem('fd_eventos', JSON.stringify(cache));
+      } catch(e){}
       suscribir();
-    } catch(e) { lm.textContent = 'Datos locales'; }
+    } catch(e) { lm.textContent = 'Usando datos locales'; }
+  }
+  if (!eventos.length) {
+    const defId = 'ev_' + Date.now();
+    const defEv = { id: defId, ...DEF_EVENTO, nombre:'La Fiesta', fecha:'Marzo 2026' };
+    eventos.push(defEv);
+    await guardarEvento(defEv);
   }
   lb.style.width = '100%';
   await new Promise(r => setTimeout(r, 300));
@@ -497,99 +569,224 @@ async function init() {
   renderHome();
 }
 
-// ══ HOME ══
-function renderHome() {
-  const vend = S.reservas.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
-  const max  = S.config.aforo;
-  document.getElementById('h-nombre-ev').textContent = S.config.nombre.toUpperCase();
-  document.getElementById('h-fecha-ev').textContent  = S.config.fecha;
-  document.getElementById('h-precio').textContent    = S.config.precio + ' €';
-  document.getElementById('h-vend').textContent      = vend;
-  document.getElementById('h-disp').textContent      = Math.max(0, max - vend);
-  document.getElementById('h-bar').style.width       = max > 0 ? Math.min(100, Math.round(vend/max*100)) + '%' : '0%';
+// ════════════════════════════════════════
+// ROUTER
+// ════════════════════════════════════════
+function show(id) {
+  if (id === 'p-admin' && !loggedIn) { show('p-login'); return; }
+  if (id === 'p-discoteca' && !discoLoggedIn) { show('p-login-disco'); return; }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if (id === 'p-home')     renderHome();
+  if (id === 'p-evento')   renderEvento();
+  if (id === 'p-reservar') renderSlots();
+  if (id === 'p-admin')    renderAdmin();
+  if (id === 'p-discoteca') renderDiscoteca();
+  if (id === 'p-misreservas') { try{document.getElementById('mr-email').value='';document.getElementById('mr-result').innerHTML='';}catch(e){} }
 }
 
-// ══ RESERVA ══
+function seleccionarEvento(id) {
+  evActual = eventos.find(e => e.id === id);
+  if (!evActual) return;
+  show('p-evento');
+}
+
+// ════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════
+function renderHome() {
+  const el = document.getElementById('h-local-nombre');
+  if (el) el.textContent = G.localNombre || 'ENTRADAS';
+  const grid = document.getElementById('eventos-grid'); if (!grid) return;
+  const activos = eventos.filter(e => e.activo);
+  if (!activos.length) {
+    grid.innerHTML = `<div class="no-eventos"><p style="font-size:15px;margin-bottom:8px">No hay eventos activos en este momento.</p><p>Vuelve pronto.</p></div>`;
+    return;
+  }
+  grid.innerHTML = activos.map(ev => {
+    const vend = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+    const pct  = ev.aforo>0 ? Math.min(100,Math.round(vend/ev.aforo*100)) : 0;
+    const disp = Math.max(0, ev.aforo - vend);
+    return `<div class="evento-card" onclick="seleccionarEvento('${ev.id}')">
+      <div class="ev-nombre">${ev.nombre.toUpperCase()}</div>
+      <div class="ev-fecha">${ev.fecha}</div>
+      ${ev.desc?`<div class="ev-info">${ev.desc}</div>`:''}
+      <div class="ev-precio">${ev.precio} € / entrada</div>
+      <div class="ev-aforo">
+        <div style="font-size:12px;color:var(--mu)">${disp} entradas disponibles</div>
+        <div class="ev-bar-bg"><div class="ev-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// EVENTO INDIVIDUAL
+// ════════════════════════════════════════
+function renderEvento() {
+  if (!evActual) return;
+  const vend = (evActual.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+  const max  = evActual.aforo;
+  document.getElementById('ev-nombre').textContent = evActual.nombre.toUpperCase();
+  document.getElementById('ev-fecha').textContent  = evActual.fecha;
+  document.getElementById('ev-desc').textContent   = evActual.desc || 'La noche que estabas esperando. Entradas limitadas, pago en efectivo.';
+  document.getElementById('ev-precio').textContent = evActual.precio + ' €';
+  document.getElementById('ev-vend').textContent   = vend;
+  document.getElementById('ev-disp').textContent   = Math.max(0,max-vend);
+  document.getElementById('ev-bar').style.width    = max>0?Math.min(100,Math.round(vend/max*100))+'%':'0%';
+}
+
+// ════════════════════════════════════════
+// RESERVA
+// ════════════════════════════════════════
 function calcTotal() {
-  const q = parseInt(document.getElementById('r-cant').value) || 1;
-  document.getElementById('r-total').textContent = (q * S.config.precio) + ' €';
+  const q = parseInt(document.getElementById('r-cant').value)||1;
+  if (evActual) document.getElementById('r-total').textContent = (q*evActual.precio)+' €';
 }
 
 function renderSlots() {
+  if (!evActual) return;
   const g = document.getElementById('slots-grid');
-  const activos = S.slots.filter(s => s.activo);
-  g.innerHTML = '';
-  S.slotSel = null;
-  if (!activos.length) { document.getElementById('no-slots').style.display = 'block'; return; }
-  document.getElementById('no-slots').style.display = 'none';
+  const activos = (evActual.slots||[]).filter(s=>s.activo);
+  g.innerHTML = ''; slotSel = null;
+  document.getElementById('res-evento-nombre').textContent = evActual.nombre + ' — elige tu horario';
+  if (!activos.length) { document.getElementById('no-slots').style.display='block'; return; }
+  document.getElementById('no-slots').style.display='none';
   activos.forEach(s => {
     const d = document.createElement('div');
-    d.className = 'slot';
-    d.dataset.id = s.id;
-    d.innerHTML = `<div class="slot-time">${s.hora}</div><div class="slot-date">${s.fecha}</div><div class="slot-place">${s.lugar}</div><div class="slot-org">con ${s.org}</div>`;
-    d.onclick = () => { S.slotSel = s.id; document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
+    d.className='slot'; d.dataset.id=s.id;
+    d.innerHTML=`<div class="slot-time">${s.hora}</div><div class="slot-date">${s.fecha}</div><div class="slot-place">${s.lugar}</div><div class="slot-org">con ${s.org}</div>`;
+    d.onclick=()=>{ slotSel=s.id; document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
     g.appendChild(d);
   });
   calcTotal();
 }
 
+function getOrgs() {
+  const base=[{n:G.org1,w:G.wa1},{n:G.org2,w:G.wa2},{n:G.org3,w:G.wa3}].filter(o=>o.n&&o.n.trim());
+  return [...base,...(G.orgsExtra||[]).filter(o=>o.n&&o.n.trim())];
+}
+
 function hacerReserva() {
+  if (!evActual) return;
   const nom  = document.getElementById('r-nom').value.trim();
   const mail = document.getElementById('r-email').value.trim();
-  const cant = Math.min(12, Math.max(1, parseInt(document.getElementById('r-cant').value) || 1));
-  if (!nom)                     { toast('Por favor escribe tu nombre'); return; }
-  if (!mail || !mail.includes('@')) { toast('Email no válido'); return; }
-  if (!S.slotSel)               { toast('Selecciona un horario'); return; }
-  const slot = S.slots.find(s => s.id === S.slotSel);
-  const orgs = [{n:S.config.org1,w:S.config.wa1},{n:S.config.org2,w:S.config.wa2},{n:S.config.org3,w:S.config.wa3}];
-  const org  = orgs[S.turnoOrg % 3];
-  S.turnoOrg++;
-  const r = { id:nextId++, nombre:nom, email:mail, cantidad:cant, importe:cant*S.config.precio, slot:`${slot.fecha}, ${slot.hora}`, lugar:slot.lugar, org:org.n, orgWa:org.w, estado:'pendiente', fecha:new Date().toLocaleDateString('es-ES'), entradaGenerada:false };
-  S.reservas.push(r);
-  S.reservaActual = r;
-  guardar(); renderHome();
-  document.getElementById('confirm-rows').innerHTML = `
+  const cant = Math.min(12,Math.max(1,parseInt(document.getElementById('r-cant').value)||1));
+  if (!nom)                    { toast('Por favor escribe tu nombre'); return; }
+  if (!mail||!mail.includes('@')){ toast('Email no válido'); return; }
+  if (!slotSel)                { toast('Selecciona un horario'); return; }
+  const slot = evActual.slots.find(s=>s.id===slotSel);
+  const orgs = getOrgs();
+  const org  = orgs[evActual.turnoOrg % orgs.length];
+  evActual.turnoOrg++;
+  const r = { id:evActual.nextId++, eventoId:evActual.id, eventoNombre:evActual.nombre, nombre:nom, email:mail, cantidad:cant, importe:cant*evActual.precio, slot:`${slot.fecha}, ${slot.hora}`, lugar:slot.lugar, org:org.n, orgWa:org.w, estado:'pendiente', fecha:new Date().toLocaleDateString('es-ES'), entradaGenerada:false };
+  evActual.reservas.push(r);
+  reservaActual = r;
+  guardarEvento(evActual); renderEvento();
+  document.getElementById('confirm-rows').innerHTML=`
+    <div class="crow"><span>Evento</span><span>${r.eventoNombre}</span></div>
     <div class="crow"><span>Nombre</span><span>${r.nombre}</span></div>
     <div class="crow"><span>Entradas</span><span>${r.cantidad}</span></div>
-    <div class="crow"><span>Total a pagar</span><span>${r.importe} €</span></div>
+    <div class="crow"><span>Total</span><span>${r.importe} €</span></div>
     <div class="crow"><span>Cita</span><span>${r.slot}</span></div>
     <div class="crow"><span>Lugar</span><span>${r.lugar}</span></div>
     <div class="crow"><span>Organizador</span><span>${r.org}</span></div>`;
-  document.getElementById('r-nom').value = '';
-  document.getElementById('r-email').value = '';
-  document.getElementById('r-cant').value = '1';
+  document.getElementById('r-nom').value=''; document.getElementById('r-email').value=''; document.getElementById('r-cant').value='1';
   show('p-confirm');
 }
 
 function abrirWA() {
-  const r = S.reservaActual; if (!r) return;
-  const wa = (r.orgWa || S.config.wa1).replace(/\D/g,'');
-  const msg = encodeURIComponent(`Hola ${r.org}! He reservado ${r.cantidad} entrada${r.cantidad>1?'s':''} para ${S.config.nombre} (${r.importe} €). Quedamos el ${r.slot} en ${r.lugar}. Soy ${r.nombre}.`);
-  window.open(`https://wa.me/${wa}?text=${msg}`, '_blank');
+  if (!reservaActual) return;
+  const wa = (reservaActual.orgWa||G.wa1).replace(/\D/g,'');
+  const msg = encodeURIComponent(`Hola ${reservaActual.org}! He reservado ${reservaActual.cantidad} entrada${reservaActual.cantidad>1?'s':''} para ${reservaActual.eventoNombre} (${reservaActual.importe} €). Quedamos el ${reservaActual.slot} en ${reservaActual.lugar}. Soy ${reservaActual.nombre}.`);
+  window.open(`https://wa.me/${wa}?text=${msg}`,'_blank');
 }
 
-// ══ AUTH ══
+// ════════════════════════════════════════
+// MIS RESERVAS
+// ════════════════════════════════════════
+function buscarMisReservas() {
+  const email = document.getElementById('mr-email').value.trim().toLowerCase();
+  if (!email||!email.includes('@')) { toast('Email no válido'); return; }
+  const mis = [];
+  eventos.forEach(ev => { (ev.reservas||[]).filter(r=>r.email&&r.email.toLowerCase()===email).forEach(r=>mis.push({...r,ev})); });
+  const div = document.getElementById('mr-result');
+  if (!mis.length) { div.innerHTML=`<p style="color:var(--mu);font-size:14px">No encontramos reservas con ese email.</p>`; return; }
+  div.innerHTML = mis.map(({ev,...r})=>`
+    <div style="background:var(--g2);border:1px solid var(--g3);border-radius:12px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div style="font-weight:500;font-size:15px;margin-bottom:2px">${r.nombre}</div>
+          <div style="font-size:12px;color:var(--acc);margin-bottom:4px">${ev.nombre}</div>
+          <div style="font-size:13px;color:var(--mu);margin-bottom:2px">📅 ${r.slot}</div>
+          <div style="font-size:13px;color:var(--mu);margin-bottom:2px" id="mr-lugar-txt-${r.id}">📍 ${r.lugar}</div>
+          <div style="font-size:13px;color:var(--mu)">👤 ${r.org}</div>
+        </div>
+        ${bdg(r.estado)}
+      </div>
+      ${r.estado==='cancelado'?`<p style="font-size:13px;color:var(--red)">Reserva cancelada.</p>`:`
+      <div style="border-top:1px solid var(--g3);padding-top:12px;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Entradas</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="acbtn" style="padding:7px 16px;font-size:16px" onclick="mrCant('${ev.id}',${r.id},-1,'${email}')">−</button>
+            <span id="mr-cant-${r.id}" style="font-family:var(--fd);font-size:32px;color:var(--acc);min-width:40px;text-align:center">${r.cantidad}</span>
+            <button class="acbtn" style="padding:7px 16px;font-size:16px" onclick="mrCant('${ev.id}',${r.id},1,'${email}')">+</button>
+            <span style="font-family:var(--fd);font-size:22px;color:var(--acc)" id="mr-imp-${r.id}">${r.importe} €</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Lugar de quedada</div>
+          <select id="mr-lugar-${r.id}" onchange="mrLugar('${ev.id}',${r.id},this.value,'${email}')" style="font-size:14px;padding:10px 14px">${(ev.lugares||[]).map(l=>`<option ${l===r.lugar?'selected':''}>${l}</option>`).join('')}</select>
+        </div>
+        <p style="font-size:11px;color:var(--mu)">Los cambios se guardan automáticamente.</p>
+      </div>`}
+    </div>`).join('');
+}
+
+function mrCant(evId, rId, delta, email) {
+  const ev = eventos.find(e=>e.id===evId); if(!ev) return;
+  const r = ev.reservas.find(r=>r.id===rId); if(!r) return;
+  r.cantidad = Math.max(1, r.cantidad+delta);
+  r.importe = r.cantidad * ev.precio;
+  guardarEvento(ev);
+  const ec=document.getElementById('mr-cant-'+rId); if(ec) ec.textContent=r.cantidad;
+  const ei=document.getElementById('mr-imp-'+rId); if(ei) ei.textContent=r.importe+' €';
+  toast('Entradas: '+r.cantidad);
+}
+
+function mrLugar(evId, rId, lugar, email) {
+  const ev = eventos.find(e=>e.id===evId); if(!ev) return;
+  const r = ev.reservas.find(r=>r.id===rId); if(!r) return;
+  r.lugar = lugar; guardarEvento(ev);
+  const t=document.getElementById('mr-lugar-txt-'+rId); if(t) t.textContent='📍 '+lugar;
+  toast('Lugar actualizado');
+}
+
+// ════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════
 function doLogin() {
   const p = document.getElementById('l-pass').value;
-  if (p === S.config.pass) {
-    S.loggedIn = true;
-    document.getElementById('l-err').style.display = 'none';
-    document.getElementById('l-pass').value = '';
-    buildAdmin();
-    show('p-admin');
-  } else {
-    document.getElementById('l-err').style.display = 'block';
-  }
+  if (p===G.pass) { loggedIn=true; document.getElementById('l-err').style.display='none'; document.getElementById('l-pass').value=''; buildAdmin(); show('p-admin'); }
+  else document.getElementById('l-err').style.display='block';
 }
 
-function logout() {
-  S.loggedIn = false;
-  document.getElementById('p-admin').innerHTML = '';
-  show('p-home');
+function doLoginDisco() {
+  const p = document.getElementById('ld-pass').value;
+  if (p===G.passDiscoteca) { discoLoggedIn=true; document.getElementById('ld-err').style.display='none'; document.getElementById('ld-pass').value=''; show('p-discoteca'); }
+  else document.getElementById('ld-err').style.display='block';
 }
 
-// ══ BUILD ADMIN ══
+function logout() { loggedIn=false; document.getElementById('p-admin').innerHTML=''; show('p-home'); }
+function logoutDisco() { discoLoggedIn=false; show('p-home'); }
+
+// ════════════════════════════════════════
+// BUILD ADMIN
+// ════════════════════════════════════════
 function buildAdmin() {
+  evAdmin = eventos[0] || null;
   document.getElementById('p-admin').innerHTML = `
 <div class="mob-top">
   <span class="mob-logo">PANEL</span>
@@ -604,11 +801,11 @@ function buildAdmin() {
       <button class="d-link" onclick="aTabM('s-res',this)">Reservas</button>
       <button class="d-link" onclick="aTabM('s-disp',this)">Disponibilidad</button>
       <button class="d-link" onclick="aTabM('s-cont',this)">Contabilidad</button>
-      <button class="d-link" onclick="aTabM('s-bot',this)">Asistente TicketBot</button>
+      <button class="d-link" onclick="aTabM('s-bot',this)">TicketBot</button>
       <button class="d-link" onclick="aTabM('s-cfg',this)">Configuración</button>
     </nav>
     <div class="d-out">
-      <button class="nbtn" onclick="show('p-home');closeDrawer()" style="width:100%">Ver web pública</button>
+      <button class="nbtn" onclick="show('p-home');closeDrawer()" style="width:100%">Ver web</button>
       <button class="nbtn" onclick="logout()" style="width:100%">Cerrar sesión</button>
     </div>
   </div>
@@ -621,59 +818,80 @@ function buildAdmin() {
       <button class="slink" onclick="aTab('s-res',this)">Reservas</button>
       <button class="slink" onclick="aTab('s-disp',this)">Disponibilidad</button>
       <button class="slink" onclick="aTab('s-cont',this)">Contabilidad</button>
-      <button class="slink" onclick="aTab('s-bot',this)">Asistente TicketBot</button>
+      <button class="slink" onclick="aTab('s-bot',this)">TicketBot</button>
       <button class="slink" onclick="aTab('s-cfg',this)">Configuración</button>
     </nav>
     <div class="sout">
-      <button class="nbtn" onclick="show('p-home')" style="width:100%;margin-bottom:6px">Ver web pública</button>
+      <button class="nbtn" onclick="show('p-home')" style="width:100%;margin-bottom:6px">Ver web</button>
       <button class="nbtn" onclick="logout()" style="width:100%">Cerrar sesión</button>
     </div>
   </aside>
   <main class="amain">
     <section class="asec on" id="s-dash">
-      <div class="ahead"><h2>Dashboard</h2><span style="font-size:13px;color:var(--mu)" id="a-fecha"></span></div>
+      <div class="ahead">
+        <h2>Dashboard</h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <select class="ev-selector" id="dash-ev-sel" onchange="cambiarEvAdmin(this.value);rDash()"></select>
+          <span style="font-size:13px;color:var(--mu)" id="a-fecha"></span>
+        </div>
+      </div>
       <div class="mgrid">
-        <div class="mcard"><div class="ml">Entradas vendidas</div><div class="mv" id="a-vend">0</div><div class="ms">de <span id="a-max">200</span> totales</div></div>
-        <div class="mcard"><div class="ml">Recaudado</div><div class="mv" id="a-rec">0 €</div><div class="ms">efectivo cobrado</div></div>
-        <div class="mcard"><div class="ml">Citas pendientes</div><div class="mv" id="a-pend">0</div><div class="ms">aún por cobrar</div></div>
-        <div class="mcard"><div class="ml">Disponibles</div><div class="mv" id="a-disp">200</div><div class="ms">entradas restantes</div></div>
+        <div class="mcard"><div class="ml">Vendidas</div><div class="mv" id="a-vend">0</div><div class="ms">de <span id="a-max">0</span></div></div>
+        <div class="mcard"><div class="ml">Recaudado</div><div class="mv" id="a-rec">0 €</div></div>
+        <div class="mcard"><div class="ml">Pendientes</div><div class="mv" id="a-pend">0</div></div>
+        <div class="mcard"><div class="ml">Disponibles</div><div class="mv" id="a-disp">0</div></div>
       </div>
       <div class="abar-wrap"><span style="font-size:12px;color:var(--mu)">Aforo</span><div class="abar"><div class="abar-fill" id="a-bar" style="width:0%"></div></div><span style="font-size:12px;color:var(--mu)" id="a-pct">0%</span></div>
-      <div style="font-size:12px;font-weight:500;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Próximas citas</div>
-      <div class="twrap"><table class="tbl"><thead><tr><th>Comprador</th><th>Entradas</th><th>Horario</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="a-prox"></tbody></table></div>
+      <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Últimas reservas</div>
+      <div class="twrap"><table class="tbl"><thead><tr><th>Comprador</th><th>Uds.</th><th>Horario</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="a-prox"></tbody></table></div>
     </section>
     <section class="asec" id="s-res">
-      <div class="ahead"><h2>Reservas</h2><button class="ctabtn" style="padding:9px 18px;font-size:13px" onclick="exportCSV()">Exportar CSV</button></div>
+      <div class="ahead">
+        <h2>Reservas</h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <select class="ev-selector" id="res-ev-sel" onchange="cambiarEvAdmin(this.value);rRes()"></select>
+          <button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportCSV()">CSV</button>
+        </div>
+      </div>
       <div class="frow" id="a-frow">
         <button class="fchip on" onclick="filtrar('todos',this)">Todos</button>
         <button class="fchip" onclick="filtrar('pendiente',this)">Pendientes</button>
         <button class="fchip" onclick="filtrar('cobrado',this)">Cobrados</button>
         <button class="fchip" onclick="filtrar('cancelado',this)">Cancelados</button>
       </div>
-      <div class="twrap res-table-wrap" id="a-res-table"><table class="tbl"><thead><tr><th style="width:18%">Nombre</th><th style="width:13%">Uds.</th><th style="width:8%">€</th><th style="width:16%">Cita</th><th style="width:13%">Lugar</th><th style="width:9%">Org.</th><th style="width:10%">Estado</th><th style="width:13%">Acciones</th></tr></thead><tbody></tbody></table></div>
+      <div class="twrap res-table-wrap" id="a-res-table"><table class="tbl"><thead><tr><th style="width:18%">Nombre</th><th style="width:13%">Uds.</th><th style="width:8%">€</th><th style="width:16%">Cita</th><th style="width:13%">Lugar</th><th style="width:10%">Org.</th><th style="width:10%">Estado</th><th style="width:12%">Acciones</th></tr></thead><tbody></tbody></table></div>
       <div class="res-cards" id="a-res-cards"></div>
     </section>
     <section class="asec" id="s-disp">
-      <div class="ahead"><h2>Disponibilidad</h2></div>
-      <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Activa los huecos en los que podéis quedar. Los compradores solo ven los activados.</p>
+      <div class="ahead">
+        <h2>Disponibilidad</h2>
+        <select class="ev-selector" id="disp-ev-sel" onchange="cambiarEvAdmin(this.value);rDisp()"></select>
+      </div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:16px">Activa los huecos disponibles para este evento.</p>
       <div class="dgrid" id="a-dgrid"></div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:13px;font-weight:500;margin-bottom:10px">Añadir nuevo hueco</div>
+      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:16px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:10px">Añadir hueco</div>
         <div class="addform">
           <input type="text" id="d-fecha" placeholder="Fecha (ej. Lun 16 mar)">
           <input type="time" id="d-hora" value="10:00">
           <select id="d-lugar"></select>
-          <select id="d-org"><option>${S.config.org1}</option><option>${S.config.org2}</option><option>${S.config.org3}</option></select>
+          <select id="d-org"></select>
           <button onclick="addSlot()">+ Añadir</button>
         </div>
-        <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:8px">Añadir lugar</div>
+        <div style="margin-top:10px;font-size:13px;font-weight:500;margin-bottom:6px">Añadir lugar</div>
         <div class="addform"><input type="text" id="d-nlug" placeholder="Nombre del lugar"><button onclick="addLugar()">+ Lugar</button></div>
       </div>
     </section>
     <section class="asec" id="s-cont">
-      <div class="ahead"><h2>Contabilidad</h2><button class="ctabtn" style="padding:9px 18px;font-size:13px" onclick="exportCSV()">Exportar CSV</button></div>
+      <div class="ahead">
+        <h2>Contabilidad</h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <select class="ev-selector" id="cont-ev-sel" onchange="cambiarEvAdmin(this.value);rCont()"></select>
+          <button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportCSV()">CSV</button>
+        </div>
+      </div>
       <div class="mgrid" style="margin-bottom:20px">
-        <div class="mcard"><div class="ml">Total cobrado</div><div class="mv" id="c-cob">0 €</div></div>
+        <div class="mcard"><div class="ml">Cobrado</div><div class="mv" id="c-cob">0 €</div></div>
         <div class="mcard"><div class="ml">Pendiente</div><div class="mv" id="c-pen">0 €</div></div>
         <div class="mcard"><div class="ml">Entradas cobradas</div><div class="mv" id="c-ents">0</div></div>
         <div class="mcard"><div class="ml">Canceladas</div><div class="mv" id="c-can">0</div></div>
@@ -681,23 +899,28 @@ function buildAdmin() {
       <div class="twrap"><table class="tbl"><thead><tr><th>Nombre</th><th>Entradas</th><th>Importe</th><th>Fecha</th><th>Org.</th><th>Estado</th></tr></thead><tbody id="c-body"></tbody></table></div>
     </section>
     <section class="asec" id="s-bot">
-      <div class="ahead"><h2>Asistente TicketBot</h2></div>
-      <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Selecciona una reserva cobrada y genera el texto para el bot de Telegram.</p>
-      <div class="fg"><label>Reserva a procesar</label><select id="bot-sel" onchange="genBot()"><option value="">— Selecciona una reserva cobrada —</option></select></div>
-      <div class="tbcard" id="bot-card" style="display:none"><h4>Texto para TicketBot</h4><p>Copia y pega en Telegram:</p><div class="botout" id="bot-out"></div><button class="copybtn" onclick="copyBot()">Copiar texto</button></div>
-      <div class="tbcard"><h4>Pendientes de generar</h4><p>Reservas cobradas sin entrada generada:</p><div id="bot-pend"></div></div>
+      <div class="ahead">
+        <h2>TicketBot</h2>
+        <select class="ev-selector" id="bot-ev-sel" onchange="cambiarEvAdmin(this.value);rBot()"></select>
+      </div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:16px">Genera el texto para el bot de Telegram.</p>
+      <div class="fg"><label>Reserva cobrada</label><select id="bot-sel" onchange="genBot()"><option value="">— Selecciona —</option></select></div>
+      <div class="tbcard" id="bot-card" style="display:none"><h4>Texto para TicketBot</h4><p>Copia y pega en Telegram:</p><div class="botout" id="bot-out"></div><button class="copybtn" onclick="copyBot()">Copiar</button></div>
+      <div class="tbcard"><h4>Pendientes de generar</h4><p>Cobradas sin entrada generada:</p><div id="bot-pend"></div></div>
     </section>
     <section class="asec" id="s-cfg">
       <div class="ahead"><h2>Configuración</h2></div>
       <div class="cgrid">
-        <div class="ccard"><h4>Evento</h4>
-          <div class="crow2"><label>Nombre</label><input class="cinput" id="c-nom" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Fecha</label><input class="cinput" id="c-fec" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Precio (€)</label><input class="cinput" type="number" id="c-pre" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Aforo máximo</label><input class="cinput" type="number" id="c-afo" onchange="saveCfg()"></div>
+        <div class="ccard"><h4>Eventos</h4>
+          <div id="cfg-eventos-list"></div>
+          <button class="ctabtn" style="padding:9px 16px;font-size:13px;margin-top:12px;width:100%" onclick="abrirNF()">+ Nuevo evento</button>
         </div>
         <div class="ccard"><h4>Acceso</h4>
-          <div class="crow2"><label>Contraseña</label><input class="cinput" type="password" id="c-pas" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
+          <div class="crow2"><label>Contraseña panel</label><input class="cinput" type="password" id="c-pas" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
+          <div class="crow2"><label>Clave discoteca</label><input class="cinput" type="password" id="c-pdisco" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
+          <div class="crow2"><label>Nombre del local</label><input class="cinput" id="c-local" onchange="saveCfg()"></div>
+        </div>
+        <div class="ccard"><h4>Organizadores base</h4>
           <div class="crow2"><label>Org. 1 nombre</label><input class="cinput" id="c-o1" onchange="saveCfg()"></div>
           <div class="crow2"><label>Org. 1 WhatsApp</label><input class="cinput" id="c-w1" onchange="saveCfg()"></div>
           <div class="crow2"><label>Org. 2 nombre</label><input class="cinput" id="c-o2" onchange="saveCfg()"></div>
@@ -705,21 +928,13 @@ function buildAdmin() {
           <div class="crow2"><label>Org. 3 nombre</label><input class="cinput" id="c-o3" onchange="saveCfg()"></div>
           <div class="crow2"><label>Org. 3 WhatsApp</label><input class="cinput" id="c-w3" onchange="saveCfg()"></div>
         </div>
-        <div class="ccard"><h4>Lugares de quedada</h4>
-          <div id="c-lugares"></div>
-          <div style="display:flex;gap:8px;margin-top:10px"><input type="text" id="c-nlug" placeholder="Nuevo lugar..." style="flex:1;font-size:13px;padding:8px 11px"><button class="ctabtn" style="padding:8px 13px;font-size:13px" onclick="cfgAddLug()">+</button></div>
-        </div>
-        <div class="ccard"><h4>Gestión del evento</h4>
-          <p style="font-size:13px;color:var(--mu);margin-bottom:12px">Carga datos de prueba para ver la web funcionando.</p>
-          <button class="sbtn" onclick="cargarDemo()">Cargar demo</button>
-          <button class="sbtn" style="background:none;border:1px solid var(--red);color:var(--red);margin-top:8px" onclick="resetData()">Borrar reservas</button>
-          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--g2)">
-            <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Prepara la web para una nueva fiesta.</p>
-            <button class="sbtn" style="background:none;border:1px solid var(--acc);color:var(--acc)" onclick="abrirNF()">Iniciar nueva fiesta</button>
-          </div>
+        <div class="ccard"><h4>Organizadores adicionales</h4>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Se suman al reparto rotativo.</p>
+          <div id="c-orgs-extra"></div>
+          <button class="ctabtn" style="padding:8px 13px;font-size:13px;margin-top:10px" onclick="addOrgExtra()">+ Añadir</button>
         </div>
         <div class="ccard"><h4>Copia de seguridad</h4>
-          <p style="font-size:13px;color:var(--mu);margin-bottom:14px">Exporta todos los datos como JSON para recuperarlos si cambias de dispositivo.</p>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:14px">Exporta todos los datos para recuperarlos si cambias de dispositivo.</p>
           <button class="sbtn" onclick="exportBackup()" style="margin-bottom:10px">Exportar copia</button>
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border:1px dashed var(--g3);border-radius:8px">
             <span style="font-size:13px;color:var(--mu)" id="imp-lbl">Importar copia (.json)</span>
@@ -730,489 +945,382 @@ function buildAdmin() {
     </section>
   </main>
 </div>`;
+  poblarSelectores();
+  rCfg();
 }
 
-// ══ ADMIN NAV ══
-function aTab(id, btn) {
+// ════════════════════════════════════════
+// ADMIN NAV
+// ════════════════════════════════════════
+function aTab(id,btn) {
   document.querySelectorAll('.asec').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
-  document.querySelectorAll('.slink').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  const dl = document.querySelectorAll('.d-link');
-  const i  = [...document.querySelectorAll('.slink')].indexOf(btn);
-  dl.forEach(b=>b.classList.remove('on'));
-  if (dl[i]) dl[i].classList.add('on');
+  document.querySelectorAll('.slink').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
+  const dl=document.querySelectorAll('.d-link'); const i=[...document.querySelectorAll('.slink')].indexOf(btn);
+  dl.forEach(b=>b.classList.remove('on')); if(dl[i]) dl[i].classList.add('on');
   renderAdmin();
 }
-
-function aTabM(id, btn) {
+function aTabM(id,btn) {
   document.querySelectorAll('.asec').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
-  document.querySelectorAll('.d-link').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  const sl = document.querySelectorAll('.slink');
-  const i  = [...document.querySelectorAll('.d-link')].indexOf(btn);
-  sl.forEach(b=>b.classList.remove('on'));
-  if (sl[i]) sl[i].classList.add('on');
-  renderAdmin();
-  closeDrawer();
+  document.querySelectorAll('.d-link').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
+  const sl=document.querySelectorAll('.slink'); const i=[...document.querySelectorAll('.d-link')].indexOf(btn);
+  sl.forEach(b=>b.classList.remove('on')); if(sl[i]) sl[i].classList.add('on');
+  renderAdmin(); closeDrawer();
 }
-
 function renderAdmin() {
-  const sec = document.querySelector('.asec.on'); if (!sec) return;
-  const id = sec.id;
-  if (id==='s-dash') rDash();
-  if (id==='s-res')  rRes();
-  if (id==='s-disp') rDisp();
-  if (id==='s-cont') rCont();
-  if (id==='s-bot')  rBot();
-  if (id==='s-cfg')  rCfg();
+  const sec=document.querySelector('.asec.on'); if(!sec) return;
+  const id=sec.id;
+  if(id==='s-dash') rDash();
+  if(id==='s-res')  rRes();
+  if(id==='s-disp') rDisp();
+  if(id==='s-cont') rCont();
+  if(id==='s-bot')  rBot();
+  if(id==='s-cfg')  rCfg();
+}
+function cambiarEvAdmin(evId) {
+  evAdmin = eventos.find(e=>e.id===evId) || eventos[0];
+  poblarSelectores();
+}
+function poblarSelectores() {
+  const opts = eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');
+  ['dash-ev-sel','res-ev-sel','disp-ev-sel','cont-ev-sel','bot-ev-sel'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.innerHTML=opts;
+    if(evAdmin) el.value=evAdmin.id;
+  });
 }
 
-// ══ DASHBOARD ══
-const cob  = () => S.reservas.filter(r=>r.estado==='cobrado');
-const pend = () => S.reservas.filter(r=>r.estado==='pendiente');
+// ════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════
+const cobEv  = ev => (ev.reservas||[]).filter(r=>r.estado==='cobrado');
+const pendEv = ev => (ev.reservas||[]).filter(r=>r.estado==='pendiente');
 
 function rDash() {
-  const vend = cob().reduce((a,r)=>a+r.cantidad,0);
-  const rec  = cob().reduce((a,r)=>a+r.importe,0);
-  const max  = S.config.aforo;
-  const pct  = max>0?Math.round(vend/max*100):0;
-  document.getElementById('a-fecha').textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('a-vend').textContent  = vend;
-  document.getElementById('a-max').textContent   = max;
-  document.getElementById('a-rec').textContent   = rec + ' €';
-  document.getElementById('a-pend').textContent  = pend().length;
-  document.getElementById('a-disp').textContent  = Math.max(0,max-vend);
-  document.getElementById('a-bar').style.width   = pct + '%';
-  document.getElementById('a-pct').textContent   = pct + '%';
-  const prox = [...S.reservas].filter(r=>r.estado!=='cancelado').slice(-6).reverse();
-  document.getElementById('a-prox').innerHTML = prox.length
-    ? prox.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td style="color:var(--mu);font-size:12px">${r.lugar}</td><td>${bdg(r.estado)}</td></tr>`).join('')
-    : `<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:20px">Sin reservas aún</td></tr>`;
+  if (!evAdmin) return;
+  const vend=cobEv(evAdmin).reduce((a,r)=>a+r.cantidad,0);
+  const rec=cobEv(evAdmin).reduce((a,r)=>a+r.importe,0);
+  const max=evAdmin.aforo; const pct=max>0?Math.round(vend/max*100):0;
+  document.getElementById('a-fecha').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('a-vend').textContent=vend;
+  document.getElementById('a-max').textContent=max;
+  document.getElementById('a-rec').textContent=rec+' €';
+  document.getElementById('a-pend').textContent=pendEv(evAdmin).length;
+  document.getElementById('a-disp').textContent=Math.max(0,max-vend);
+  document.getElementById('a-bar').style.width=pct+'%';
+  document.getElementById('a-pct').textContent=pct+'%';
+  const prox=[...(evAdmin.reservas||[])].filter(r=>r.estado!=='cancelado').slice(-5).reverse();
+  document.getElementById('a-prox').innerHTML=prox.length
+    ?prox.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td style="color:var(--mu);font-size:12px">${r.lugar}</td><td>${bdg(r.estado)}</td></tr>`).join('')
+    :`<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:16px">Sin reservas aún</td></tr>`;
 }
 
-// ══ RESERVAS ══
+// ════════════════════════════════════════
+// RESERVAS
+// ════════════════════════════════════════
 function rRes() {
-  const lista = S.filtro==='todos' ? S.reservas : S.reservas.filter(r=>r.estado===S.filtro);
-  const vacio = `<p style="text-align:center;color:var(--mu);padding:20px">Sin reservas</p>`;
-
-  // ── TABLA (desktop) ──
-  const tableWrap = document.getElementById('a-res-table');
-  if (tableWrap) {
-    tableWrap.querySelector('tbody').innerHTML = lista.length
-      ? lista.map(r=>`<tr>
-          <td style="font-weight:500">${r.nombre}</td>
-          <td>
-            <div style="display:flex;align-items:center;gap:4px">
-              <button class="acbtn" style="padding:2px 6px;font-size:11px" onclick="editCant(${r.id},-1)">−</button>
-              <span id="cant-${r.id}" style="min-width:20px;text-align:center;font-weight:500">${r.cantidad}</span>
-              <button class="acbtn" style="padding:2px 6px;font-size:11px" onclick="editCant(${r.id},1)">+</button>
-            </div>
-          </td>
-          <td>${r.importe} €</td>
-          <td style="color:var(--mu);font-size:12px">${r.slot}</td>
-          <td style="color:var(--mu);font-size:12px">${r.lugar}</td>
-          <td style="color:var(--mu)">${r.org}</td>
-          <td>${bdg(r.estado)}</td>
-          <td>
-            <div style="display:flex;flex-direction:column;gap:4px">
-              ${r.estado==='pendiente'?`<button class="acbtn" onclick="cambiar(${r.id},'cobrado')">Cobrar</button>`:''}
-              ${r.estado!=='cancelado'?`<button class="acbtn del" onclick="cambiar(${r.id},'cancelado')">Cancelar</button>`:''}
-              ${r.estado==='cancelado'?`<button class="acbtn" onclick="cambiar(${r.id},'pendiente')">Reactivar</button>`:''}
-            </div>
-          </td></tr>`).join('')
-      : `<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:20px">Sin reservas</td></tr>`;
-  }
-
-  // ── TARJETAS (móvil) ──
-  const cards = document.getElementById('a-res-cards');
-  if (cards) {
-    cards.innerHTML = lista.length ? lista.map(r=>`
-      <div class="res-card">
-        <div class="res-card-top">
-          <div>
-            <div class="res-card-name">${r.nombre}</div>
-            <div class="res-card-info">${r.slot}</div>
-            <div class="res-card-info">${r.lugar} · ${r.org}</div>
-          </div>
-          ${bdg(r.estado)}
-        </div>
-        <div class="res-card-bottom">
-          <div class="res-card-cant">
-            <button class="acbtn" style="padding:5px 12px" onclick="editCant(${r.id},-1)">−</button>
-            <span id="cant-${r.id}" style="font-family:var(--fd);font-size:22px;color:var(--acc);min-width:30px;text-align:center">${r.cantidad}</span>
-            <button class="acbtn" style="padding:5px 12px" onclick="editCant(${r.id},1)">+</button>
-            <span style="font-size:13px;color:var(--mu)" id="imp-${r.id}">${r.importe} €</span>
-          </div>
-          <div class="res-card-btns">
-            ${r.estado==='pendiente'?`<button class="acbtn" style="padding:7px 16px;font-size:13px" onclick="cambiar(${r.id},'cobrado')">Cobrar</button>`:''}
-            ${r.estado!=='cancelado'?`<button class="acbtn del" style="padding:7px 16px;font-size:13px" onclick="cambiar(${r.id},'cancelado')">Cancelar</button>`:''}
-            ${r.estado==='cancelado'?`<button class="acbtn" style="padding:7px 16px;font-size:13px" onclick="cambiar(${r.id},'pendiente')">Reactivar</button>`:''}
-          </div>
-        </div>
-      </div>`).join('') : vacio;
-  }
-}
-
-function editCant(id, delta) {
-  const r = S.reservas.find(r=>r.id===id); if(!r) return;
-  const nueva = Math.max(1, r.cantidad + delta);
-  r.cantidad = nueva;
-  r.importe = nueva * S.config.precio;
-  guardar();
-  const el = document.getElementById('cant-'+id);
-  if (el) el.textContent = nueva;
-  const tdImporte = el?.closest('tr')?.querySelectorAll('td')[2];
-  if (tdImporte) tdImporte.textContent = r.importe + ' €';
-  renderHome();
-  toast(`Entradas actualizadas: ${nueva}`);
-}
-
-// ══ MIS RESERVAS PÚBLICAS ══
-function buscarMisReservas() {
-  const email = document.getElementById('mr-email').value.trim().toLowerCase();
-  if (!email || !email.includes('@')) { toast('Introduce un email válido'); return; }
-  const mis = S.reservas.filter(r => r.email && r.email.toLowerCase() === email);
-  const div = document.getElementById('mr-result');
-  if (!mis.length) {
-    div.innerHTML = `<div style="text-align:center;padding:20px">
-      <p style="color:var(--mu);font-size:14px;margin-bottom:8px">No encontramos reservas con ese email.</p>
-      <p style="color:var(--mu);font-size:12px">¿Aún no has reservado? <button class="acbtn" onclick="show('p-reservar')" style="font-size:13px;padding:6px 14px">Reservar entrada</button></p>
-    </div>`;
-    return;
-  }
-  const lugaresOpts = S.lugares.map(l => `<option>${l}</option>`).join('');
-  div.innerHTML = mis.map(r => `
-    <div style="background:var(--g2);border:1px solid var(--g3);border-radius:12px;padding:18px;margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-        <div>
-          <div style="font-weight:500;font-size:15px;margin-bottom:4px">${r.nombre}</div>
-          <div style="font-size:13px;color:var(--mu);margin-bottom:2px">📅 ${r.slot}</div>
-          <div style="font-size:13px;color:var(--mu)" id="mr-lugar-txt-${r.id}">📍 ${r.lugar}</div>
-        </div>
+  if (!evAdmin) return;
+  const lista = filtroAdmin==='todos'?(evAdmin.reservas||[]):(evAdmin.reservas||[]).filter(r=>r.estado===filtroAdmin);
+  const tw=document.getElementById('a-res-table');
+  if(tw) tw.querySelector('tbody').innerHTML=lista.length
+    ?lista.map(r=>`<tr>
+        <td style="font-weight:500">${r.nombre}</td>
+        <td><div style="display:flex;align-items:center;gap:4px">
+          <button class="acbtn" style="padding:2px 6px;font-size:11px" onclick="editCant('${evAdmin.id}',${r.id},-1)">−</button>
+          <span id="cant-${r.id}" style="min-width:20px;text-align:center;font-weight:500">${r.cantidad}</span>
+          <button class="acbtn" style="padding:2px 6px;font-size:11px" onclick="editCant('${evAdmin.id}',${r.id},1)">+</button>
+        </div></td>
+        <td id="imp-${r.id}">${r.importe} €</td>
+        <td style="color:var(--mu);font-size:12px">${r.slot}</td>
+        <td style="color:var(--mu);font-size:12px">${r.lugar}</td>
+        <td style="color:var(--mu)">${r.org}</td>
+        <td>${bdg(r.estado)}</td>
+        <td><div style="display:flex;flex-direction:column;gap:3px">
+          ${r.estado==='pendiente'?`<button class="acbtn" onclick="cambiar('${evAdmin.id}',${r.id},'cobrado')">Cobrar</button>`:''}
+          ${r.estado!=='cancelado'?`<button class="acbtn del" onclick="cambiar('${evAdmin.id}',${r.id},'cancelado')">Cancelar</button>`:''}
+          ${r.estado==='cancelado'?`<button class="acbtn" onclick="cambiar('${evAdmin.id}',${r.id},'pendiente')">Reactivar</button>`:''}
+        </div></td></tr>`).join('')
+    :`<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
+  const cards=document.getElementById('a-res-cards');
+  if(cards) cards.innerHTML=lista.length?lista.map(r=>`
+    <div class="res-card">
+      <div class="res-card-top">
+        <div><div class="res-card-name">${r.nombre}</div><div class="res-card-info">${r.slot}</div><div class="res-card-info">${r.lugar} · ${r.org}</div></div>
         ${bdg(r.estado)}
       </div>
-      <div style="border-top:1px solid var(--g3);padding-top:12px">
-        ${r.estado === 'cancelado' ? `
-          <p style="font-size:13px;color:var(--red)">Esta reserva ha sido cancelada.</p>
-        ` : `
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <div>
-              <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Entradas</div>
-              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-                <div style="display:flex;align-items:center;gap:10px">
-                  <button class="acbtn" style="padding:7px 16px;font-size:16px" onclick="mrCant(${r.id},-1,'${email}')">−</button>
-                  <span id="mr-cant-${r.id}" style="font-family:var(--fd);font-size:32px;color:var(--acc);min-width:40px;text-align:center">${r.cantidad}</span>
-                  <button class="acbtn" style="padding:7px 16px;font-size:16px" onclick="mrCant(${r.id},1,'${email}')">+</button>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Total</div>
-                  <div style="font-family:var(--fd);font-size:28px;color:var(--acc)" id="mr-imp-${r.id}">${r.importe} €</div>
-                  <div style="font-size:11px;color:var(--mu);margin-top:2px">a pagar en efectivo</div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Lugar de quedada</div>
-              <select id="mr-lugar-${r.id}" onchange="mrLugar(${r.id},'${email}',this.value)" style="font-size:14px;padding:10px 14px">${S.lugares.map(l=>`<option ${l===r.lugar?'selected':''}>${l}</option>`).join('')}</select>
-            </div>
-          </div>
-          <p style="font-size:11px;color:var(--mu);margin-top:12px">Los cambios se actualizan automáticamente. El organizador los verá al instante.</p>
-        `}
+      <div class="res-card-bottom">
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="acbtn" style="padding:5px 12px" onclick="editCant('${evAdmin.id}',${r.id},-1)">−</button>
+          <span id="cant-${r.id}" style="font-family:var(--fd);font-size:22px;color:var(--acc);min-width:30px;text-align:center">${r.cantidad}</span>
+          <button class="acbtn" style="padding:5px 12px" onclick="editCant('${evAdmin.id}',${r.id},1)">+</button>
+          <span style="font-size:13px;color:var(--mu)" id="imp-${r.id}">${r.importe} €</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${r.estado==='pendiente'?`<button class="acbtn" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'cobrado')">Cobrar</button>`:''}
+          ${r.estado!=='cancelado'?`<button class="acbtn del" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'cancelado')">Cancelar</button>`:''}
+          ${r.estado==='cancelado'?`<button class="acbtn" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'pendiente')">Reactivar</button>`:''}
+        </div>
       </div>
-    </div>`).join('');
+    </div>`).join('') : `<p style="color:var(--mu);padding:16px">Sin reservas</p>`;
 }
 
-function mrCant(id, delta, email) {
-  const r = S.reservas.find(r => r.id === id); if (!r) return;
-  const nueva = Math.max(1, r.cantidad + delta);
-  r.cantidad = nueva;
-  r.importe = nueva * S.config.precio;
-  guardar();
-  const elC = document.getElementById('mr-cant-'+id);
-  const elI = document.getElementById('mr-imp-'+id);
-  if (elC) elC.textContent = nueva;
-  if (elI) elI.textContent = r.importe + ' €';
-  renderHome();
-  toast('Entradas actualizadas: ' + nueva);
-}
+function filtrar(f,btn) { filtroAdmin=f; document.querySelectorAll('#a-frow .fchip').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); rRes(); }
 
-function mrLugar(id, email, lugar) {
-  const r = S.reservas.find(r => r.id === id); if (!r) return;
-  r.lugar = lugar;
-  guardar();
-  const txt = document.getElementById('mr-lugar-txt-'+id);
-  if (txt) txt.textContent = '📍 ' + lugar;
-  toast('Lugar actualizado: ' + lugar);
-}
-
-function buscarReserva() { buscarMisReservas(); }
-
-function filtrar(f,btn) {
-  S.filtro=f;
-  document.querySelectorAll('#a-frow .fchip').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on'); rRes();
-}
-
-function cambiar(id,estado) {
-  const r=S.reservas.find(r=>r.id===id); if(!r) return;
-  r.estado=estado; guardar(); renderAdmin(); renderHome();
+function cambiar(evId,rId,estado) {
+  const ev=eventos.find(e=>e.id===evId); if(!ev) return;
+  const r=ev.reservas.find(r=>r.id===rId); if(!r) return;
+  r.estado=estado; guardarEvento(ev); renderAdmin(); renderEvento();
   toast(estado==='cobrado'?'¡Cobro registrado!':estado==='cancelado'?'Cancelada':'Reactivada');
 }
 
-// ══ DISPONIBILIDAD ══
+function editCant(evId,rId,delta) {
+  const ev=eventos.find(e=>e.id===evId); if(!ev) return;
+  const r=ev.reservas.find(r=>r.id===rId); if(!r) return;
+  r.cantidad=Math.max(1,r.cantidad+delta); r.importe=r.cantidad*ev.precio;
+  guardarEvento(ev);
+  const ec=document.getElementById('cant-'+rId); if(ec) ec.textContent=r.cantidad;
+  const ei=document.getElementById('imp-'+rId); if(ei) ei.textContent=r.importe+' €';
+  toast('Entradas: '+r.cantidad);
+}
+
+// ════════════════════════════════════════
+// DISPONIBILIDAD
+// ════════════════════════════════════════
 function rDisp() {
+  if (!evAdmin) return;
   const pf={};
-  S.slots.forEach(s=>{ if(!pf[s.fecha]) pf[s.fecha]=[]; pf[s.fecha].push(s); });
-  document.getElementById('a-dgrid').innerHTML = Object.keys(pf).map(f=>`
+  (evAdmin.slots||[]).forEach(s=>{ if(!pf[s.fecha]) pf[s.fecha]=[]; pf[s.fecha].push(s); });
+  document.getElementById('a-dgrid').innerHTML=Object.keys(pf).map(f=>`
     <div class="dcard"><h4>${f}</h4>${pf[f].map(s=>`
       <div class="ditem">
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:500">${s.hora} · ${s.lugar}</div>
-          <div style="font-size:11px;color:var(--mu)">${s.org}</div>
-        </div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:500">${s.hora} · ${s.lugar}</div><div style="font-size:11px;color:var(--mu)">${s.org}</div></div>
         <div style="display:flex;align-items:center;gap:6px">
-          <button class="toggle ${s.activo?'on':''}" onclick="toggleSlot(${s.id})" title="${s.activo?'Desactivar':'Activar'}"></button>
-          <button class="acbtn" style="padding:3px 8px;font-size:11px" onclick="editSlot(${s.id})" title="Editar">✎</button>
-          <button class="acbtn del" style="padding:3px 8px;font-size:11px" onclick="delSlot(${s.id})" title="Eliminar">✕</button>
+          <button class="toggle ${s.activo?'on':''}" onclick="toggleSlot('${evAdmin.id}',${s.id})"></button>
+          <button class="acbtn" style="padding:3px 8px;font-size:11px" onclick="editSlot('${evAdmin.id}',${s.id})">✎</button>
+          <button class="acbtn del" style="padding:3px 8px;font-size:11px" onclick="delSlot('${evAdmin.id}',${s.id})">✕</button>
         </div>
-      </div>`).join('')}</div>`).join('') || `<p style="font-size:13px;color:var(--mu)">Sin huecos. Añade uno abajo.</p>`;
+      </div>`).join('')}</div>`).join('')||`<p style="font-size:13px;color:var(--mu)">Sin huecos. Añade uno abajo.</p>`;
   const ls=document.getElementById('d-lugar');
-  if(ls) ls.innerHTML=S.lugares.map(l=>`<option>${l}</option>`).join('');
+  if(ls) ls.innerHTML=(evAdmin.lugares||[]).map(l=>`<option>${l}</option>`).join('');
+  const os=document.getElementById('d-org');
+  if(os) os.innerHTML=getOrgs().map(o=>`<option>${o.n}</option>`).join('');
 }
 
-function toggleSlot(id) {
-  const s=S.slots.find(s=>s.id===id); if(!s) return;
-  s.activo=!s.activo; guardar(); rDisp();
-  toast(s.activo?'Hueco activado':'Hueco desactivado');
-}
+function toggleSlot(evId,sId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const s=ev.slots.find(s=>s.id===sId);if(!s)return;s.activo=!s.activo;guardarEvento(ev);rDisp();toast(s.activo?'Activado':'Desactivado');}
+function delSlot(evId,sId){if(!confirm('¿Eliminar?'))return;const ev=eventos.find(e=>e.id===evId);if(!ev)return;ev.slots=ev.slots.filter(s=>s.id!==sId);guardarEvento(ev);rDisp();toast('Eliminado');}
+function editSlot(evId,sId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const s=ev.slots.find(s=>s.id===sId);if(!s)return;const f=prompt('Fecha:',s.fecha);if(!f)return;const h=prompt('Hora:',s.hora);if(!h)return;const l=prompt('Lugar:',s.lugar);if(!l)return;const o=prompt('Organizador:',s.org);if(!o)return;s.fecha=f;s.hora=h;s.lugar=l;s.org=o;guardarEvento(ev);rDisp();toast('Actualizado');}
+function addSlot(){if(!evAdmin)return;const f=document.getElementById('d-fecha').value.trim();const h=document.getElementById('d-hora').value;const l=document.getElementById('d-lugar').value;const o=document.getElementById('d-org').value;if(!f||!h){toast('Completa fecha y hora');return;}if(!evAdmin.slots)evAdmin.slots=[];evAdmin.slots.push({id:Date.now(),fecha:f,hora:h,lugar:l,org:o,activo:true});document.getElementById('d-fecha').value='';guardarEvento(evAdmin);rDisp();toast('Hueco añadido');}
+function addLugar(){if(!evAdmin)return;const n=document.getElementById('d-nlug').value.trim();if(!n||(evAdmin.lugares||[]).includes(n))return;if(!evAdmin.lugares)evAdmin.lugares=[];evAdmin.lugares.push(n);document.getElementById('d-nlug').value='';guardarEvento(evAdmin);rDisp();toast('Lugar añadido');}
 
-function delSlot(id) {
-  if(!confirm('¿Eliminar este hueco?')) return;
-  S.slots=S.slots.filter(s=>s.id!==id);
-  guardar(); rDisp(); toast('Hueco eliminado');
-}
-
-function editSlot(id) {
-  const s=S.slots.find(s=>s.id===id); if(!s) return;
-  const fecha=prompt('Fecha:', s.fecha); if(fecha===null) return;
-  const hora=prompt('Hora (HH:MM):', s.hora); if(hora===null) return;
-  const lugar=prompt('Lugar:', s.lugar); if(lugar===null) return;
-  const org=prompt('Organizador:', s.org); if(org===null) return;
-  s.fecha=fecha.trim()||s.fecha;
-  s.hora=hora.trim()||s.hora;
-  s.lugar=lugar.trim()||s.lugar;
-  s.org=org.trim()||s.org;
-  guardar(); rDisp(); toast('Hueco actualizado');
-}
-
-function addSlot() {
-  const fecha=document.getElementById('d-fecha').value.trim();
-  const hora=document.getElementById('d-hora').value;
-  const lugar=document.getElementById('d-lugar').value;
-  const org=document.getElementById('d-org').value;
-  if(!fecha||!hora){toast('Completa fecha y hora');return;}
-  S.slots.push({id:Date.now(),fecha,hora,lugar,org,activo:true});
-  document.getElementById('d-fecha').value='';
-  guardar(); rDisp(); toast('Hueco añadido');
-}
-
-function addLugar() {
-  const n=document.getElementById('d-nlug').value.trim();
-  if(!n||S.lugares.includes(n)) return;
-  S.lugares.push(n); document.getElementById('d-nlug').value='';
-  guardar(); rDisp(); toast('Lugar añadido');
-}
-
-// ══ CONTABILIDAD ══
+// ════════════════════════════════════════
+// CONTABILIDAD
+// ════════════════════════════════════════
 function rCont() {
-  document.getElementById('c-cob').textContent  = cob().reduce((a,r)=>a+r.importe,0)+' €';
-  document.getElementById('c-pen').textContent  = pend().reduce((a,r)=>a+r.importe,0)+' €';
-  document.getElementById('c-ents').textContent = cob().reduce((a,r)=>a+r.cantidad,0);
-  document.getElementById('c-can').textContent  = S.reservas.filter(r=>r.estado==='cancelado').length;
-  document.getElementById('c-body').innerHTML   = S.reservas.length
-    ? S.reservas.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.fecha}</td><td style="color:var(--mu)">${r.org}</td><td>${bdg(r.estado)}</td></tr>`).join('')
-    : `<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:20px">Sin datos</td></tr>`;
+  if (!evAdmin) return;
+  const c=cobEv(evAdmin); const p=pendEv(evAdmin);
+  document.getElementById('c-cob').textContent=c.reduce((a,r)=>a+r.importe,0)+' €';
+  document.getElementById('c-pen').textContent=p.reduce((a,r)=>a+r.importe,0)+' €';
+  document.getElementById('c-ents').textContent=c.reduce((a,r)=>a+r.cantidad,0);
+  document.getElementById('c-can').textContent=(evAdmin.reservas||[]).filter(r=>r.estado==='cancelado').length;
+  document.getElementById('c-body').innerHTML=(evAdmin.reservas||[]).length
+    ?(evAdmin.reservas||[]).map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.fecha}</td><td style="color:var(--mu)">${r.org}</td><td>${bdg(r.estado)}</td></tr>`).join('')
+    :`<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin datos</td></tr>`;
 }
 
-// ══ TICKETBOT ══
+// ════════════════════════════════════════
+// TICKETBOT
+// ════════════════════════════════════════
 function rBot() {
-  const cs=cob();
+  if (!evAdmin) return;
+  const cs=cobEv(evAdmin);
   const sel=document.getElementById('bot-sel');
-  sel.innerHTML=`<option value="">— Selecciona una reserva cobrada —</option>`+
-    cs.map(r=>`<option value="${r.id}">${r.nombre} · ${r.cantidad} entrada${r.cantidad>1?'s':''} · ${r.slot}</option>`).join('');
+  sel.innerHTML=`<option value="">— Selecciona —</option>`+cs.map(r=>`<option value="${r.id}">${r.nombre} · ${r.cantidad} entrada${r.cantidad>1?'s':''}</option>`).join('');
   const pp=cs.filter(r=>!r.entradaGenerada);
   document.getElementById('bot-pend').innerHTML=pp.length
-    ? pp.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--g2);font-size:13px"><span>${r.nombre} · ${r.cantidad} entradas</span><button class="acbtn" onclick="markGen(${r.id})">Marcar generada</button></div>`).join('')
-    : `<p style="font-size:13px;color:var(--mu)">Todo al día.</p>`;
+    ?pp.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--g2);font-size:13px"><span>${r.nombre} · ${r.cantidad}</span><button class="acbtn" onclick="markGen('${evAdmin.id}',${r.id})">Marcar generada</button></div>`).join('')
+    :`<p style="font-size:13px;color:var(--mu)">Todo al día.</p>`;
 }
+function genBot(){if(!evAdmin)return;const id=parseInt(document.getElementById('bot-sel').value);const r=(evAdmin.reservas||[]).find(r=>r.id===id);if(!r){document.getElementById('bot-card').style.display='none';return;}document.getElementById('bot-card').style.display='block';document.getElementById('bot-out').textContent=`/nuevaentrada\nNombre: ${r.nombre}\nEntradas: ${r.cantidad}\nEvento: ${evAdmin.nombre}\nFecha: ${evAdmin.fecha}\nImporte: ${r.importe} €`;}
+function copyBot(){navigator.clipboard.writeText(document.getElementById('bot-out').textContent).then(()=>toast('¡Copiado!'));}
+function markGen(evId,rId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const r=ev.reservas.find(r=>r.id===rId);if(!r)return;r.entradaGenerada=true;guardarEvento(ev);rBot();toast('Marcado');}
 
-function genBot() {
-  const id=parseInt(document.getElementById('bot-sel').value);
-  const r=S.reservas.find(r=>r.id===id);
-  if(!r){document.getElementById('bot-card').style.display='none';return;}
-  document.getElementById('bot-card').style.display='block';
-  document.getElementById('bot-out').textContent=`/nuevaentrada\nNombre: ${r.nombre}\nEntradas: ${r.cantidad}\nEvento: ${S.config.nombre}\nFecha: ${S.config.fecha}\nImporte: ${r.importe} €`;
-}
-
-function copyBot() { navigator.clipboard.writeText(document.getElementById('bot-out').textContent).then(()=>toast('¡Copiado!')); }
-
-function markGen(id) {
-  const r=S.reservas.find(r=>r.id===id); if(!r) return;
-  r.entradaGenerada=true; guardar(); rBot(); toast('Marcado como generado');
-}
-
-// ══ CONFIG ══
+// ════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════
 function rCfg() {
-  document.getElementById('c-nom').value=S.config.nombre;
-  document.getElementById('c-fec').value=S.config.fecha;
-  document.getElementById('c-pre').value=S.config.precio;
-  document.getElementById('c-afo').value=S.config.aforo;
-  document.getElementById('c-pas').value=S.config.pass;
-  document.getElementById('c-o1').value=S.config.org1;
-  document.getElementById('c-w1').value=S.config.wa1;
-  document.getElementById('c-o2').value=S.config.org2;
-  document.getElementById('c-w2').value=S.config.wa2;
-  document.getElementById('c-o3').value=S.config.org3;
-  document.getElementById('c-w3').value=S.config.wa3;
-  rLugares();
+  const el=id=>document.getElementById(id); if(!el('c-pas')) return;
+  el('c-pas').value=G.pass; el('c-pdisco').value=G.passDiscoteca||'discoteca2026';
+  el('c-local').value=G.localNombre||'';
+  el('c-o1').value=G.org1; el('c-w1').value=G.wa1;
+  el('c-o2').value=G.org2; el('c-w2').value=G.wa2;
+  el('c-o3').value=G.org3; el('c-w3').value=G.wa3;
+  rOrgsExtra(); rCfgEventos();
 }
 
 function saveCfg() {
-  S.config.nombre=document.getElementById('c-nom').value;
-  S.config.fecha=document.getElementById('c-fec').value;
-  S.config.precio=parseInt(document.getElementById('c-pre').value)||15;
-  S.config.aforo=parseInt(document.getElementById('c-afo').value)||200;
-  S.config.pass=document.getElementById('c-pas').value;
-  S.config.org1=document.getElementById('c-o1').value;
-  S.config.wa1=document.getElementById('c-w1').value;
-  S.config.org2=document.getElementById('c-o2').value;
-  S.config.wa2=document.getElementById('c-w2').value;
-  S.config.org3=document.getElementById('c-o3').value;
-  S.config.wa3=document.getElementById('c-w3').value;
-  guardar(); renderHome(); toast('Configuración guardada');
+  const el=id=>document.getElementById(id);
+  G.pass=el('c-pas').value; G.passDiscoteca=el('c-pdisco').value;
+  G.localNombre=el('c-local').value;
+  G.org1=el('c-o1').value; G.wa1=el('c-w1').value;
+  G.org2=el('c-o2').value; G.wa2=el('c-w2').value;
+  G.org3=el('c-o3').value; G.wa3=el('c-w3').value;
+  guardarGlobal(); renderHome(); toast('Guardado');
 }
 
-function rLugares() {
-  const el=document.getElementById('c-lugares'); if(!el) return;
-  el.innerHTML=S.lugares.map((l,i)=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--g2);font-size:13px">
-      <span>${l}</span>
-      ${S.lugares.length>1?`<button class="acbtn del" onclick="delLug(${i})">✕</button>`:''}
+function rCfgEventos() {
+  const el=document.getElementById('cfg-eventos-list'); if(!el) return;
+  el.innerHTML=eventos.map(ev=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g2);font-size:13px;gap:8px">
+      <div>
+        <div style="font-weight:500">${ev.nombre}</div>
+        <div style="font-size:12px;color:var(--mu)">${ev.fecha} · ${ev.precio}€ · aforo ${ev.aforo}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="toggle ${ev.activo?'on':''}" onclick="toggleEvento('${ev.id}')" title="${ev.activo?'Desactivar':'Activar'}"></button>
+        <button class="acbtn" onclick="editEvento('${ev.id}')">✎</button>
+        <button class="acbtn del" onclick="delEvento('${ev.id}')">✕</button>
+      </div>
     </div>`).join('');
 }
 
-function delLug(i){S.lugares.splice(i,1);guardar();rLugares();}
+function toggleEvento(id){const ev=eventos.find(e=>e.id===id);if(!ev)return;ev.activo=!ev.activo;guardarEvento(ev);rCfgEventos();renderHome();toast(ev.activo?'Evento activado':'Evento desactivado');}
+function delEvento(id){if(!confirm('¿Eliminar este evento y todas sus reservas?'))return;eventos=eventos.filter(e=>e.id!==id);if(window._db&&window._fb)try{window._fb.setDoc(window._fb.doc(window._db,'eventos',id),{_deleted:true});}catch(e){}rCfgEventos();poblarSelectores();evAdmin=eventos[0]||null;renderAdmin();renderHome();toast('Evento eliminado');}
+function editEvento(id){const ev=eventos.find(e=>e.id===id);if(!ev)return;const n=prompt('Nombre:',ev.nombre);if(!n)return;const f=prompt('Fecha:',ev.fecha);if(!f)return;const p=parseFloat(prompt('Precio:',ev.precio));if(!p)return;const a=parseInt(prompt('Aforo:',ev.aforo));if(!a)return;const d=prompt('Descripción:',ev.desc||'');ev.nombre=n;ev.fecha=f;ev.precio=p;ev.aforo=a;ev.desc=d;guardarEvento(ev);rCfgEventos();poblarSelectores();renderHome();toast('Evento actualizado');}
 
-function cfgAddLug() {
-  const v=document.getElementById('c-nlug').value.trim();
-  if(!v||S.lugares.includes(v)) return;
-  S.lugares.push(v); document.getElementById('c-nlug').value='';
-  guardar(); rLugares(); toast('Lugar añadido');
+function rOrgsExtra() {
+  const el=document.getElementById('c-orgs-extra'); if(!el) return;
+  const ex=G.orgsExtra||[];
+  el.innerHTML=ex.map((o,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--g2)">
+      <input value="${o.n}" placeholder="Nombre" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'n',this.value)">
+      <input value="${o.w}" placeholder="WhatsApp" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'w',this.value)">
+      <button class="acbtn del" onclick="delOrgExtra(${i})">✕</button>
+    </div>`).join('')||`<p style="font-size:12px;color:var(--mu);padding:6px 0">Solo los 3 organizadores base</p>`;
 }
+function addOrgExtra(){if(!G.orgsExtra)G.orgsExtra=[];G.orgsExtra.push({n:'',w:''});guardarGlobal();rOrgsExtra();toast('Añadido');}
+function editOrgExtra(i,c,v){if(!G.orgsExtra)return;G.orgsExtra[i][c]=v;guardarGlobal();}
+function delOrgExtra(i){G.orgsExtra.splice(i,1);guardarGlobal();rOrgsExtra();toast('Eliminado');}
 
-// ══ DRAWER ══
-function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');document.getElementById('ham-btn').classList.toggle('open');}
-function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('ham-btn').classList.remove('open');}
-
-// ══ NUEVA FIESTA ══
-function abrirNF(){nfN=0;['nf-nom','nf-fec','nf-pre','nf-afo','nf-pas'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});nfRender();document.getElementById('modal-nf').classList.add('open');}
+// ════════════════════════════════════════
+// NUEVA FIESTA (MODAL)
+// ════════════════════════════════════════
+function abrirNF(){nfN=0;['nf-nom','nf-fec','nf-pre','nf-afo','nf-desc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});nfRender();document.getElementById('modal-nf').classList.add('open');}
 function cerrarNF(){document.getElementById('modal-nf').classList.remove('open');}
-
-function nfPaso(d) {
+function nfPaso(d){
   if(d===1){
     if(nfN===0){const n=document.getElementById('nf-nom').value.trim(),f=document.getElementById('nf-fec').value.trim();if(!n||!f){toast('Rellena nombre y fecha');return;}}
-    if(nfN===1){const p=parseInt(document.getElementById('nf-pre').value),a=parseInt(document.getElementById('nf-afo').value);if(!p||p<1){toast('Precio no válido');return;}if(!a||a<1){toast('Aforo no válido');return;}}
-    if(nfN===2){
-      const n=document.getElementById('nf-nom').value.trim(),f=document.getElementById('nf-fec').value.trim(),p=document.getElementById('nf-pre').value,a=document.getElementById('nf-afo').value,ps=document.getElementById('nf-pas').value.trim();
-      document.getElementById('nf-prev').innerHTML=`<div class="prev-row"><span>Nombre</span><span>${n}</span></div><div class="prev-row"><span>Fecha</span><span>${f}</span></div><div class="prev-row"><span>Precio</span><span>${p} €</span></div><div class="prev-row"><span>Aforo</span><span>${a}</span></div><div class="prev-row"><span>Contraseña</span><span>${ps||'(sin cambios)'}</span></div><div class="prev-row"><span>Organizadores</span><span>${S.config.org1}, ${S.config.org2}, ${S.config.org3}</span></div>`;
-    }
+    if(nfN===1){const p=parseFloat(document.getElementById('nf-pre').value),a=parseInt(document.getElementById('nf-afo').value);if(!p||p<1){toast('Precio no válido');return;}if(!a||a<1){toast('Aforo no válido');return;}}
+    if(nfN===2){const n=document.getElementById('nf-nom').value.trim(),f=document.getElementById('nf-fec').value.trim(),p=document.getElementById('nf-pre').value,a=document.getElementById('nf-afo').value,desc=document.getElementById('nf-desc').value.trim();document.getElementById('nf-prev').innerHTML=`<div class="prev-row"><span>Nombre</span><span>${n}</span></div><div class="prev-row"><span>Fecha</span><span>${f}</span></div><div class="prev-row"><span>Precio</span><span>${p} €</span></div><div class="prev-row"><span>Aforo</span><span>${a}</span></div>${desc?`<div class="prev-row"><span>Descripción</span><span>${desc}</span></div>`:''}`;}
     if(nfN===3){
-      S.config.nombre=document.getElementById('nf-nom').value.trim();
-      S.config.fecha=document.getElementById('nf-fec').value.trim();
-      S.config.precio=parseInt(document.getElementById('nf-pre').value)||15;
-      S.config.aforo=parseInt(document.getElementById('nf-afo').value)||200;
-      const ps=document.getElementById('nf-pas').value.trim(); if(ps) S.config.pass=ps;
-      S.reservas=[];S.slots=[];S.turnoOrg=0;nextId=100;
-      guardar();cerrarNF();renderAdmin();renderHome();
-      toast(`¡Nueva fiesta "${S.config.nombre}" creada!`);return;
+      const ev={id:'ev_'+Date.now(),...DEF_EVENTO,nombre:document.getElementById('nf-nom').value.trim(),fecha:document.getElementById('nf-fec').value.trim(),precio:parseFloat(document.getElementById('nf-pre').value)||15,aforo:parseInt(document.getElementById('nf-afo').value)||200,desc:document.getElementById('nf-desc').value.trim()};
+      eventos.push(ev); guardarEvento(ev); evAdmin=ev;
+      cerrarNF(); rCfgEventos(); poblarSelectores(); renderHome(); renderAdmin();
+      toast(`Evento "${ev.nombre}" creado`); return;
     }
   }
-  nfN=Math.max(0,Math.min(3,nfN+d));nfRender();
+  nfN=Math.max(0,Math.min(3,nfN+d)); nfRender();
 }
-
 function nfRender(){
   document.querySelectorAll('.msec').forEach((s,i)=>s.classList.toggle('on',i===nfN));
   for(let i=0;i<4;i++){const e=document.getElementById('ns'+i);if(!e)continue;e.classList.remove('done','cur');if(i<nfN)e.classList.add('done');else if(i===nfN)e.classList.add('cur');}
   document.getElementById('nf-back').style.display=nfN>0?'block':'none';
-  document.getElementById('nf-next').textContent=nfN===3?'¡Crear nueva fiesta!':'Siguiente →';
+  document.getElementById('nf-next').textContent=nfN===3?'¡Crear evento!':'Siguiente →';
 }
 
-// ══ BACKUP ══
+// ════════════════════════════════════════
+// PANEL DISCOTECA
+// ════════════════════════════════════════
+function renderDiscoteca() {
+  const sel=document.getElementById('disco-ev-sel');
+  if(sel){sel.innerHTML=`<option value="">Todos los eventos</option>`+eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');}
+  const evId=sel?sel.value:'';
+  const lista=evId?[eventos.find(e=>e.id===evId)].filter(Boolean):eventos;
+  const todasRes=lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
+  const vend=todasRes.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+  const rec=todasRes.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
+  const aforo=lista.reduce((a,ev)=>a+ev.aforo,0);
+  const m=document.getElementById('disco-metrics');
+  if(m)m.innerHTML=`
+    <div class="mcard"><div class="ml">Entradas vendidas</div><div class="mv">${vend}</div><div class="ms">de ${aforo} aforo total</div></div>
+    <div class="mcard"><div class="ml">Recaudado</div><div class="mv">${rec} €</div></div>
+    <div class="mcard"><div class="ml">Pendientes</div><div class="mv">${todasRes.filter(r=>r.estado==='pendiente').length}</div></div>
+    <div class="mcard"><div class="ml">Eventos activos</div><div class="mv">${eventos.filter(e=>e.activo).length}</div></div>`;
+  const t=document.getElementById('disco-tabla');
+  if(t)t.innerHTML=todasRes.length
+    ?todasRes.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td style="color:var(--acc);font-size:12px">${r.evNombre||''}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td>${bdg(r.estado)}</td></tr>`).join('')
+    :`<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
+  const dt=document.getElementById('disco-titulo');if(dt)dt.textContent=(G.localNombre||'ENTRADAS').toUpperCase();
+  const ds=document.getElementById('disco-subtitulo');if(ds)ds.textContent=eventos.length+' eventos · Vista del local';
+}
+
+// ════════════════════════════════════════
+// EXPORTS
+// ════════════════════════════════════════
 function exportCSV(){
-  const h=['ID','Nombre','Email','Entradas','Importe (€)','Cita','Lugar','Organizador','Estado','Fecha'];
-  const r=S.reservas.map(r=>[r.id,r.nombre,r.email||'',r.cantidad,r.importe,r.slot,r.lugar,r.org,r.estado,r.fecha]);
-  dl('\uFEFF'+[h,...r].map(row=>row.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`contabilidad_${new Date().toISOString().slice(0,10)}.csv`);
+  if(!evAdmin)return;
+  const h=['ID','Nombre','Email','Entradas','Importe','Cita','Lugar','Org.','Estado','Fecha'];
+  const rows=(evAdmin.reservas||[]).map(r=>[r.id,r.nombre,r.email||'',r.cantidad,r.importe,r.slot,r.lugar,r.org,r.estado,r.fecha]);
+  dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`${evAdmin.nombre}_${new Date().toISOString().slice(0,10)}.csv`);
   toast('CSV descargado');
 }
 
+function exportCSVDisco(){
+  const todasRes=eventos.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
+  const h=['Evento','Nombre','Email','Entradas','Importe','Estado','Fecha'];
+  const rows=todasRes.map(r=>[r.evNombre,r.nombre,r.email||'',r.cantidad,r.importe,r.estado,r.fecha]);
+  dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`contabilidad_${new Date().toISOString().slice(0,10)}.csv`);
+  toast('CSV descargado');
+}
+
+function exportEmailsCSV(){
+  const todasRes=eventos.flatMap(ev=>(ev.reservas||[]).filter(r=>r.email).map(r=>({...r,evNombre:ev.nombre})));
+  const h=['Nombre','Email','Evento','Entradas','Estado'];
+  const rows=todasRes.map(r=>[r.nombre,r.email,r.evNombre,r.cantidad,r.estado]);
+  dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`emails_${new Date().toISOString().slice(0,10)}.csv`);
+  toast('Emails exportados');
+}
+
 function exportBackup(){
-  dl(JSON.stringify({version:1,exportado:new Date().toISOString(),reservas:S.reservas,slots:S.slots,lugares:S.lugares,config:S.config,turnoOrg:S.turnoOrg,nextId},null,2),'application/json',`backup_${new Date().toISOString().slice(0,10)}.json`);
+  dl(JSON.stringify({version:2,exportado:new Date().toISOString(),global:G,eventos:eventos},null,2),'application/json',`backup_${new Date().toISOString().slice(0,10)}.json`);
   toast('Copia descargada');
 }
 
 function importBackup(input){
-  const file=input.files[0]; if(!file) return;
+  const f=input.files[0]; if(!f) return;
   const rd=new FileReader();
   rd.onload=e=>{
     try{
       const d=JSON.parse(e.target.result);
-      if(!d.reservas||!d.config){toast('Archivo no válido');return;}
-      if(!confirm('¿Importar esta copia? Se sobrescribirán los datos actuales.')) return;
-      aplicar(d);guardar();renderAdmin();renderHome();
-      document.getElementById('imp-lbl').textContent='✓ '+file.name;
-      toast('¡Datos importados!');
-    }catch(e){toast('Error al leer el archivo');}
+      if(!d.global&&!d.config){toast('Archivo no válido');return;}
+      if(!confirm('¿Importar? Se sobrescribirán los datos actuales.'))return;
+      if(d.global){G={...DEF_GLOBAL,...d.global};guardarGlobal();}
+      if(d.eventos){eventos=d.eventos;eventos.forEach(ev=>guardarEvento(ev));}
+      buildAdmin(); renderHome();
+      document.getElementById('imp-lbl').textContent='✓ '+f.name;
+      toast('¡Importado!');
+    }catch(e){toast('Error al leer');}
   };
-  rd.readAsText(file);
+  rd.readAsText(f);
 }
 
 function dl(c,t,n){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:t}));a.download=n;a.click();}
 
-// ══ DEMO ══
-function cargarDemo(){
-  S.reservas=[
-    {id:1,nombre:'Lucía Fernández',email:'lucia@uni.es',cantidad:4,importe:60,slot:'Lun 16 mar, 10:00',lugar:'Entrada facultad',org:'Tú',orgWa:S.config.wa1,estado:'cobrado',fecha:'10/03/2026',entradaGenerada:true},
-    {id:2,nombre:'Pablo Ruiz',email:'pablo@uni.es',cantidad:2,importe:30,slot:'Lun 16 mar, 11:00',lugar:'Entrada facultad',org:'Marcos',orgWa:S.config.wa2,estado:'cobrado',fecha:'10/03/2026',entradaGenerada:false},
-    {id:3,nombre:'Amara Diallo',email:'amara@uni.es',cantidad:6,importe:90,slot:'Mar 17 mar, 10:00',lugar:'Entrada facultad',org:'Sara',orgWa:S.config.wa3,estado:'pendiente',fecha:'11/03/2026',entradaGenerada:false},
-    {id:4,nombre:'Iñigo Etxebarria',email:'inigo@uni.es',cantidad:3,importe:45,slot:'Mar 17 mar, 12:00',lugar:'Entrada facultad',org:'Tú',orgWa:S.config.wa1,estado:'cobrado',fecha:'11/03/2026',entradaGenerada:true},
-    {id:5,nombre:'Carla Méndez',email:'carla@uni.es',cantidad:5,importe:75,slot:'Mié 18 mar, 11:00',lugar:'Entrada facultad',org:'Marcos',orgWa:S.config.wa2,estado:'pendiente',fecha:'12/03/2026',entradaGenerada:false},
-    {id:6,nombre:'Mireia Puig',email:'mireia@uni.es',cantidad:2,importe:30,slot:'Lun 16 mar, 10:00',lugar:'Entrada facultad',org:'Sara',orgWa:S.config.wa3,estado:'cancelado',fecha:'09/03/2026',entradaGenerada:false},
-  ];
-  nextId=200;guardar();renderAdmin();renderHome();toast('Demo cargada');
-}
-
-function resetData(){
-  if(!confirm('¿Borrar todas las reservas?')) return;
-  S.reservas=[];S.turnoOrg=0;nextId=100;
-  guardar();renderAdmin();renderHome();toast('Reservas borradas');
-}
-
-// ══ HELPERS ══
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
 function bdg(e){
-  if(e==='cobrado')  return `<span class="badge b-ok">Cobrado</span>`;
-  if(e==='pendiente')return `<span class="badge b-pend">Pendiente</span>`;
-  return `<span class="badge b-cancel">Cancelado</span>`;
+  if(e==='cobrado')return`<span class="badge b-ok">Cobrado</span>`;
+  if(e==='pendiente')return`<span class="badge b-pend">Pendiente</span>`;
+  return`<span class="badge b-cancel">Cancelado</span>`;
 }
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');document.getElementById('ham-btn').classList.toggle('open');}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('ham-btn').classList.remove('open');}
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-// ══ ARRANQUE ══
+// ════════════════════════════════════════
+// ARRANQUE
+// ════════════════════════════════════════
 init();
 </script>
 </body>
