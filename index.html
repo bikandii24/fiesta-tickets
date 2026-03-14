@@ -448,6 +448,8 @@ select option{background:var(--g2)}
       </select>
     </div>
     <div class="mgrid" id="disco-metrics" style="margin-bottom:24px"></div>
+    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Comparativa de eventos</div>
+    <div id="disco-comparativa" style="margin-bottom:24px"></div>
     <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Reservas</div>
     <div class="twrap"><table class="tbl"><thead><tr><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>Cita</th><th>Estado</th></tr></thead><tbody id="disco-tabla"></tbody></table></div>
     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
@@ -872,6 +874,7 @@ function buildAdmin() {
       <button class="d-link" onclick="aTabM('s-disp',this)">Disponibilidad</button>
       <button class="d-link" onclick="aTabM('s-cont',this)">Contabilidad</button>
       <button class="d-link" onclick="aTabM('s-bot',this)">TicketBot</button>
+      <button class="d-link" onclick="aTabM('s-emails',this)">Emails</button>
       <button class="d-link" onclick="aTabM('s-cfg',this)">Configuración</button>
     </nav>
     <div class="d-out">
@@ -889,6 +892,7 @@ function buildAdmin() {
       <button class="slink" onclick="aTab('s-disp',this)">Disponibilidad</button>
       <button class="slink" onclick="aTab('s-cont',this)">Contabilidad</button>
       <button class="slink" onclick="aTab('s-bot',this)">TicketBot</button>
+      <button class="slink" onclick="aTab('s-emails',this)">Emails</button>
       <button class="slink" onclick="aTab('s-cfg',this)">Configuración</button>
     </nav>
     <div class="sout">
@@ -978,6 +982,16 @@ function buildAdmin() {
       <div class="tbcard" id="bot-card" style="display:none"><h4>Texto para TicketBot</h4><p>Copia y pega en Telegram:</p><div class="botout" id="bot-out"></div><button class="copybtn" onclick="copyBot()">Copiar</button></div>
       <div class="tbcard"><h4>Pendientes de generar</h4><p>Cobradas sin entrada generada:</p><div id="bot-pend"></div></div>
     </section>
+    <section class="asec" id="s-emails">
+      <div class="ahead"><h2>Emails</h2><button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportEmailsCSV()">Exportar CSV</button></div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Todos los compradores que han realizado una reserva en cualquier evento.</p>
+      <div class="frow" id="emails-frow">
+        <button class="fchip on" onclick="filtrarEmails('todos',this)">Todos</button>
+        <button class="fchip" onclick="filtrarEmails('cobrado',this)">Cobrados</button>
+        <button class="fchip" onclick="filtrarEmails('pendiente',this)">Pendientes</button>
+      </div>
+      <div class="twrap"><table class="tbl"><thead><tr><th style="width:22%">Nombre</th><th style="width:26%">Email</th><th style="width:18%">Evento</th><th style="width:10%">Entradas</th><th style="width:12%">Estado</th><th style="width:12%">Fecha</th></tr></thead><tbody id="emails-body"></tbody></table></div>
+    </section>
     <section class="asec" id="s-cfg">
       <div class="ahead"><h2>Configuración</h2></div>
       <div class="cgrid">
@@ -1046,6 +1060,7 @@ function renderAdmin() {
   if(id==='s-disp') rDisp();
   if(id==='s-cont') rCont();
   if(id==='s-bot')  rBot();
+  if(id==='s-emails') rEmails();
   if(id==='s-cfg')  rCfg();
 }
 function cambiarEvAdmin(evId) {
@@ -1320,7 +1335,26 @@ function renderDiscoteca() {
   if(t)t.innerHTML=todasRes.length
     ?todasRes.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td style="color:var(--acc);font-size:12px">${r.evNombre||''}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td>${bdg(r.estado)}</td></tr>`).join('')
     :`<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
-  const dt=document.getElementById('disco-titulo');if(dt)dt.textContent=(G.localNombre||'ENTRADAS').toUpperCase();
+  // Comparativa de eventos
+  const comp = document.getElementById('disco-comparativa');
+  if (comp) {
+    const maxVend = Math.max(1, ...eventos.map(ev => (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0)));
+    comp.innerHTML = eventos.map(ev => {
+      const vEv   = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+      const recEv = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
+      const pct   = Math.round(vEv / maxVend * 100);
+      const pctAf = ev.aforo>0 ? Math.round(vEv/ev.aforo*100) : 0;
+      return `<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+          <span style="font-size:13px;font-weight:500">${ev.nombre}</span>
+          <span style="font-size:12px;color:var(--mu)">${vEv} entradas · ${recEv} € · ${pctAf}% aforo</span>
+        </div>
+        <div style="height:8px;background:var(--g2);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--acc);border-radius:4px;transition:width .5s"></div>
+        </div>
+      </div>`;
+    }).join('') || `<p style="font-size:13px;color:var(--mu)">Sin eventos para comparar.</p>`;
+  }
   const ds=document.getElementById('disco-subtitulo');if(ds)ds.textContent=eventos.length+' eventos · Vista del local';
 }
 
@@ -1341,6 +1375,48 @@ function exportCSVDisco(){
   const rows=todasRes.map(r=>[r.evNombre,r.nombre,r.email||'',r.cantidad,r.importe,r.estado,r.fecha]);
   dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`contabilidad_${new Date().toISOString().slice(0,10)}.csv`);
   toast('CSV descargado');
+}
+
+// ════════════════════════════════════════
+// EMAILS
+// ════════════════════════════════════════
+let filtroEmails = 'todos';
+
+function rEmails() {
+  const todasRes = eventos.flatMap(ev =>
+    (ev.reservas||[]).filter(r => r.email).map(r => ({...r, evNombre:ev.nombre}))
+  );
+  const lista = filtroEmails === 'todos' ? todasRes : todasRes.filter(r => r.estado === filtroEmails);
+  // Deduplicar por email mostrando la más reciente
+  const body = document.getElementById('emails-body'); if (!body) return;
+  body.innerHTML = lista.length
+    ? lista.map(r => `<tr>
+        <td style="font-weight:500">${r.nombre}</td>
+        <td style="color:var(--acc);font-size:12px">${r.email}</td>
+        <td style="color:var(--mu);font-size:12px">${r.evNombre}</td>
+        <td>${r.cantidad}</td>
+        <td>${bdg(r.estado)}</td>
+        <td style="color:var(--mu);font-size:12px">${r.fecha}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin emails registrados</td></tr>`;
+  // Total único
+  const unicos = new Set(todasRes.map(r=>r.email)).size;
+  const total = document.getElementById('emails-frow');
+  if (total) {
+    const existing = document.getElementById('emails-total');
+    if (existing) existing.remove();
+    const span = document.createElement('span');
+    span.id = 'emails-total';
+    span.style.cssText = 'font-size:12px;color:var(--mu);margin-left:auto;align-self:center';
+    span.textContent = `${unicos} emails únicos · ${lista.length} reservas`;
+    total.appendChild(span);
+  }
+}
+
+function filtrarEmails(f, btn) {
+  filtroEmails = f;
+  document.querySelectorAll('#emails-frow .fchip').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); rEmails();
 }
 
 function exportEmailsCSV(){
