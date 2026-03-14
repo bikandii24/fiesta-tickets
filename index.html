@@ -465,7 +465,7 @@ select option{background:var(--g2)}
 // ESTADO GLOBAL
 // ════════════════════════════════════════
 const DEF_GLOBAL = {
-  pass:'fiesta2026', passDiscoteca:'discoteca2026', localNombre:'Entradas',
+  pass:'jon26', passDiscoteca:'discoteca2026', localNombre:'Entradas',
   org1:'Org 1', wa1:'34600000001',
   org2:'Org 2', wa2:'34600000002',
   org3:'Org 3', wa3:'34600000003',
@@ -550,6 +550,50 @@ async function init() {
       if (gSnap.exists()) aplicarGlobal(gSnap.data());
       eventos = [];
       eSnap.forEach(d => aplicarEvento(d.id, d.data()));
+
+      // ── MIGRACIÓN DATOS ANTIGUOS ──
+      if (!eSnap.size) {
+        lm.textContent = 'Migrando datos anteriores...';
+        try {
+          const oldSnap = await window._fb.getDoc(window._fb.doc(window._db, 'fiesta', 'datos'));
+          if (oldSnap.exists()) {
+            const old = oldSnap.data();
+            const cfg = old.config || {};
+            // Migrar config global
+            G = {
+              ...DEF_GLOBAL,
+              pass:           cfg.pass         || DEF_GLOBAL.pass,
+              passDiscoteca:  cfg.passDiscoteca || DEF_GLOBAL.passDiscoteca,
+              localNombre:    cfg.nombre        || DEF_GLOBAL.localNombre,
+              org1: cfg.org1 || DEF_GLOBAL.org1, wa1: (cfg.wa1||DEF_GLOBAL.wa1).replace(/\D/g,''),
+              org2: cfg.org2 || DEF_GLOBAL.org2, wa2: (cfg.wa2||DEF_GLOBAL.wa2).replace(/\D/g,''),
+              org3: cfg.org3 || DEF_GLOBAL.org3, wa3: (cfg.wa3||DEF_GLOBAL.wa3).replace(/\D/g,''),
+              orgsExtra: cfg.orgsExtra || []
+            };
+            await guardarGlobal();
+            // Migrar evento único
+            const evId = 'ev_' + Date.now();
+            const ev = {
+              id: evId,
+              ...DEF_EVENTO,
+              nombre:   cfg.nombre || 'La Fiesta',
+              fecha:    cfg.fecha  || 'Marzo 2026',
+              precio:   cfg.precio || 15,
+              aforo:    cfg.aforo  || 200,
+              activo:   true,
+              reservas: old.reservas  || [],
+              slots:    old.slots     || [],
+              lugares:  old.lugares   || ['Entrada facultad'],
+              turnoOrg: old.turnoOrg  || 0,
+              nextId:   old.nextId    || 100
+            };
+            eventos.push(ev);
+            await guardarEvento(ev);
+            lm.textContent = '¡Migración completada!';
+          }
+        } catch(me) { console.warn('Migración:', me); }
+      }
+
       try {
         const cache = {}; eventos.forEach(e => { const {id,...rest}=e; cache[id]=rest; });
         localStorage.setItem('fd_eventos', JSON.stringify(cache));
