@@ -67,7 +67,19 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 2
 .stat-num{font-family:var(--fd);font-size:72px;color:var(--acc);line-height:1}
 .stat-lbl{font-size:12px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
 .bar-bg{height:3px;background:var(--g2);border-radius:2px;margin-top:8px;width:200px}
-.bar-fill{height:100%;border-radius:2px;background:var(--acc);transition:width .5s}
+.bar-fill.warn{background:#f5a623}
+.bar-fill.danger{background:var(--red)}
+.banner-ultimas{display:none;margin-top:20px;padding:14px 24px;border-radius:8px;background:rgba(255,71,71,.12);border:1px solid var(--red);color:var(--red);font-weight:500;font-size:14px;animation:parpadeo 1s ease-in-out infinite}
+.banner-ultimas.on{display:inline-flex;align-items:center;gap:10px}
+@keyframes parpadeo{0%,100%{opacity:1}50%{opacity:.5}}
+/* Lista de espera */
+.waitlist-box{margin-top:20px;padding:18px 24px;background:var(--g1);border:1px solid var(--g2);border-radius:12px;max-width:360px;text-align:left}
+.waitlist-box h4{font-size:14px;font-weight:500;margin-bottom:6px;color:var(--fg)}
+.waitlist-box p{font-size:12px;color:var(--mu);margin-bottom:14px}
+.waitlist-box input{width:100%;background:var(--g2);border:1px solid var(--g3);color:var(--fg);padding:10px 14px;border-radius:8px;font-family:var(--fb);font-size:14px;outline:none;margin-bottom:8px}
+.waitlist-box input:focus{border-color:var(--acc)}
+.waitlist-box button{width:100%;background:none;border:1px solid var(--acc);color:var(--acc);padding:10px;border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer}
+.waitlist-ok{display:none;margin-top:12px;font-size:13px;color:#6dc96d;font-weight:500}
 .urgency{margin-top:32px;padding:16px 28px;border:1px solid rgba(232,255,71,.3);border-radius:8px;display:inline-flex;align-items:center;gap:10px;font-size:14px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
@@ -246,14 +258,62 @@ select option{background:var(--g2)}
   .slots-grid{grid-template-columns:1fr}
   .eventos-grid{grid-template-columns:1fr;padding:0 16px 32px}
 }
+.mob-hide{display:table-row}.mob-cards{display:none}
+@media(max-width:700px){
+  .mob-hide{display:none!important}
+  .mob-cards{display:flex!important;flex-direction:column;gap:10px;margin-top:10px}
+}
+/* Card genérica para móvil */
+.m-card{background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:14px}
+.m-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.m-card-name{font-weight:500;font-size:14px;margin-bottom:2px}
+.m-card-sub{font-size:12px;color:var(--mu);margin-bottom:2px}
+.m-card-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--g2);margin-top:6px;font-size:13px}
+.m-card-row span:first-child{color:var(--mu)}
+.m-card-row span:last-child{font-weight:500}
+/* Barra de filtros avanzados */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:12px 14px;background:var(--g1);border:1px solid var(--g2);border-radius:10px}
+.filter-bar input[type=text]{flex:1;min-width:140px;background:var(--g2);border:1px solid var(--g3);color:var(--fg);padding:7px 12px;border-radius:8px;font-family:var(--fb);font-size:13px;outline:none;width:auto}
+.filter-bar input[type=text]:focus{border-color:var(--acc)}
+.filter-bar select{background:var(--g2);border:1px solid var(--g3);color:var(--fg);padding:7px 12px;border-radius:8px;font-family:var(--fb);font-size:13px;outline:none;cursor:pointer;width:auto}
+.filter-bar select:focus{border-color:var(--acc)}
+.filter-bar label{font-size:12px;color:var(--mu);white-space:nowrap}
+/* Selección múltiple */
+.sel-bar{display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;background:rgba(232,255,71,.08);border:1px solid rgba(232,255,71,.3);border-radius:10px;margin-bottom:10px}
+.sel-bar.on{display:flex}
+.sel-count{font-size:13px;font-weight:500;color:var(--acc)}
+.sel-bar .acbtn{font-size:12px;padding:5px 14px}
+.chk{width:16px;height:16px;accent-color:var(--acc);cursor:pointer;flex-shrink:0}
+tr.selected td{background:rgba(232,255,71,.05)!important}
+.m-card.selected{border-color:var(--acc);background:rgba(232,255,71,.06)}
+/* Modal confirmación eliminar */
+.del-modal{display:none;position:fixed;inset:0;z-index:9996;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:20px}
+.del-modal.open{display:flex}
+.del-box{background:var(--g1);border:1px solid var(--red);border-radius:16px;width:100%;max-width:420px;padding:28px}
+.del-box h3{font-family:var(--fd);font-size:24px;color:var(--red);letter-spacing:2px;margin-bottom:8px}
+.del-box p{font-size:13px;color:var(--mu);margin-bottom:20px;line-height:1.7}
+.del-box input{width:100%;background:var(--g2);border:1px solid var(--g3);color:var(--fg);padding:11px 15px;border-radius:8px;font-family:var(--fb);font-size:15px;outline:none;margin-bottom:14px;transition:border-color .2s;letter-spacing:2px}
+.del-box input:focus{border-color:var(--red)}
+.del-box input.ok{border-color:#6dc96d}
+.del-confirm{width:100%;background:var(--red);color:#fff;border:none;padding:13px;border-radius:8px;font-family:var(--fb);font-weight:500;font-size:15px;cursor:pointer;opacity:.4;transition:opacity .2s}
+.del-confirm.ready{opacity:1}
+.del-cancel{width:100%;background:none;border:1px solid var(--g3);color:var(--mu);padding:11px;border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer;margin-top:8px}
 </style>
-</head>
 <body>
 
 <div id="loading">
   <div class="ll">TICKETS</div>
   <div class="lm" id="lmsg">Cargando eventos...</div>
   <div class="lb-wrap"><div class="lb" id="lbar"></div></div>
+</div>
+<div class="del-modal" id="del-modal">
+  <div class="del-box">
+    <h3>ELIMINAR</h3>
+    <p id="del-msg">Vas a eliminar <strong id="del-count">0</strong> reserva(s). Esta acción no se puede deshacer.<br><br>Escribe <strong style="color:var(--red);letter-spacing:2px">ELIMINAR</strong> para confirmar.</p>
+    <input type="text" id="del-input" placeholder="Escribe ELIMINAR" oninput="checkDelInput()">
+    <button class="del-confirm" id="del-confirm" onclick="confirmarEliminar()" disabled>Eliminar definitivamente</button>
+    <button class="del-cancel" onclick="cerrarDelModal()">Cancelar</button>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -318,15 +378,18 @@ select option{background:var(--g2)}
     <h1 id="ev-nombre">LA FIESTA</h1>
     <p class="herosub" id="ev-desc">La noche que estabas esperando. Entradas limitadas, pago en efectivo.</p>
     <div class="heroprice">Precio: <span id="ev-precio">15 €</span></div>
-    <button class="ctabtn" onclick="show('p-reservar')">Quiero mi entrada →</button>
+    <div id="ev-agotado-btn">
+      <button class="ctabtn" onclick="show('p-reservar')">Quiero mi entrada →</button>
+    </div>
     <div class="stats">
-      <div style="text-align:center"><div class="stat-num" id="ev-vend">0</div><div class="stat-lbl">Vendidas</div></div>
+      <div style="text-align:center"><div class="stat-num" id="ev-vend">0</div><div class="stat-lbl">Reservadas</div></div>
       <div style="text-align:center">
         <div class="stat-num" id="ev-disp">200</div><div class="stat-lbl">Disponibles</div>
         <div class="bar-bg"><div class="bar-fill" id="ev-bar" style="width:0%"></div></div>
+        <div id="ev-pct-txt" style="font-size:11px;color:var(--mu);margin-top:4px;letter-spacing:1px"></div>
       </div>
     </div>
-    <div class="urgency"><span class="dot"></span><span>Aforo <strong>limitado</strong> — reserva ya antes de quedarte sin.</span></div>
+    <div class="urgency" id="ev-urgency"><span class="dot"></span><span id="ev-urgency-txt">Aforo <strong>limitado</strong> — reserva ya antes de quedarte sin.</span></div>
   </div>
 </div>
 
@@ -367,7 +430,7 @@ select option{background:var(--g2)}
       <div id="confirm-rows"></div>
       <button class="wabtn" onclick="abrirWA()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        Avisar al organizador por WhatsApp
+        Avisar al RRPP por WhatsApp
       </button>
       <button class="sbtn" style="background:none;border:1px solid var(--g3);color:var(--mu);margin-top:8px" onclick="show('p-misreservas')">Ver / modificar mis reservas</button>
     </div>
@@ -400,7 +463,7 @@ select option{background:var(--g2)}
   <div class="lwrap">
     <div class="fcard" style="max-width:380px">
       <div class="ftitle" style="color:var(--acc)">PANEL</div>
-      <div class="fsub">Acceso para organizadores</div>
+      <div class="fsub">Acceso para RRPP</div>
       <div class="fg"><label>Contraseña</label><input type="password" id="l-pass" placeholder="Contraseña del equipo" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="sbtn" onclick="doLogin()">Entrar</button>
       <div class="lerr" id="l-err">Contraseña incorrecta.</div>
@@ -451,7 +514,25 @@ select option{background:var(--g2)}
     <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Comparativa de eventos</div>
     <div id="disco-comparativa" style="margin-bottom:24px"></div>
     <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Reservas</div>
-    <div class="twrap"><table class="tbl"><thead><tr><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>Cita</th><th>Estado</th></tr></thead><tbody id="disco-tabla"></tbody></table></div>
+    <div class="filter-bar">
+      <input type="text" id="disco-search" placeholder="Buscar nombre..." oninput="renderDiscoteca()">
+      <select id="disco-sort" onchange="renderDiscoteca()">
+        <option value="reciente">Más recientes</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="ent-desc">Más entradas primero</option>
+        <option value="ent-asc">Menos entradas primero</option>
+        <option value="fecha-asc">Cita más próxima</option>
+        <option value="fecha-desc">Cita más lejana</option>
+      </select>
+    </div>
+    <div class="sel-bar" id="disco-sel-bar">
+      <span class="sel-count" id="disco-sel-count">0 seleccionadas</span>
+      <button class="acbtn del" onclick="bulkEliminar('disco')">Eliminar</button>
+      <button class="acbtn" onclick="clearSel('disco')">Deseleccionar</button>
+    </div>
+    <div class="twrap"><table class="tbl"><thead><tr class="mob-hide"><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('disco',this)"></th><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>Cita</th><th>Estado</th></tr></thead><tbody id="disco-tabla"></tbody></table></div>
+    <div class="mob-cards" id="disco-cards"></div>
     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
       <button class="ctabtn" style="padding:10px 18px;font-size:13px" onclick="exportEmailsCSV()">Exportar emails</button>
       <button class="ctabtn" style="padding:10px 18px;font-size:13px;background:var(--g2);color:var(--fg)" onclick="exportCSVDisco()">Exportar contabilidad</button>
@@ -677,17 +758,24 @@ function renderHome() {
     return;
   }
   grid.innerHTML = activos.map(ev => {
-    const vend = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+    const vend = (ev.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
     const pct  = ev.aforo>0 ? Math.min(100,Math.round(vend/ev.aforo*100)) : 0;
     const disp = Math.max(0, ev.aforo - vend);
+    const barColor = pct>=90?'var(--red)':pct>=70?'#f5a623':'var(--acc)';
+    const agotado  = disp <= 0;
     return `<div class="evento-card" onclick="seleccionarEvento('${ev.id}')">
       <div class="ev-nombre">${ev.nombre.toUpperCase()}</div>
       <div class="ev-fecha">${ev.fecha}</div>
       ${ev.desc?`<div class="ev-info">${ev.desc}</div>`:''}
       <div class="ev-precio">${ev.precio} € / entrada</div>
       <div class="ev-aforo">
-        <div style="font-size:12px;color:var(--mu)">${disp} entradas disponibles</div>
-        <div class="ev-bar-bg"><div class="ev-bar-fill" style="width:${pct}%"></div></div>
+        ${agotado
+          ? `<div style="font-size:12px;color:var(--red);font-weight:500">⚡ Aforo completo — lista de espera</div>`
+          : disp<=20
+            ? `<div style="font-size:12px;color:var(--red);font-weight:500">🔥 ¡Solo quedan ${disp} entradas!</div>`
+            : `<div style="font-size:12px;color:var(--mu)">${disp} entradas disponibles · ${pct}% reservado</div>`
+        }
+        <div class="ev-bar-bg"><div class="ev-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
       </div>
     </div>`;
   }).join('');
@@ -698,15 +786,56 @@ function renderHome() {
 // ════════════════════════════════════════
 function renderEvento() {
   if (!evActual) return;
-  const vend = (evActual.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+  // Contar todas las reservas activas (no canceladas)
+  const vend = (evActual.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
   const max  = evActual.aforo;
+  const disp = Math.max(0, max - vend);
+  const pct  = max>0 ? Math.min(100,Math.round(vend/max*100)) : 0;
+  const agotado = disp <= 0;
+
   document.getElementById('ev-nombre').textContent = evActual.nombre.toUpperCase();
   document.getElementById('ev-fecha').textContent  = evActual.fecha;
   document.getElementById('ev-desc').textContent   = evActual.desc || 'La noche que estabas esperando. Entradas limitadas, pago en efectivo.';
   document.getElementById('ev-precio').textContent = evActual.precio + ' €';
   document.getElementById('ev-vend').textContent   = vend;
-  document.getElementById('ev-disp').textContent   = Math.max(0,max-vend);
-  document.getElementById('ev-bar').style.width    = max>0?Math.min(100,Math.round(vend/max*100))+'%':'0%';
+  document.getElementById('ev-disp').textContent   = disp;
+  document.getElementById('ev-pct-txt').textContent = pct + '% reservado';
+
+  // Barra dinámica con color
+  const bar = document.getElementById('ev-bar');
+  bar.style.width = pct + '%';
+  bar.className = 'bar-fill' + (pct>=90?' danger':pct>=70?' warn':'');
+
+  // Botón / lista de espera
+  const btnDiv = document.getElementById('ev-agotado-btn');
+  if (agotado) {
+    btnDiv.innerHTML = `
+      <div class="waitlist-box">
+        <h4>⚡ Aforo completo</h4>
+        <p>Todas las entradas están reservadas. Déjanos tu email y te avisamos si se libera alguna.</p>
+        <input type="email" id="wl-email" placeholder="tu@email.com">
+        <input type="text" id="wl-nombre" placeholder="Tu nombre">
+        <button onclick="apuntarseWaitlist()">Avisadme si hay cancelación</button>
+        <div class="waitlist-ok" id="wl-ok">✓ Apuntado. Te avisaremos por WhatsApp si se libera una entrada.</div>
+      </div>`;
+  } else {
+    btnDiv.innerHTML = `<button class="ctabtn" onclick="show('p-reservar')">Quiero mi entrada →</button>`;
+  }
+
+  // Banner últimas entradas
+  const banner = document.getElementById('ev-urgency');
+  const txt    = document.getElementById('ev-urgency-txt');
+  if (agotado) {
+    banner.style.borderColor='var(--red)'; banner.style.background='rgba(255,71,71,.08)';
+    txt.innerHTML = `<strong style="color:var(--red)">Aforo completo</strong> — Apúntate a la lista de espera.`;
+  } else if (disp <= 20) {
+    banner.classList.add('banner-ultimas');
+    txt.innerHTML = `🔥 ¡Últimas entradas! Solo quedan <strong>${disp}</strong> disponibles.`;
+  } else {
+    banner.classList.remove('banner-ultimas');
+    banner.style.borderColor=''; banner.style.background='';
+    txt.innerHTML = `Aforo <strong>limitado</strong> — reserva ya antes de quedarte sin.`;
+  }
 }
 
 // ════════════════════════════════════════
@@ -722,6 +851,32 @@ function renderSlots() {
   const g = document.getElementById('slots-grid');
   const activos = (evActual.slots||[]).filter(s=>s.activo);
   g.innerHTML = ''; slotSel = null;
+
+  // Mostrar entradas restantes para este dispositivo
+  const yaRes = getEntradasDispositivo(evActual.id);
+  const restantes = LIMITE_DEV - yaRes;
+  const maxInput = Math.min(restantes, 12);
+  const cantInput = document.getElementById('r-cant');
+  if (cantInput) { cantInput.max = maxInput; if (parseInt(cantInput.value) > maxInput) cantInput.value = Math.max(1, maxInput); }
+  const labelCant = document.querySelector('label[for="r-cant"]') || cantInput?.previousElementSibling;
+  const infoEl = document.getElementById('r-cant-info');
+  if (!infoEl) {
+    const info = document.createElement('p');
+    info.id = 'r-cant-info';
+    info.style.cssText = 'font-size:12px;margin-top:6px;';
+    if (cantInput) cantInput.parentNode.appendChild(info);
+  }
+  const el = document.getElementById('r-cant-info');
+  if (el) {
+    if (yaRes >= LIMITE_DEV) {
+      el.style.color = 'var(--red)';
+      el.textContent = `Has alcanzado el límite de ${LIMITE_DEV} entradas para este evento desde este dispositivo.`;
+    } else {
+      el.style.color = 'var(--mu)';
+      el.textContent = yaRes > 0 ? `Ya tienes ${yaRes} entrada${yaRes>1?'s':''} reservadas — puedes añadir ${restantes} más.` : `Máximo ${LIMITE_DEV} entradas por dispositivo.`;
+    }
+  }
+
   document.getElementById('res-evento-nombre').textContent = evActual.nombre + ' — elige tu horario';
   if (!activos.length) { document.getElementById('no-slots').style.display='block'; return; }
   document.getElementById('no-slots').style.display='none';
@@ -740,6 +895,26 @@ function getOrgs() {
   return [...base,...(G.orgsExtra||[]).filter(o=>o.n&&o.n.trim())];
 }
 
+// ════════════════════════════════════════
+// LÍMITE POR DISPOSITIVO
+// ════════════════════════════════════════
+const LIMITE_DEV = 12;
+
+function getEntradasDispositivo(evId) {
+  try {
+    const data = JSON.parse(localStorage.getItem('dev_reservas') || '{}');
+    return data[evId] || 0;
+  } catch(e) { return 0; }
+}
+
+function registrarEntradasDispositivo(evId, cantidad) {
+  try {
+    const data = JSON.parse(localStorage.getItem('dev_reservas') || '{}');
+    data[evId] = (data[evId] || 0) + cantidad;
+    localStorage.setItem('dev_reservas', JSON.stringify(data));
+  } catch(e) {}
+}
+
 function hacerReserva() {
   if (!evActual) return;
   const nom  = document.getElementById('r-nom').value.trim();
@@ -748,13 +923,39 @@ function hacerReserva() {
   if (!nom)                    { toast('Por favor escribe tu nombre'); return; }
   if (!mail||!mail.includes('@')){ toast('Email no válido'); return; }
   if (!slotSel)                { toast('Selecciona un horario'); return; }
+
+  // Comprobar límite por dispositivo
+  const yaReservadas = getEntradasDispositivo(evActual.id);
+  if (yaReservadas >= LIMITE_DEV) {
+    toast(`Ya has reservado el máximo de ${LIMITE_DEV} entradas para este evento desde este dispositivo.`);
+    return;
+  }
+  const cantFinal = Math.min(cant, LIMITE_DEV - yaReservadas);
+  if (cantFinal < cant) {
+    toast(`Solo puedes reservar ${cantFinal} entrada${cantFinal>1?'s':''} más (límite: ${LIMITE_DEV} por dispositivo).`);
+  }
+
+  // Bloqueo real de aforo — verificar en el momento de reservar
+  const ocupadas = (evActual.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
+  const disponibles = evActual.aforo - ocupadas;
+  if (disponibles <= 0) {
+    toast('Lo sentimos, el aforo está completo. Apúntate a la lista de espera.');
+    show('p-evento');
+    return;
+  }
+  const cantFinal2 = Math.min(cantFinal, disponibles);
+  if (cantFinal2 < cantFinal) {
+    toast(`Solo quedan ${disponibles} entrada${disponibles!==1?'s':''} disponibles. Ajustando tu reserva.`);
+  }
+  const cantReal = cantFinal2;
   const slot = evActual.slots.find(s=>s.id===slotSel);
   const orgs = getOrgs();
   const org  = orgs[evActual.turnoOrg % orgs.length];
   evActual.turnoOrg++;
-  const r = { id:evActual.nextId++, eventoId:evActual.id, eventoNombre:evActual.nombre, nombre:nom, email:mail, cantidad:cant, importe:cant*evActual.precio, slot:`${slot.fecha}, ${slot.hora}`, lugar:slot.lugar, org:org.n, orgWa:org.w, estado:'pendiente', fecha:new Date().toLocaleDateString('es-ES'), entradaGenerada:false };
+  const r = { id:evActual.nextId++, eventoId:evActual.id, eventoNombre:evActual.nombre, nombre:nom, email:mail, cantidad:cantReal, importe:cantReal*evActual.precio, slot:`${slot.fecha}, ${slot.hora}`, lugar:slot.lugar, org:org.n, orgWa:org.w, estado:'pendiente', fecha:new Date().toLocaleDateString('es-ES'), entradaGenerada:false, notas:'' };
   evActual.reservas.push(r);
   reservaActual = r;
+  registrarEntradasDispositivo(evActual.id, cantReal);
   guardarEvento(evActual); renderEvento();
   document.getElementById('confirm-rows').innerHTML=`
     <div class="crow"><span>Evento</span><span>${r.eventoNombre}</span></div>
@@ -763,9 +964,23 @@ function hacerReserva() {
     <div class="crow"><span>Total</span><span>${r.importe} €</span></div>
     <div class="crow"><span>Cita</span><span>${r.slot}</span></div>
     <div class="crow"><span>Lugar</span><span>${r.lugar}</span></div>
-    <div class="crow"><span>Organizador</span><span>${r.org}</span></div>`;
+    <div class="crow"><span>RRPP</span><span>${r.org}</span></div>`;
+  // Botón añadir a calendario
+  const calDiv = document.createElement('button');
+  calDiv.className = 'sbtn';
+  calDiv.style.cssText = 'background:none;border:1px solid var(--g3);color:var(--mu);margin-top:12px';
+  calDiv.textContent = '📅 Añadir a calendario';
+  calDiv.onclick = () => añadirCalendario(r);
+  document.getElementById('confirm-rows').appendChild(calDiv);
   document.getElementById('r-nom').value=''; document.getElementById('r-email').value=''; document.getElementById('r-cant').value='1';
   show('p-confirm');
+  // WhatsApp automático al RRPP
+  setTimeout(() => {
+    const wa = (r.orgWa||G.wa1).replace(/\D/g,'');
+    const msg = encodeURIComponent(`🎫 Nueva reserva — ${r.eventoNombre}\nNombre: ${r.nombre}\nEntradas: ${r.cantidad} (${r.importe} €)\nCita: ${r.slot}\nLugar: ${r.lugar}\nEmail: ${r.email}`);
+    window.open(`https://wa.me/${wa}?text=${msg}`,'_blank');
+  }, 800);
+  // Notificar a lista de espera si se liberó aforo (no aplica aquí, pero sí al cancelar)
 }
 
 function abrirWA() {
@@ -773,6 +988,61 @@ function abrirWA() {
   const wa = (reservaActual.orgWa||G.wa1).replace(/\D/g,'');
   const msg = encodeURIComponent(`Hola ${reservaActual.org}! He reservado ${reservaActual.cantidad} entrada${reservaActual.cantidad>1?'s':''} para ${reservaActual.eventoNombre} (${reservaActual.importe} €). Quedamos el ${reservaActual.slot} en ${reservaActual.lugar}. Soy ${reservaActual.nombre}.`);
   window.open(`https://wa.me/${wa}?text=${msg}`,'_blank');
+}
+
+function añadirCalendario(r) {
+  // Intentar parsear la fecha del slot (ej: "Lun 16 mar, 10:00")
+  try {
+    const partes = r.slot.split(', ');
+    const horaStr = partes[1] || '10:00';
+    const [hh, mm] = horaStr.split(':').map(Number);
+    // Usamos fecha del evento como referencia, hora del slot
+    const ahora = new Date();
+    const inicio = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), hh, mm);
+    const fin    = new Date(inicio.getTime() + 60*60*1000); // +1h
+    const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+    const title  = encodeURIComponent(`${r.eventoNombre} — ${r.cantidad} entrada${r.cantidad>1?'s':''}`);
+    const detail = encodeURIComponent(`Cita con ${r.org} en ${r.lugar}. Importe: ${r.importe} €`);
+    const loc    = encodeURIComponent(r.lugar);
+    // Google Calendar
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(inicio)}/${fmt(fin)}&details=${detail}&location=${loc}`;
+    window.open(url, '_blank');
+  } catch(e) {
+    toast('No se pudo generar el evento de calendario');
+  }
+}
+
+// ════════════════════════════════════════
+// LISTA DE ESPERA
+// ════════════════════════════════════════
+function apuntarseWaitlist() {
+  if (!evActual) return;
+  const email  = document.getElementById('wl-email')?.value.trim();
+  const nombre = document.getElementById('wl-nombre')?.value.trim();
+  if (!email||!email.includes('@')) { toast('Email no válido'); return; }
+  if (!nombre) { toast('Escribe tu nombre'); return; }
+  if (!evActual.waitlist) evActual.waitlist = [];
+  if (evActual.waitlist.find(w=>w.email===email)) { toast('Ya estás en la lista de espera'); return; }
+  evActual.waitlist.push({ nombre, email, fecha: new Date().toLocaleDateString('es-ES') });
+  guardarEvento(evActual);
+  const ok = document.getElementById('wl-ok');
+  if (ok) { ok.style.display='block'; }
+  toast('¡Apuntado a la lista de espera!');
+}
+
+function notificarWaitlist(ev) {
+  // Llama al primero de la lista de espera por WhatsApp
+  if (!ev.waitlist || !ev.waitlist.length) return;
+  const primero = ev.waitlist[0];
+  const orgs = getOrgs();
+  const org  = orgs[0];
+  const wa   = (org.w||G.wa1).replace(/\D/g,'');
+  const msg  = encodeURIComponent(`Hola ${primero.nombre}! Se ha liberado una entrada para ${ev.nombre}. ¿Te interesa? Contesta rápido antes de que se ocupe. — ${org.n}`);
+  window.open(`https://wa.me/${wa}?text=${msg}`,'_blank');
+  // Quitar de la lista tras notificar
+  ev.waitlist.shift();
+  guardarEvento(ev);
+  toast(`Lista de espera: ${primero.nombre} notificado`);
 }
 
 // ════════════════════════════════════════
@@ -874,6 +1144,7 @@ function buildAdmin() {
       <button class="d-link" onclick="aTabM('s-disp',this)">Disponibilidad</button>
       <button class="d-link" onclick="aTabM('s-cont',this)">Contabilidad</button>
       <button class="d-link" onclick="aTabM('s-bot',this)">TicketBot</button>
+      <button class="d-link" onclick="aTabM('s-rrpp',this)">Stats RRPP</button>
       <button class="d-link" onclick="aTabM('s-emails',this)">Emails</button>
       <button class="d-link" onclick="aTabM('s-cfg',this)">Configuración</button>
     </nav>
@@ -892,6 +1163,7 @@ function buildAdmin() {
       <button class="slink" onclick="aTab('s-disp',this)">Disponibilidad</button>
       <button class="slink" onclick="aTab('s-cont',this)">Contabilidad</button>
       <button class="slink" onclick="aTab('s-bot',this)">TicketBot</button>
+      <button class="slink" onclick="aTab('s-rrpp',this)">Stats RRPP</button>
       <button class="slink" onclick="aTab('s-emails',this)">Emails</button>
       <button class="slink" onclick="aTab('s-cfg',this)">Configuración</button>
     </nav>
@@ -917,7 +1189,26 @@ function buildAdmin() {
       </div>
       <div class="abar-wrap"><span style="font-size:12px;color:var(--mu)">Aforo</span><div class="abar"><div class="abar-fill" id="a-bar" style="width:0%"></div></div><span style="font-size:12px;color:var(--mu)" id="a-pct">0%</span></div>
       <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Últimas reservas</div>
-      <div class="twrap"><table class="tbl"><thead><tr><th>Comprador</th><th>Uds.</th><th>Horario</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="a-prox"></tbody></table></div>
+      <div class="sel-bar" id="dash-sel-bar">
+        <span class="sel-count" id="dash-sel-count">0 seleccionadas</span>
+        <button class="acbtn" onclick="bulkCobrar('dash')">Cobrar</button>
+        <button class="acbtn del" onclick="bulkEliminar('dash')">Eliminar</button>
+        <button class="acbtn" onclick="clearSel('dash')">Deseleccionar</button>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="dash-search" placeholder="Buscar nombre..." oninput="rDash()">
+        <select id="dash-sort" onchange="rDash()">
+          <option value="reciente">Más recientes</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="ent-desc">Más entradas primero</option>
+          <option value="ent-asc">Menos entradas primero</option>
+          <option value="fecha-asc">Cita más próxima</option>
+          <option value="fecha-desc">Cita más lejana</option>
+        </select>
+      </div>
+      <div class="twrap"><table class="tbl"><thead><tr class="mob-hide"><th>Comprador</th><th>Uds.</th><th>Horario</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="a-prox"></tbody></table></div>
+      <div class="mob-cards" id="a-prox-cards"></div>
     </section>
     <section class="asec" id="s-res">
       <div class="ahead">
@@ -927,13 +1218,31 @@ function buildAdmin() {
           <button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportCSV()">CSV</button>
         </div>
       </div>
+      <div class="sel-bar" id="res-sel-bar">
+        <span class="sel-count" id="res-sel-count">0 seleccionadas</span>
+        <button class="acbtn" onclick="bulkCobrar('res')">Cobrar</button>
+        <button class="acbtn del" onclick="bulkEliminar('res')">Eliminar</button>
+        <button class="acbtn" onclick="clearSel('res')">Deseleccionar</button>
+      </div>
       <div class="frow" id="a-frow">
         <button class="fchip on" onclick="filtrar('todos',this)">Todos</button>
         <button class="fchip" onclick="filtrar('pendiente',this)">Pendientes</button>
         <button class="fchip" onclick="filtrar('cobrado',this)">Cobrados</button>
         <button class="fchip" onclick="filtrar('cancelado',this)">Cancelados</button>
       </div>
-      <div class="twrap res-table-wrap" id="a-res-table"><table class="tbl"><thead><tr><th style="width:18%">Nombre</th><th style="width:13%">Uds.</th><th style="width:8%">€</th><th style="width:16%">Cita</th><th style="width:13%">Lugar</th><th style="width:10%">Org.</th><th style="width:10%">Estado</th><th style="width:12%">Acciones</th></tr></thead><tbody></tbody></table></div>
+      <div class="filter-bar">
+        <input type="text" id="res-search" placeholder="Buscar nombre..." oninput="rRes()">
+        <select id="res-sort" onchange="rRes()">
+          <option value="reciente">Más recientes</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="ent-desc">Más entradas primero</option>
+          <option value="ent-asc">Menos entradas primero</option>
+          <option value="fecha-asc">Cita más próxima</option>
+          <option value="fecha-desc">Cita más lejana</option>
+        </select>
+      </div>
+      <div class="twrap res-table-wrap" id="a-res-table"><table class="tbl"><thead><tr><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('res',this)"></th><th style="width:16%">Nombre</th><th style="width:12%">Uds.</th><th style="width:8%">€</th><th style="width:14%">Cita</th><th style="width:12%">Lugar</th><th style="width:9%">RRPP</th><th style="width:10%">Estado</th><th style="width:15%">Acciones</th></tr></thead><tbody></tbody></table></div>
       <div class="res-cards" id="a-res-cards"></div>
     </section>
     <section class="asec" id="s-disp">
@@ -970,7 +1279,26 @@ function buildAdmin() {
         <div class="mcard"><div class="ml">Entradas cobradas</div><div class="mv" id="c-ents">0</div></div>
         <div class="mcard"><div class="ml">Canceladas</div><div class="mv" id="c-can">0</div></div>
       </div>
-      <div class="twrap"><table class="tbl"><thead><tr><th>Nombre</th><th>Entradas</th><th>Importe</th><th>Fecha</th><th>Org.</th><th>Estado</th></tr></thead><tbody id="c-body"></tbody></table></div>
+      <div class="filter-bar">
+        <input type="text" id="cont-search" placeholder="Buscar nombre..." oninput="rCont()">
+        <select id="cont-sort" onchange="rCont()">
+          <option value="reciente">Más recientes</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="ent-desc">Más entradas primero</option>
+          <option value="ent-asc">Menos entradas primero</option>
+          <option value="fecha-asc">Cita más próxima</option>
+          <option value="fecha-desc">Cita más lejana</option>
+        </select>
+      </div>
+      <div class="sel-bar" id="cont-sel-bar">
+        <span class="sel-count" id="cont-sel-count">0 seleccionadas</span>
+        <button class="acbtn" onclick="bulkCobrar('cont')">Cobrar</button>
+        <button class="acbtn del" onclick="bulkEliminar('cont')">Eliminar</button>
+        <button class="acbtn" onclick="clearSel('cont')">Deseleccionar</button>
+      </div>
+      <div class="twrap"><table class="tbl"><thead><tr class="mob-hide"><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('cont',this)"></th><th>Nombre</th><th>Entradas</th><th>Importe</th><th>Fecha</th><th>RRPP</th><th>Estado</th></tr></thead><tbody id="c-body"></tbody></table></div>
+      <div class="mob-cards" id="c-cards"></div>
     </section>
     <section class="asec" id="s-bot">
       <div class="ahead">
@@ -982,15 +1310,40 @@ function buildAdmin() {
       <div class="tbcard" id="bot-card" style="display:none"><h4>Texto para TicketBot</h4><p>Copia y pega en Telegram:</p><div class="botout" id="bot-out"></div><button class="copybtn" onclick="copyBot()">Copiar</button></div>
       <div class="tbcard"><h4>Pendientes de generar</h4><p>Cobradas sin entrada generada:</p><div id="bot-pend"></div></div>
     </section>
+    <section class="asec" id="s-rrpp">
+      <div class="ahead">
+        <h2>Stats RRPP</h2>
+        <select class="ev-selector" id="rrpp-ev-sel" onchange="cambiarEvAdmin(this.value);rRRPP()"></select>
+      </div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Rendimiento de cada RRPP en el evento seleccionado.</p>
+      <div id="rrpp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px"></div>
+      <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Lista de espera</div>
+      <div id="rrpp-waitlist" class="twrap"></div>
+    </section>
     <section class="asec" id="s-emails">
       <div class="ahead"><h2>Emails</h2><button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportEmailsCSV()">Exportar CSV</button></div>
       <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Todos los compradores que han realizado una reserva en cualquier evento.</p>
+      <div class="sel-bar" id="emails-sel-bar">
+        <span class="sel-count" id="emails-sel-count">0 seleccionadas</span>
+        <button class="acbtn del" onclick="bulkEliminar('emails')">Eliminar</button>
+        <button class="acbtn" onclick="clearSel('emails')">Deseleccionar</button>
+      </div>
       <div class="frow" id="emails-frow">
         <button class="fchip on" onclick="filtrarEmails('todos',this)">Todos</button>
         <button class="fchip" onclick="filtrarEmails('cobrado',this)">Cobrados</button>
         <button class="fchip" onclick="filtrarEmails('pendiente',this)">Pendientes</button>
       </div>
-      <div class="twrap res-table-wrap" id="emails-table"><table class="tbl"><thead><tr><th style="width:20%">Nombre</th><th style="width:25%">Email</th><th style="width:18%">Evento</th><th style="width:10%">Entradas</th><th style="width:13%">Estado</th><th style="width:14%">Fecha</th></tr></thead><tbody id="emails-body"></tbody></table></div>
+      <div class="filter-bar">
+        <input type="text" id="emails-search" placeholder="Buscar nombre o email..." oninput="rEmails()">
+        <select id="emails-sort" onchange="rEmails()">
+          <option value="reciente">Más recientes</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="ent-desc">Más entradas primero</option>
+          <option value="ent-asc">Menos entradas primero</option>
+        </select>
+      </div>
+      <div class="twrap res-table-wrap" id="emails-table"><table class="tbl"><thead><tr><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('emails',this)"></th><th style="width:18%">Nombre</th><th style="width:23%">Email</th><th style="width:16%">Evento</th><th style="width:9%">Entradas</th><th style="width:12%">Estado</th><th style="width:12%">Fecha</th></tr></thead><tbody id="emails-body"></tbody></table></div>
       <div class="res-cards" id="emails-cards"></div>
     </section>
     <section class="asec" id="s-cfg">
@@ -1005,15 +1358,15 @@ function buildAdmin() {
           <div class="crow2"><label>Clave discoteca</label><input class="cinput" type="password" id="c-pdisco" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
           <div class="crow2"><label>Nombre del local</label><input class="cinput" id="c-local" onchange="saveCfg()"></div>
         </div>
-        <div class="ccard"><h4>Organizadores base</h4>
-          <div class="crow2"><label>Org. 1 nombre</label><input class="cinput" id="c-o1" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Org. 1 WhatsApp</label><input class="cinput" id="c-w1" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Org. 2 nombre</label><input class="cinput" id="c-o2" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Org. 2 WhatsApp</label><input class="cinput" id="c-w2" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Org. 3 nombre</label><input class="cinput" id="c-o3" onchange="saveCfg()"></div>
-          <div class="crow2"><label>Org. 3 WhatsApp</label><input class="cinput" id="c-w3" onchange="saveCfg()"></div>
+        <div class="ccard"><h4>RRPP base</h4>
+          <div class="crow2"><label>RRPP 1 nombre</label><input class="cinput" id="c-o1" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 1 WhatsApp</label><input class="cinput" id="c-w1" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 2 nombre</label><input class="cinput" id="c-o2" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 2 WhatsApp</label><input class="cinput" id="c-w2" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 3 nombre</label><input class="cinput" id="c-o3" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 3 WhatsApp</label><input class="cinput" id="c-w3" onchange="saveCfg()"></div>
         </div>
-        <div class="ccard"><h4>Organizadores adicionales</h4>
+        <div class="ccard"><h4>RRPP adicionales</h4>
           <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Se suman al reparto rotativo.</p>
           <div id="c-orgs-extra"></div>
           <button class="ctabtn" style="padding:8px 13px;font-size:13px;margin-top:10px" onclick="addOrgExtra()">+ Añadir</button>
@@ -1061,6 +1414,7 @@ function renderAdmin() {
   if(id==='s-disp') rDisp();
   if(id==='s-cont') rCont();
   if(id==='s-bot')  rBot();
+  if(id==='s-rrpp') rRRPP();
   if(id==='s-emails') rEmails();
   if(id==='s-cfg')  rCfg();
 }
@@ -1070,7 +1424,7 @@ function cambiarEvAdmin(evId) {
 }
 function poblarSelectores() {
   const opts = eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');
-  ['dash-ev-sel','res-ev-sel','disp-ev-sel','cont-ev-sel','bot-ev-sel'].forEach(id=>{
+  ['dash-ev-sel','res-ev-sel','disp-ev-sel','cont-ev-sel','bot-ev-sel','rrpp-ev-sel'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
     el.innerHTML=opts;
     if(evAdmin) el.value=evAdmin.id;
@@ -1080,6 +1434,126 @@ function poblarSelectores() {
 // ════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════
+// ════════════════════════════════════════
+// SELECCIÓN MÚLTIPLE Y ELIMINACIÓN
+// ════════════════════════════════════════
+const seleccionadas = { dash:new Set(), res:new Set(), cont:new Set(), emails:new Set(), disco:new Set() };
+let pendingDelete = { ctx:null, ids:[], evIds:[] };
+
+function toggleSel(ctx, id, evId) {
+  const key = `${evId}:${id}`;
+  if (seleccionadas[ctx].has(key)) seleccionadas[ctx].delete(key);
+  else seleccionadas[ctx].add(key);
+  updateSelBar(ctx);
+}
+
+function selAll(ctx, chk) {
+  const rows = document.querySelectorAll(`[data-ctx="${ctx}"]`);
+  seleccionadas[ctx].clear();
+  if (chk.checked) rows.forEach(el => seleccionadas[ctx].add(el.dataset.key));
+  updateSelBar(ctx);
+  // re-render para reflejar estado visual
+  const fn = {dash:rDash,res:rRes,cont:rCont,emails:rEmails,disco:renderDiscoteca}[ctx];
+  if (fn) fn();
+}
+
+function clearSel(ctx) {
+  seleccionadas[ctx].clear();
+  updateSelBar(ctx);
+  const fn = {dash:rDash,res:rRes,cont:rCont,emails:rEmails,disco:renderDiscoteca}[ctx];
+  if (fn) fn();
+}
+
+function updateSelBar(ctx) {
+  const bar = document.getElementById(`${ctx}-sel-bar`);
+  const cnt = document.getElementById(`${ctx}-sel-count`);
+  const n = seleccionadas[ctx].size;
+  if (bar) bar.classList.toggle('on', n > 0);
+  if (cnt) cnt.textContent = `${n} seleccionada${n!==1?'s':''}`;
+}
+
+function bulkCobrar(ctx) {
+  if (!evAdmin) return;
+  seleccionadas[ctx].forEach(key => {
+    const [evId, id] = key.split(':');
+    const ev = eventos.find(e=>e.id===evId); if(!ev) return;
+    const r = ev.reservas.find(r=>r.id===parseInt(id)); if(!r) return;
+    if (r.estado === 'pendiente') r.estado = 'cobrado';
+    guardarEvento(ev);
+  });
+  seleccionadas[ctx].clear(); updateSelBar(ctx);
+  renderAdmin(); renderEvento(); toast('Reservas cobradas');
+}
+
+function bulkEliminar(ctx) {
+  const n = seleccionadas[ctx].size;
+  if (n === 0) { toast('Selecciona al menos una reserva'); return; }
+  pendingDelete = { ctx, ids: [...seleccionadas[ctx]] };
+  document.getElementById('del-count').textContent = n;
+  document.getElementById('del-input').value = '';
+  document.getElementById('del-confirm').disabled = true;
+  document.getElementById('del-confirm').classList.remove('ready');
+  document.getElementById('del-input').classList.remove('ok');
+  document.getElementById('del-modal').classList.add('open');
+}
+
+function eliminarUna(evId, rId) {
+  pendingDelete = { ctx: null, ids: [`${evId}:${rId}`] };
+  document.getElementById('del-count').textContent = 1;
+  document.getElementById('del-input').value = '';
+  document.getElementById('del-confirm').disabled = true;
+  document.getElementById('del-confirm').classList.remove('ready');
+  document.getElementById('del-input').classList.remove('ok');
+  document.getElementById('del-modal').classList.add('open');
+}
+
+function checkDelInput() {
+  const v = document.getElementById('del-input').value;
+  const ok = v === 'ELIMINAR';
+  document.getElementById('del-confirm').disabled = !ok;
+  document.getElementById('del-confirm').classList.toggle('ready', ok);
+  document.getElementById('del-input').classList.toggle('ok', ok);
+}
+
+function confirmarEliminar() {
+  if (document.getElementById('del-input').value !== 'ELIMINAR') return;
+  pendingDelete.ids.forEach(key => {
+    const [evId, id] = key.split(':');
+    const ev = eventos.find(e=>e.id===evId); if(!ev) return;
+    ev.reservas = ev.reservas.filter(r=>r.id!==parseInt(id));
+    guardarEvento(ev);
+  });
+  const ctx = pendingDelete.ctx;
+  if (ctx) { seleccionadas[ctx].clear(); updateSelBar(ctx); }
+  cerrarDelModal();
+  renderAdmin(); renderEvento(); renderHome();
+  toast(`${pendingDelete.ids.length} reserva${pendingDelete.ids.length!==1?'s':''} eliminada${pendingDelete.ids.length!==1?'s':''}`);
+  pendingDelete = { ctx:null, ids:[] };
+}
+
+function cerrarDelModal() {
+  document.getElementById('del-modal').classList.remove('open');
+  document.getElementById('del-input').value = '';
+}
+
+// ════════════════════════════════════════
+// HELPER SORT + FILTER
+// ════════════════════════════════════════
+function sortAndFilter(lista, searchId, sortId) {
+  const q   = (document.getElementById(searchId)?.value||'').toLowerCase().trim();
+  const ord = document.getElementById(sortId)?.value || 'reciente';
+  let r = q ? lista.filter(r => r.nombre?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q)) : [...lista];
+  if      (ord==='az')        r.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  else if (ord==='za')        r.sort((a,b)=>b.nombre.localeCompare(a.nombre,'es'));
+  else if (ord==='ent-desc')  r.sort((a,b)=>b.cantidad-a.cantidad);
+  else if (ord==='ent-asc')   r.sort((a,b)=>a.cantidad-b.cantidad);
+  else if (ord==='fecha-asc') r.sort((a,b)=>{ const pa=a.slot||'',pb=b.slot||''; return pa.localeCompare(pb); });
+  else if (ord==='fecha-desc')r.sort((a,b)=>{ const pa=a.slot||'',pb=b.slot||''; return pb.localeCompare(pa); });
+  // reciente: mantiene orden original (último añadido primero)
+  else r.reverse();
+  return r;
+}
+
 const cobEv  = ev => (ev.reservas||[]).filter(r=>r.estado==='cobrado');
 const pendEv = ev => (ev.reservas||[]).filter(r=>r.estado==='pendiente');
 
@@ -1096,10 +1570,21 @@ function rDash() {
   document.getElementById('a-disp').textContent=Math.max(0,max-vend);
   document.getElementById('a-bar').style.width=pct+'%';
   document.getElementById('a-pct').textContent=pct+'%';
-  const prox=[...(evAdmin.reservas||[])].filter(r=>r.estado!=='cancelado').slice(-5).reverse();
-  document.getElementById('a-prox').innerHTML=prox.length
-    ?prox.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td style="color:var(--mu);font-size:12px">${r.lugar}</td><td>${bdg(r.estado)}</td></tr>`).join('')
-    :`<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:16px">Sin reservas aún</td></tr>`;
+  const proxRaw=[...(evAdmin.reservas||[])].filter(r=>r.estado!=='cancelado');
+  const prox = sortAndFilter(proxRaw,'dash-search','dash-sort');
+  const proxHtml = prox.length
+    ? prox.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.dash.has(key);return`<tr class="mob-hide${sel?' selected':''}" data-ctx="dash" data-key="${key}"><td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('dash',${r.id},'${evAdmin.id}');rDash()"></td><td>${nomCell(r)}</td><td>${r.cantidad}</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td style="color:var(--mu);font-size:12px">${r.lugar}</td><td>${bdg(r.estado)}</td><td><button class="acbtn del" style="font-size:11px" onclick="eliminarUna('${evAdmin.id}',${r.id})">Eliminar</button></td></tr>`}).join('')
+    : `<tr class="mob-hide"><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin resultados</td></tr>`;
+  document.getElementById('a-prox').innerHTML = proxHtml;
+  const proxCards = document.getElementById('a-prox-cards');
+  if (proxCards) proxCards.innerHTML = prox.length
+    ? prox.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.dash.has(key);return`<div class="m-card${sel?' selected':''}" data-ctx="dash" data-key="${key}" onclick="toggleSel('dash',${r.id},'${evAdmin.id}');rDash()">
+        <div class="m-card-top"><div><div class="m-card-name">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);font-style:italic;margin-bottom:2px">${r.notas}</div>`:''}<div class="m-card-sub">${r.slot} · ${r.lugar}</div></div>${bdg(r.estado)}</div>
+        <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
+        <div class="m-card-row"><span style="color:var(--mu)">Toca para seleccionar · </span><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})"> Eliminar</button></div>
+      </div>`}).join('')
+    : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin resultados</p>`;
+  updateSelBar('dash');
 }
 
 // ════════════════════════════════════════
@@ -1107,11 +1592,13 @@ function rDash() {
 // ════════════════════════════════════════
 function rRes() {
   if (!evAdmin) return;
-  const lista = filtroAdmin==='todos'?(evAdmin.reservas||[]):(evAdmin.reservas||[]).filter(r=>r.estado===filtroAdmin);
+  const base = filtroAdmin==='todos'?(evAdmin.reservas||[]):(evAdmin.reservas||[]).filter(r=>r.estado===filtroAdmin);
+  const lista = sortAndFilter(base,'res-search','res-sort');
   const tw=document.getElementById('a-res-table');
   if(tw) tw.querySelector('tbody').innerHTML=lista.length
-    ?lista.map(r=>`<tr>
-        <td style="font-weight:500">${r.nombre}</td>
+    ?lista.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.res.has(key);return`<tr class="${sel?'selected':''}" data-ctx="res" data-key="${key}">
+        <td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('res',${r.id},'${evAdmin.id}');rRes()"></td>
+        <td>${nomCell(r)}</td>
         <td><div style="display:flex;align-items:center;gap:4px">
           <button class="acbtn" style="padding:2px 6px;font-size:11px" onclick="editCant('${evAdmin.id}',${r.id},-1)">−</button>
           <span id="cant-${r.id}" style="min-width:20px;text-align:center;font-weight:500">${r.cantidad}</span>
@@ -1126,13 +1613,15 @@ function rRes() {
           ${r.estado==='pendiente'?`<button class="acbtn" onclick="cambiar('${evAdmin.id}',${r.id},'cobrado')">Cobrar</button>`:''}
           ${r.estado!=='cancelado'?`<button class="acbtn del" onclick="cambiar('${evAdmin.id}',${r.id},'cancelado')">Cancelar</button>`:''}
           ${r.estado==='cancelado'?`<button class="acbtn" onclick="cambiar('${evAdmin.id}',${r.id},'pendiente')">Reactivar</button>`:''}
-        </div></td></tr>`).join('')
-    :`<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
+          <button class="acbtn del" onclick="eliminarUna('${evAdmin.id}',${r.id})">Eliminar</button>
+          <button class="acbtn" onclick="editNota('${evAdmin.id}',${r.id})" title="${r.notas||'Sin notas'}" style="${r.notas?'color:var(--acc);border-color:var(--acc)':''}">Info Adic${r.notas?' ✓':''}</button>
+        </div></td></tr>`}).join('')
+    :`<tr><td colspan="9" style="text-align:center;color:var(--mu);padding:16px">Sin resultados</td></tr>`;
   const cards=document.getElementById('a-res-cards');
-  if(cards) cards.innerHTML=lista.length?lista.map(r=>`
-    <div class="res-card">
-      <div class="res-card-top">
-        <div><div class="res-card-name">${r.nombre}</div><div class="res-card-info">${r.slot}</div><div class="res-card-info">${r.lugar} · ${r.org}</div></div>
+  if(cards) cards.innerHTML=lista.length?lista.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.res.has(key);return`
+    <div class="res-card${sel?' selected':''}" data-ctx="res" data-key="${key}">
+      <div class="res-card-top" onclick="toggleSel('res',${r.id},'${evAdmin.id}');rRes()">
+        <div><div class="res-card-name">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);font-style:italic;margin-bottom:2px">${r.notas}</div>`:''}<div class="res-card-info">${r.slot}</div><div class="res-card-info">${r.lugar} · ${r.org}</div></div>
         ${bdg(r.estado)}
       </div>
       <div class="res-card-bottom">
@@ -1142,21 +1631,37 @@ function rRes() {
           <button class="acbtn" style="padding:5px 12px" onclick="editCant('${evAdmin.id}',${r.id},1)">+</button>
           <span style="font-size:13px;color:var(--mu)" id="imp-${r.id}">${r.importe} €</span>
         </div>
-        <div style="display:flex;gap:6px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${r.estado==='pendiente'?`<button class="acbtn" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'cobrado')">Cobrar</button>`:''}
           ${r.estado!=='cancelado'?`<button class="acbtn del" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'cancelado')">Cancelar</button>`:''}
           ${r.estado==='cancelado'?`<button class="acbtn" style="padding:7px 14px;font-size:13px" onclick="cambiar('${evAdmin.id}',${r.id},'pendiente')">Reactivar</button>`:''}
+          <button class="acbtn del" style="padding:7px 14px;font-size:13px" onclick="eliminarUna('${evAdmin.id}',${r.id})">Eliminar</button>
+          <button class="acbtn" style="padding:7px 14px;font-size:13px${r.notas?';color:var(--acc);border-color:var(--acc)':''}" onclick="editNota('${evAdmin.id}',${r.id})">${r.notas ? "Info Adic ✓" : "Info Adic"}</button>
         </div>
       </div>
-    </div>`).join('') : `<p style="color:var(--mu);padding:16px">Sin reservas</p>`;
+    </div>`}).join('') : `<p style="color:var(--mu);padding:16px">Sin resultados</p>`;
+  updateSelBar('res');
 }
 
 function filtrar(f,btn) { filtroAdmin=f; document.querySelectorAll('#a-frow .fchip').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); rRes(); }
+
+function editNota(evId, rId) {
+  const ev = eventos.find(e=>e.id===evId); if(!ev) return;
+  const r  = ev.reservas.find(r=>r.id===rId); if(!r) return;
+  const nota = prompt(`Nota para ${r.nombre}:`, r.notas||'');
+  if (nota === null) return;
+  r.notas = nota.trim();
+  guardarEvento(ev); rRes(); toast('Nota guardada');
+}
 
 function cambiar(evId,rId,estado) {
   const ev=eventos.find(e=>e.id===evId); if(!ev) return;
   const r=ev.reservas.find(r=>r.id===rId); if(!r) return;
   r.estado=estado; guardarEvento(ev); renderAdmin(); renderEvento();
+  // Si se cancela, notificar al primero de la lista de espera
+  if (estado==='cancelado' && ev.waitlist && ev.waitlist.length) {
+    setTimeout(()=>notificarWaitlist(ev), 500);
+  }
   toast(estado==='cobrado'?'¡Cobro registrado!':estado==='cancelado'?'Cancelada':'Reactivada');
 }
 
@@ -1195,7 +1700,7 @@ function rDisp() {
 
 function toggleSlot(evId,sId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const s=ev.slots.find(s=>s.id===sId);if(!s)return;s.activo=!s.activo;guardarEvento(ev);rDisp();toast(s.activo?'Activado':'Desactivado');}
 function delSlot(evId,sId){if(!confirm('¿Eliminar?'))return;const ev=eventos.find(e=>e.id===evId);if(!ev)return;ev.slots=ev.slots.filter(s=>s.id!==sId);guardarEvento(ev);rDisp();toast('Eliminado');}
-function editSlot(evId,sId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const s=ev.slots.find(s=>s.id===sId);if(!s)return;const f=prompt('Fecha:',s.fecha);if(!f)return;const h=prompt('Hora:',s.hora);if(!h)return;const l=prompt('Lugar:',s.lugar);if(!l)return;const o=prompt('Organizador:',s.org);if(!o)return;s.fecha=f;s.hora=h;s.lugar=l;s.org=o;guardarEvento(ev);rDisp();toast('Actualizado');}
+function editSlot(evId,sId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;const s=ev.slots.find(s=>s.id===sId);if(!s)return;const f=prompt('Fecha:',s.fecha);if(!f)return;const h=prompt('Hora:',s.hora);if(!h)return;const l=prompt('Lugar:',s.lugar);if(!l)return;const o=prompt('RRPP:',s.org);if(!o)return;s.fecha=f;s.hora=h;s.lugar=l;s.org=o;guardarEvento(ev);rDisp();toast('Actualizado');}
 function addSlot(){if(!evAdmin)return;const f=document.getElementById('d-fecha').value.trim();const h=document.getElementById('d-hora').value;const l=document.getElementById('d-lugar').value;const o=document.getElementById('d-org').value;if(!f||!h){toast('Completa fecha y hora');return;}if(!evAdmin.slots)evAdmin.slots=[];evAdmin.slots.push({id:Date.now(),fecha:f,hora:h,lugar:l,org:o,activo:true});document.getElementById('d-fecha').value='';guardarEvento(evAdmin);rDisp();toast('Hueco añadido');}
 function addLugar(){if(!evAdmin)return;const n=document.getElementById('d-nlug').value.trim();if(!n||(evAdmin.lugares||[]).includes(n))return;if(!evAdmin.lugares)evAdmin.lugares=[];evAdmin.lugares.push(n);document.getElementById('d-nlug').value='';guardarEvento(evAdmin);rDisp();toast('Lugar añadido');}
 
@@ -1209,14 +1714,87 @@ function rCont() {
   document.getElementById('c-pen').textContent=p.reduce((a,r)=>a+r.importe,0)+' €';
   document.getElementById('c-ents').textContent=c.reduce((a,r)=>a+r.cantidad,0);
   document.getElementById('c-can').textContent=(evAdmin.reservas||[]).filter(r=>r.estado==='cancelado').length;
-  document.getElementById('c-body').innerHTML=(evAdmin.reservas||[]).length
-    ?(evAdmin.reservas||[]).map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.fecha}</td><td style="color:var(--mu)">${r.org}</td><td>${bdg(r.estado)}</td></tr>`).join('')
-    :`<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin datos</td></tr>`;
+  const lista = sortAndFilter(evAdmin.reservas||[],'cont-search','cont-sort');
+  document.getElementById('c-body').innerHTML = lista.length
+    ? lista.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.cont.has(key);return`<tr class="mob-hide${sel?' selected':''}" data-ctx="cont" data-key="${key}"><td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('cont',${r.id},'${evAdmin.id}');rCont()"></td><td>${nomCell(r)}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.fecha}</td><td style="color:var(--mu)">${r.org}</td><td>${bdg(r.estado)}</td></tr>`}).join('')
+    : `<tr class="mob-hide"><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin resultados</td></tr>`;
+  const cCards = document.getElementById('c-cards');
+  if (cCards) cCards.innerHTML = lista.length
+    ? lista.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.cont.has(key);return`<div class="m-card${sel?' selected':''}" onclick="toggleSel('cont',${r.id},'${evAdmin.id}');rCont()">
+        <div class="m-card-top"><div><div class="m-card-name">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);font-style:italic;margin-bottom:2px">${r.notas}</div>`:''}<div class="m-card-sub">${r.fecha} · ${r.org}</div></div>${bdg(r.estado)}</div>
+        <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
+        <div class="m-card-row"><span>Importe</span><span style="color:var(--acc);font-weight:500">${r.importe} €</span></div>
+        <div class="m-card-row"><button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})"> Eliminar</button></div>
+      </div>`}).join('')
+    : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin resultados</p>`;
+  updateSelBar('cont');
 }
 
 // ════════════════════════════════════════
 // TICKETBOT
 // ════════════════════════════════════════
+// ════════════════════════════════════════
+// STATS RRPP
+// ════════════════════════════════════════
+function rRRPP() {
+  if (!evAdmin) return;
+  const sel = document.getElementById('rrpp-ev-sel');
+  if (sel) { sel.innerHTML = eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join(''); sel.value = evAdmin.id; }
+
+  const reservas = evAdmin.reservas || [];
+  const totalEnts = reservas.filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
+  const totalRec  = reservas.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
+
+  // Agrupar por RRPP
+  const stats = {};
+  reservas.filter(r=>r.estado!=='cancelado').forEach(r => {
+    if (!stats[r.org]) stats[r.org] = { entradas:0, cobradas:0, importe:0, pendiente:0, reservas:0 };
+    stats[r.org].reservas++;
+    stats[r.org].entradas += r.cantidad;
+    if (r.estado==='cobrado') { stats[r.org].cobradas+=r.cantidad; stats[r.org].importe+=r.importe; }
+    else stats[r.org].pendiente += r.importe;
+  });
+
+  const grid = document.getElementById('rrpp-grid');
+  if (grid) grid.innerHTML = Object.entries(stats).length
+    ? Object.entries(stats).map(([nombre,s]) => {
+        const pct = totalEnts>0 ? Math.round(s.entradas/totalEnts*100) : 0;
+        return `<div class="mcard">
+          <div style="font-family:var(--fd);font-size:20px;letter-spacing:1px;margin-bottom:10px;color:var(--acc)">${nombre}</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:4px">${s.reservas} reserva${s.reservas!==1?'s':''} · ${s.entradas} entradas</div>
+          <div style="height:4px;background:var(--g2);border-radius:2px;margin-bottom:8px"><div style="height:100%;width:${pct}%;background:var(--acc);border-radius:2px"></div></div>
+          <div style="font-size:11px;color:var(--mu);margin-bottom:4px">${pct}% del total</div>
+          <div style="font-size:13px;font-weight:500;color:#6dc96d">${s.importe} € cobrado</div>
+          <div style="font-size:12px;color:#f5a623">${s.pendiente} € pendiente</div>
+        </div>`;
+      }).join('')
+    : `<p style="font-size:13px;color:var(--mu)">Sin reservas en este evento.</p>`;
+
+  // Lista de espera
+  const wl = document.getElementById('rrpp-waitlist');
+  const waitlist = evAdmin.waitlist || [];
+  if (wl) wl.innerHTML = waitlist.length
+    ? `<table class="tbl"><thead><tr><th>Nombre</th><th>Email</th><th>Fecha</th><th>Acción</th></tr></thead><tbody>${
+        waitlist.map((w,i)=>`<tr><td style="font-weight:500">${w.nombre}</td><td style="color:var(--acc);font-size:12px">${w.email}</td><td style="color:var(--mu);font-size:12px">${w.fecha}</td><td><button class="acbtn" onclick="notificarWaitlistAdmin(${i})">Notificar por WA</button><button class="acbtn del" onclick="eliminarWaitlist(${i})" style="margin-left:4px">✕</button></td></tr>`).join('')
+      }</tbody></table>`
+    : `<p style="font-size:13px;color:var(--mu);padding:14px">No hay nadie en lista de espera.</p>`;
+}
+
+function notificarWaitlistAdmin(idx) {
+  if (!evAdmin) return;
+  const w = (evAdmin.waitlist||[])[idx]; if (!w) return;
+  const orgs = getOrgs(); const org = orgs[0];
+  const wa = (org.w||G.wa1).replace(/\D/g,'');
+  const msg = encodeURIComponent(`Hola ${w.nombre}! Se ha liberado una entrada para ${evAdmin.nombre}. ¿Te interesa? Contesta rápido antes de que se ocupe. — ${org.n}`);
+  window.open(`https://wa.me/${wa}?text=${msg}`,'_blank');
+}
+
+function eliminarWaitlist(idx) {
+  if (!evAdmin||!evAdmin.waitlist) return;
+  evAdmin.waitlist.splice(idx,1);
+  guardarEvento(evAdmin); rRRPP(); toast('Eliminado de la lista');
+}
+
 function rBot() {
   if (!evAdmin) return;
   const cs=cobEv(evAdmin);
@@ -1282,7 +1860,7 @@ function rOrgsExtra() {
       <input value="${o.n}" placeholder="Nombre" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'n',this.value)">
       <input value="${o.w}" placeholder="WhatsApp" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'w',this.value)">
       <button class="acbtn del" onclick="delOrgExtra(${i})">✕</button>
-    </div>`).join('')||`<p style="font-size:12px;color:var(--mu);padding:6px 0">Solo los 3 organizadores base</p>`;
+    </div>`).join('')||`<p style="font-size:12px;color:var(--mu);padding:6px 0">Solo los 3 RRPP base</p>`;
 }
 function addOrgExtra(){if(!G.orgsExtra)G.orgsExtra=[];G.orgsExtra.push({n:'',w:''});guardarGlobal();rOrgsExtra();toast('Añadido');}
 function editOrgExtra(i,c,v){if(!G.orgsExtra)return;G.orgsExtra[i][c]=v;guardarGlobal();}
@@ -1322,20 +1900,34 @@ function renderDiscoteca() {
   if(sel){sel.innerHTML=`<option value="">Todos los eventos</option>`+eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');}
   const evId=sel?sel.value:'';
   const lista=evId?[eventos.find(e=>e.id===evId)].filter(Boolean):eventos;
-  const todasRes=lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
-  const vend=todasRes.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
-  const rec=todasRes.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
+  const todasResBase=lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
+  const todasRes = sortAndFilter(todasResBase,'disco-search','disco-sort');
+  const vend=todasResBase.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
+  const rec=todasResBase.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
   const aforo=lista.reduce((a,ev)=>a+ev.aforo,0);
   const m=document.getElementById('disco-metrics');
   if(m)m.innerHTML=`
     <div class="mcard"><div class="ml">Entradas vendidas</div><div class="mv">${vend}</div><div class="ms">de ${aforo} aforo total</div></div>
     <div class="mcard"><div class="ml">Recaudado</div><div class="mv">${rec} €</div></div>
-    <div class="mcard"><div class="ml">Pendientes</div><div class="mv">${todasRes.filter(r=>r.estado==='pendiente').length}</div></div>
+    <div class="mcard"><div class="ml">Pendientes</div><div class="mv">${todasResBase.filter(r=>r.estado==='pendiente').length}</div></div>
     <div class="mcard"><div class="ml">Eventos activos</div><div class="mv">${eventos.filter(e=>e.activo).length}</div></div>`;
   const t=document.getElementById('disco-tabla');
-  if(t)t.innerHTML=todasRes.length
-    ?todasRes.map(r=>`<tr><td style="font-weight:500">${r.nombre}</td><td style="color:var(--acc);font-size:12px">${r.evNombre||''}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td>${bdg(r.estado)}</td></tr>`).join('')
-    :`<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
+  if(t) t.innerHTML=todasRes.length
+    ?todasRes.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.disco.has(key);return`<tr class="mob-hide${sel?' selected':''}" data-ctx="disco" data-key="${key}"><td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('disco',${r.id},'${r.eventoId||r.id}');renderDiscoteca()"></td><td>${nomCell(r)}</td><td style="color:var(--acc);font-size:12px">${r.evNombre||''}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td>${bdg(r.estado)}</td></tr>`}).join('')
+    :`<tr class="mob-hide"><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
+  const dc = document.getElementById('disco-cards');
+  if (dc) dc.innerHTML = todasRes.length
+    ? todasRes.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.disco.has(key);return`<div class="m-card${sel?' selected':''}" onclick="toggleSel('disco',${r.id},'${r.eventoId||r.id}');renderDiscoteca()">
+        <div class="m-card-top">
+          <div><div class="m-card-name">${r.nombre}</div><div class="m-card-sub" style="color:var(--acc)">${r.evNombre||''}</div><div class="m-card-sub">${r.slot}</div></div>
+          ${bdg(r.estado)}
+        </div>
+        <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
+        <div class="m-card-row"><span>Importe</span><span style="color:var(--acc)">${r.importe} €</span></div>
+        <div class="m-card-row"><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})"> Eliminar</button></div>
+      </div>`}).join('')
+    : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin reservas</p>`;
+  updateSelBar('disco');
   // Comparativa de eventos
   const comp = document.getElementById('disco-comparativa');
   if (comp) {
@@ -1387,26 +1979,26 @@ function rEmails() {
   const todasRes = eventos.flatMap(ev =>
     (ev.reservas||[]).filter(r => r.email).map(r => ({...r, evNombre:ev.nombre}))
   );
-  const lista = filtroEmails === 'todos' ? todasRes : todasRes.filter(r => r.estado === filtroEmails);
+  const base = filtroEmails === 'todos' ? todasRes : todasRes.filter(r => r.estado === filtroEmails);
+  const lista = sortAndFilter(base,'emails-search','emails-sort');
 
-  // Tabla desktop
   const body = document.getElementById('emails-body');
   if (body) body.innerHTML = lista.length
-    ? lista.map(r=>`<tr>
+    ? lista.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.emails.has(key);return`<tr class="${sel?'selected':''}" data-ctx="emails" data-key="${key}">
+        <td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('emails',${r.id},'${r.eventoId||r.id}');rEmails()"></td>
         <td style="font-weight:500">${r.nombre}</td>
         <td style="color:var(--acc);font-size:12px">${r.email}</td>
         <td style="color:var(--mu);font-size:12px">${r.evNombre}</td>
         <td>${r.cantidad}</td>
         <td>${bdg(r.estado)}</td>
         <td style="color:var(--mu);font-size:12px">${r.fecha}</td>
-      </tr>`).join('')
-    : `<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Sin emails registrados</td></tr>`;
+      </tr>`}).join('')
+    : `<tr><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin resultados</td></tr>`;
 
-  // Tarjetas móvil
   const cards = document.getElementById('emails-cards');
   if (cards) cards.innerHTML = lista.length
-    ? lista.map(r=>`
-      <div class="res-card">
+    ? lista.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.emails.has(key);return`
+      <div class="res-card${sel?' selected':''}" onclick="toggleSel('emails',${r.id},'${r.eventoId||r.id}');rEmails()">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
           <div>
             <div style="font-weight:500;font-size:14px;margin-bottom:2px">${r.nombre}</div>
@@ -1415,8 +2007,11 @@ function rEmails() {
           </div>
           ${bdg(r.estado)}
         </div>
-      </div>`).join('')
-    : `<p style="color:var(--mu);padding:16px;font-size:13px">Sin emails registrados</p>`;
+        <button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})"> Eliminar</button>
+      </div>`}).join('')
+    : `<p style="color:var(--mu);padding:16px;font-size:13px">Sin resultados</p>`;
+
+  updateSelBar('emails');
 
   // Contador
   const unicos = new Set(todasRes.map(r=>r.email)).size;
@@ -1474,6 +2069,11 @@ function dl(c,t,n){const a=document.createElement('a');a.href=URL.createObjectUR
 // ════════════════════════════════════════
 // HELPERS
 // ════════════════════════════════════════
+// Helper: nombre + nota debajo
+function nomCell(r) {
+  return `<div style="font-weight:500">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);margin-top:2px;font-style:italic">${r.notas}</div>`:''}`;
+}
+
 function bdg(e){
   if(e==='cobrado')return`<span class="badge b-ok">Cobrado</span>`;
   if(e==='pendiente')return`<span class="badge b-pend">Pendiente</span>`;
