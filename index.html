@@ -493,6 +493,9 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
       <div class="fg"><label>Contraseña</label><input type="password" id="ld-pass" placeholder="Contraseña del local" onkeydown="if(event.key==='Enter')doLoginDisco()"></div>
       <button class="sbtn" onclick="doLoginDisco()">Entrar</button>
       <div class="lerr" id="ld-err">Contraseña incorrecta.</div>
+      <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--g2);text-align:center">
+        <button onclick="activarModoDemo()" style="background:none;border:none;color:var(--g3);font-size:11px;font-family:var(--fb);cursor:pointer;letter-spacing:1px">· · ·</button>
+      </div>
     </div>
   </div>
 </div>
@@ -511,6 +514,10 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
       <div>
         <div style="font-family:var(--fd);font-size:24px;letter-spacing:2px" id="disco-titulo">EVENTOS</div>
         <div style="font-size:13px;color:var(--mu)" id="disco-subtitulo">Vista del local</div>
+      </div>
+      <div id="demo-banner" style="display:none;background:rgba(232,255,71,.12);border:1px solid var(--acc);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--acc);align-items:center;gap:10px">
+        <span>🎭 MODO DEMO</span>
+        <button onclick="desactivarModoDemo()" style="background:none;border:1px solid var(--acc);color:var(--acc);padding:3px 10px;border-radius:4px;font-size:11px;font-family:var(--fb);cursor:pointer;margin-left:8px">Salir</button>
       </div>
       <select id="disco-ev-sel" class="ev-selector" onchange="renderDiscoteca()">
         <option value="">Todos los eventos</option>
@@ -1887,6 +1894,107 @@ function nfRender(){
 // PANEL DISCOTECA
 // ════════════════════════════════════════
 // ════════════════════════════════════════
+// ════════════════════════════════════════
+// MODO DEMO
+// ════════════════════════════════════════
+let modoDemo = false;
+let eventosDemoBackup = null;
+
+function activarModoDemo() {
+  if (modoDemo) { desactivarModoDemo(); return; }
+  modoDemo = true;
+  eventosDemoBackup = JSON.parse(JSON.stringify(eventos));
+
+  const rrpps = [
+    {n:'Carlos',w:'34600000001'},{n:'Laura',w:'34600000002'},
+    {n:'Marcos',w:'34600000003'},{n:'Sara',w:'34600000004'}
+  ];
+  const lugares = ['Entrada facultad','La L','Puerta principal','Bar de abajo'];
+
+  function mkReserva(id, evId, evNombre, precio, fecha, slot, org, estado, cant, notas='') {
+    return {id, eventoId:evId, eventoNombre:evNombre, nombre:['Álvaro García','María López','Unai Etxeberria','Lucía Fernández','Jon Arizaga','Ane Goikoetxea','Pablo Martínez','Irene Sáez','Mikel Urrutia','Nora Bilbao','Diego Torres','Amaia Zubiaurre','Sergio Peña','Leire Mendez','Iñigo Ruiz','Cristina Vidal','Borja Alonso','Marta Eguia','Raul Castillo','Elena Aguirre'][id%20], email:`user${id}@demo.com`, cantidad:cant, importe:cant*precio, slot, lugar:lugares[id%4], org:org.n, orgWa:org.w, estado, fecha, entradaGenerada:estado==='cobrado', notas};
+  }
+
+  const hoy = new Date();
+  const fmt = d => d.toLocaleDateString('es-ES');
+  const d = (days) => { const x=new Date(hoy); x.setDate(x.getDate()-days); return fmt(x); };
+
+  // Evento 1 — Fiesta Uni Viernes (aforo casi lleno)
+  const ev1 = {
+    id:'demo-ev1', nombre:'Fiesta Uni Viernes', fecha:'Vie 20 Mar', precio:15, aforo:400,
+    activo:true, desc:'La noche más esperada del trimestre', turnoOrg:0, nextId:100,
+    slots:[{id:1,fecha:'Vie 20 Mar',hora:'22:00',lugar:'Entrada facultad',org:'Carlos',activo:true},{id:2,fecha:'Vie 20 Mar',hora:'23:00',lugar:'La L',org:'Laura',activo:true}],
+    lugares:['Entrada facultad','La L'],
+    reservas: [], waitlist:[]
+  };
+  let rid=0;
+  const slotsFri=['Vie 20 Mar, 22:00','Vie 20 Mar, 23:00'];
+  // 320 entradas vendidas aprox
+  [[0,'cobrado',8],[1,'cobrado',6],[2,'cobrado',5],[3,'cobrado',4],[4,'cobrado',7],[5,'cobrado',3],[6,'cobrado',6],[7,'cobrado',5],[8,'cobrado',8],[9,'cobrado',4],[10,'cobrado',7],[11,'cobrado',6],[12,'cobrado',5],[13,'cobrado',3],[14,'cobrado',8],[15,'cobrado',6],[16,'cobrado',4],[17,'cobrado',7],[18,'cobrado',5],[19,'cobrado',6],
+   [0,'cobrado',5],[1,'cobrado',4],[2,'cobrado',6],[3,'cobrado',8],[4,'cobrado',3],[5,'cobrado',7],[6,'cobrado',5],[7,'cobrado',4],[8,'cobrado',6],[9,'cobrado',8],[10,'cobrado',5],[11,'cobrado',4],[12,'cobrado',7],[13,'cobrado',6],[14,'cobrado',4],[15,'cobrado',5],[16,'cobrado',8],[17,'cobrado',3],[18,'cobrado',6],[19,'cobrado',7],
+   [0,'pendiente',3],[1,'pendiente',5],[2,'pendiente',2],[3,'pendiente',4],[4,'pendiente',6],[5,'pendiente',3],[6,'pendiente',2],[7,'pendiente',5],[8,'cancelado',4],[9,'cancelado',3]
+  ].forEach(([orgIdx,est,cant],i)=>{
+    ev1.reservas.push(mkReserva(rid++,'demo-ev1','Fiesta Uni Viernes',15,d(Math.floor(Math.random()*14)+1),slotsFri[i%2],rrpps[orgIdx%4],est,cant,i===0?'Paga la mitad ahora':''));
+  });
+
+  // Evento 2 — Sábado Tardeo (medio lleno)
+  const ev2 = {
+    id:'demo-ev2', nombre:'Sábado Tardeo', fecha:'Sáb 21 Mar', precio:10, aforo:300,
+    activo:true, desc:'Afterwork universitario desde las 6', turnoOrg:0, nextId:200,
+    slots:[{id:1,fecha:'Sáb 21 Mar',hora:'18:00',lugar:'Puerta principal',org:'Marcos',activo:true}],
+    lugares:['Puerta principal','Bar de abajo'],
+    reservas: [], waitlist:[]
+  };
+  [[0,'cobrado',4],[1,'cobrado',3],[2,'cobrado',5],[3,'cobrado',2],[4,'cobrado',6],[5,'cobrado',4],[6,'cobrado',3],[7,'cobrado',5],[8,'cobrado',4],[9,'cobrado',3],[10,'cobrado',2],[11,'cobrado',4],[12,'cobrado',6],[13,'cobrado',3],[14,'cobrado',5],[15,'cobrado',4],[16,'cobrado',3],[17,'cobrado',2],[18,'pendiente',5],[19,'pendiente',4],[0,'pendiente',3],[1,'pendiente',6],[2,'cancelado',2],[3,'cancelado',3]
+  ].forEach(([orgIdx,est,cant],i)=>{
+    ev2.reservas.push(mkReserva(rid++,'demo-ev2','Sábado Tardeo',10,d(Math.floor(Math.random()*10)+1),'Sáb 21 Mar, 18:00',rrpps[orgIdx%4],est,cant));
+  });
+
+  // Evento 3 — Fiesta Fin de Curso (recién abierto)
+  const ev3 = {
+    id:'demo-ev3', nombre:'Fiesta Fin de Curso', fecha:'Vie 3 Abr', precio:18, aforo:500,
+    activo:true, desc:'La fiesta del año. Solo una vez.', turnoOrg:0, nextId:300,
+    slots:[{id:1,fecha:'Vie 3 Abr',hora:'22:00',lugar:'Entrada facultad',org:'Sara',activo:true},{id:2,fecha:'Vie 3 Abr',hora:'23:30',lugar:'Bar de abajo',org:'Carlos',activo:true}],
+    lugares:['Entrada facultad','Bar de abajo'],
+    reservas: [], waitlist:[{nombre:'Alex Ruiz',email:'alex@demo.com',fecha:d(1)},{nombre:'Paula Vega',email:'paula@demo.com',fecha:d(0)}]
+  };
+  [[0,'cobrado',6],[1,'cobrado',4],[2,'cobrado',8],[3,'cobrado',3],[4,'cobrado',5],[5,'cobrado',7],[6,'cobrado',4],[7,'cobrado',6],[8,'pendiente',8],[9,'pendiente',5],[10,'pendiente',6],[11,'pendiente',4],[12,'pendiente',7],[13,'cancelado',3]
+  ].forEach(([orgIdx,est,cant],i)=>{
+    ev3.reservas.push(mkReserva(rid++,'demo-ev3','Fiesta Fin de Curso',18,d(Math.floor(Math.random()*5)),i%2===0?'Vie 3 Abr, 22:00':'Vie 3 Abr, 23:30',rrpps[orgIdx%4],est,cant));
+  });
+
+  // Inyectar en memoria (sin tocar Firebase)
+  eventos = [ev1, ev2, ev3];
+  evAdmin = ev1;
+  discoLoggedIn = true;
+  G.localNombre = 'DEMO — Back&Stage';
+
+  // Mostrar banner demo
+  const banner = document.getElementById('demo-banner');
+  if (banner) banner.style.display = 'flex';
+  const titulo = document.getElementById('disco-titulo');
+  if (titulo) titulo.textContent = 'DEMO';
+
+  toast('🎭 Modo demo activado');
+  show('p-discoteca');
+  setTimeout(()=>renderDiscoteca(),250);
+}
+
+function desactivarModoDemo() {
+  modoDemo = false;
+  if (eventosDemoBackup !== null) eventos = eventosDemoBackup;
+  eventosDemoBackup = null;
+  discoLoggedIn = false;
+  G.localNombre = '';
+  const banner = document.getElementById('demo-banner');
+  if (banner) banner.style.display = 'none';
+  const titulo = document.getElementById('disco-titulo');
+  if (titulo) titulo.textContent = 'EVENTOS';
+  show('p-home');
+  renderHome();
+  toast('Modo demo desactivado');
+}
+
 // GRÁFICOS (Chart.js)
 // ════════════════════════════════════════
 const chartInstances = {};
