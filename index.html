@@ -405,7 +405,9 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
       <div class="fsub" id="res-evento-nombre">Rellena el formulario y elige cuándo quedamos.</div>
       <div class="fg"><label>Tu nombre completo</label><input type="text" id="r-nom" placeholder="Ej. Lucía Fernández"></div>
       <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="tu@email.com"></div>
-      <div class="fg"><label>Número de entradas (máx. 12)</label><input type="number" id="r-cant" min="1" max="12" value="1" oninput="calcTotal()"></div>
+      <div class="fg"><label>Número de entradas (máx. 12)</label><input type="number" id="r-cant" min="1" max="12" value="1" oninput="calcTotal()">
+        <p id="r-cant-info" style="font-size:12px;color:var(--mu);margin-top:6px"></p>
+      </div>
       <div class="total-box"><span>Total a pagar en efectivo</span><strong id="r-total">15 €</strong></div>
       <div class="fg">
         <label>Selecciona horario de quedada</label>
@@ -1581,7 +1583,7 @@ function rDash() {
     ? prox.map(r=>{const key=`${evAdmin.id}:${r.id}`;const sel=seleccionadas.dash.has(key);return`<div class="m-card${sel?' selected':''}" data-ctx="dash" data-key="${key}" onclick="toggleSel('dash',${r.id},'${evAdmin.id}');rDash()">
         <div class="m-card-top"><div><div class="m-card-name">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);font-style:italic;margin-bottom:2px">${r.notas}</div>`:''}<div class="m-card-sub">${r.slot} · ${r.lugar}</div></div>${bdg(r.estado)}</div>
         <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
-        <div class="m-card-row"><span style="color:var(--mu)">Toca para seleccionar · </span><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})"> Eliminar</button></div>
+        <div class="m-card-row"><span style="color:var(--mu)">Toca para seleccionar · </span><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})">Eliminar</button></div>
       </div>`}).join('')
     : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin resultados</p>`;
   updateSelBar('dash');
@@ -1724,7 +1726,7 @@ function rCont() {
         <div class="m-card-top"><div><div class="m-card-name">${r.nombre}</div>${r.notas?`<div style="font-size:11px;color:var(--mu);font-style:italic;margin-bottom:2px">${r.notas}</div>`:''}<div class="m-card-sub">${r.fecha} · ${r.org}</div></div>${bdg(r.estado)}</div>
         <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
         <div class="m-card-row"><span>Importe</span><span style="color:var(--acc);font-weight:500">${r.importe} €</span></div>
-        <div class="m-card-row"><button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})"> Eliminar</button></div>
+        <div class="m-card-row"><button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${evAdmin.id}',${r.id})">Eliminar</button></div>
       </div>`}).join('')
     : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin resultados</p>`;
   updateSelBar('cont');
@@ -1897,7 +1899,11 @@ function nfRender(){
 // ════════════════════════════════════════
 function renderDiscoteca() {
   const sel=document.getElementById('disco-ev-sel');
-  if(sel){sel.innerHTML=`<option value="">Todos los eventos</option>`+eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');}
+  const valorActual = sel ? sel.value : '';
+  if(sel){
+    sel.innerHTML=`<option value="">Todos los eventos</option>`+eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');
+    if(valorActual) sel.value = valorActual;
+  }
   const evId=sel?sel.value:'';
   const lista=evId?[eventos.find(e=>e.id===evId)].filter(Boolean):eventos;
   const todasResBase=lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
@@ -1924,7 +1930,7 @@ function renderDiscoteca() {
         </div>
         <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
         <div class="m-card-row"><span>Importe</span><span style="color:var(--acc)">${r.importe} €</span></div>
-        <div class="m-card-row"><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})"> Eliminar</button></div>
+        <div class="m-card-row"><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})">Eliminar</button></div>
       </div>`}).join('')
     : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin reservas</p>`;
   updateSelBar('disco');
@@ -2007,7 +2013,7 @@ function rEmails() {
           </div>
           ${bdg(r.estado)}
         </div>
-        <button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})"> Eliminar</button>
+        <button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})">Eliminar</button>
       </div>`}).join('')
     : `<p style="color:var(--mu);padding:16px;font-size:13px">Sin resultados</p>`;
 
