@@ -605,6 +605,9 @@ const DEF_GLOBAL = {
   orgsExtra:[]
 };
 
+// Flag modo demo — declarado aquí para que esté disponible en toda la app
+let modoDemo = false;
+
 const DEF_EVENTO = {
   nombre:'Nuevo Evento', fecha:'Próximamente', desc:'', precio:15, aforo:200,
   activo:true, reservas:[], slots:[], lugares:['Entrada facultad'],
@@ -635,6 +638,7 @@ async function guardarGlobal() {
 }
 
 async function guardarEvento(ev) {
+  if (modoDemo) return; // No guardar en Firebase durante el demo
   const data = { nombre:ev.nombre, fecha:ev.fecha, desc:ev.desc, precio:ev.precio, aforo:ev.aforo, activo:ev.activo, reservas:ev.reservas, slots:ev.slots, lugares:ev.lugares, turnoOrg:ev.turnoOrg, nextId:ev.nextId };
   try {
     const cache = JSON.parse(localStorage.getItem('fd_eventos')||'{}');
@@ -647,6 +651,7 @@ async function guardarEvento(ev) {
 function aplicarGlobal(d) { G = { ...DEF_GLOBAL, ...d }; }
 
 function aplicarEvento(id, d) {
+  if (modoDemo) return; // No sobreescribir eventos demo
   const idx = eventos.findIndex(e => e.id === id);
   const ev = { id, ...DEF_EVENTO, ...d };
   if (idx >= 0) eventos[idx] = ev; else eventos.push(ev);
@@ -655,6 +660,7 @@ function aplicarEvento(id, d) {
 function suscribir() {
   if (!window._db || !window._fb) return;
   window._fb.onSnapshot(window._fb.doc(window._db, GCOL, 'config'), snap => {
+    if (modoDemo) return; // No actualizar durante modo demo
     if (snap.exists()) { aplicarGlobal(snap.data()); guardarLocalGlobal(); renderHome(); if (loggedIn) renderAdmin(); }
   });
 }
@@ -799,6 +805,7 @@ function seleccionarEvento(id) {
 // HOME
 // ════════════════════════════════════════
 function renderHome() {
+  if (modoDemo) return; // Durante el demo la home no se toca
   const el = document.getElementById('h-local-nombre');
   if (el) el.textContent = G.localNombre || 'ENTRADAS';
   const grid = document.getElementById('eventos-grid'); if (!grid) return;
@@ -1897,7 +1904,6 @@ function nfRender(){
 // ════════════════════════════════════════
 // MODO DEMO
 // ════════════════════════════════════════
-let modoDemo = false;
 let eventosDemoBackup = null;
 
 function activarModoDemo() {
@@ -1967,15 +1973,37 @@ function activarModoDemo() {
   eventos = [ev1, ev2, ev3];
   evAdmin = ev1;
   discoLoggedIn = true;
-  G.localNombre = 'DEMO — Back&Stage';
+  G.localNombre = 'Tu Discoteca';
 
   // Mostrar banner demo
   const banner = document.getElementById('demo-banner');
   if (banner) banner.style.display = 'flex';
   const titulo = document.getElementById('disco-titulo');
-  if (titulo) titulo.textContent = 'DEMO';
+  if (titulo) titulo.textContent = 'EVENTOS';
 
   toast('🎭 Modo demo activado');
+  // Renderizar home con eventos demo
+  const elHome = document.getElementById('h-local-nombre');
+  if (elHome) elHome.textContent = 'TU DISCOTECA';
+  const grid = document.getElementById('eventos-grid');
+  if (grid) {
+    grid.innerHTML = [ev1,ev2,ev3].map(ev => {
+      const vend = (ev.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
+      const pct  = ev.aforo>0 ? Math.min(100,Math.round(vend/ev.aforo*100)) : 0;
+      const disp = Math.max(0, ev.aforo - vend);
+      const barColor = pct>=90?'var(--red)':pct>=70?'#f5a623':'var(--acc)';
+      return `<div class="evento-card" onclick="seleccionarEvento('${ev.id}')">
+        <div class="ev-nombre">${ev.nombre.toUpperCase()}</div>
+        <div class="ev-fecha">${ev.fecha}</div>
+        ${ev.desc?`<div class="ev-info">${ev.desc}</div>`:''}
+        <div class="ev-precio">${ev.precio} € / entrada</div>
+        <div class="ev-aforo">
+          ${disp<=20?`<div style="font-size:12px;color:var(--red);font-weight:500">🔥 ¡Solo quedan ${disp} entradas!</div>`:`<div style="font-size:12px;color:var(--mu)">${disp} entradas disponibles · ${pct}% reservado</div>`}
+          <div class="ev-bar-bg"><div class="ev-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
   show('p-discoteca');
   setTimeout(()=>renderDiscoteca(),250);
 }
@@ -1992,6 +2020,14 @@ function desactivarModoDemo() {
   if (titulo) titulo.textContent = 'EVENTOS';
   show('p-home');
   renderHome();
+  // Forzar recarga de eventos reales desde Firebase
+  if (window._db && window._fb) {
+    window._fb.getDocs(window._fb.collection(window._db, ECOL)).then(eSnap => {
+      eventos = [];
+      eSnap.forEach(d => { const data=d.data(); if(!data._deleted) aplicarEvento(d.id,data); });
+      renderHome();
+    }).catch(()=>{});
+  }
   toast('Modo demo desactivado');
 }
 
