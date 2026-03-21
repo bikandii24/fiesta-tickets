@@ -302,11 +302,29 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 .del-confirm{width:100%;background:var(--red);color:#fff;border:none;padding:13px;border-radius:8px;font-family:var(--fb);font-weight:500;font-size:15px;cursor:pointer;opacity:.4;transition:opacity .2s}
 .del-confirm.ready{opacity:1}
 .del-cancel{width:100%;background:none;border:1px solid var(--g3);color:var(--mu);padding:11px;border-radius:8px;font-family:var(--fb);font-size:14px;cursor:pointer;margin-top:8px}
+
+/* ── OPTIMIZACIÓN MÓVIL RRPP ── */
+@media(max-width:700px){
+  .acbtn{padding:8px 14px;font-size:13px;min-height:40px}
+  .fchip{padding:8px 16px;font-size:13px;min-height:40px}
+  .sbtn{padding:14px;font-size:16px;border-radius:10px}
+  .mcard{padding:16px}
+  .mv{font-size:28px}
+  .ahead h2{font-size:22px}
+  .res-card{padding:14px}
+  .res-card-name{font-size:15px}
+  .filter-bar{padding:10px}
+  .filter-bar input[type=text]{font-size:14px;padding:10px 14px}
+  .filter-bar select{font-size:14px;padding:10px 12px}
+  .sel-bar{padding:12px 14px}
+  .acbtn.del{background:rgba(255,71,71,.15)}
+}
+
 </style>
 <body>
 
 <div id="loading">
-  <div class="ll">TICKETS</div>
+  <div class="ll">ENTRADAS</div>
   <div class="lm" id="lmsg">Cargando eventos...</div>
   <div class="lb-wrap"><div class="lb" id="lbar"></div></div>
 </div>
@@ -356,7 +374,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 <!-- ══ HOME — SELECTOR DE EVENTOS ══ -->
 <div class="page on" id="p-home">
   <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <span class="logo" onclick="show('p-home')">ENTRADAS</span>
     <div style="display:flex;gap:8px">
       <button class="nbtn" onclick="show('p-misreservas')">Mis reservas</button>
       <button class="nbtn hi" onclick="show('p-login')">Panel</button>
@@ -374,7 +392,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 <!-- ══ EVENTO — DETALLE ══ -->
 <div class="page" id="p-evento">
   <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <span class="logo" onclick="show('p-home')">ENTRADAS</span>
     <button class="nbtn" onclick="show('p-home')">← Eventos</button>
   </nav>
   <div class="hero">
@@ -400,7 +418,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 <!-- ══ RESERVAR ══ -->
 <div class="page" id="p-reservar">
   <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <span class="logo" onclick="show('p-home')">ENTRADAS</span>
     <button class="nbtn" onclick="show('p-evento')">← Volver</button>
   </nav>
   <div class="fwrap">
@@ -425,7 +443,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 
 <!-- ══ CONFIRMACIÓN ══ -->
 <div class="page" id="p-confirm">
-  <nav><span class="logo" onclick="show('p-home')">TICKETS</span></nav>
+  <nav><span class="logo" onclick="show('p-home')">ENTRADAS</span></nav>
   <div class="fwrap">
     <div class="fcard">
       <div class="cicon">
@@ -446,7 +464,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 <!-- ══ MIS RESERVAS ══ -->
 <div class="page" id="p-misreservas">
   <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <span class="logo" onclick="show('p-home')">ENTRADAS</span>
     <button class="nbtn" onclick="show('p-home')">← Inicio</button>
   </nav>
   <div class="fwrap">
@@ -463,7 +481,7 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 <!-- ══ LOGIN ══ -->
 <div class="page" id="p-login">
   <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
+    <span class="logo" onclick="show('p-home')">ENTRADAS</span>
     <button class="nbtn" onclick="show('p-home')">← Volver</button>
   </nav>
   <div class="lwrap">
@@ -473,119 +491,6 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
       <div class="fg"><label>Contraseña</label><input type="password" id="l-pass" placeholder="Contraseña del equipo" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="sbtn" onclick="doLogin()">Entrar</button>
       <div class="lerr" id="l-err">Contraseña incorrecta.</div>
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--g2);text-align:center">
-        <button class="nbtn" onclick="show('p-login-disco')" style="font-size:12px">Acceso discoteca →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ LOGIN DISCOTECA ══ -->
-<div class="page" id="p-login-disco">
-  <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
-    <button class="nbtn" onclick="show('p-login')">← Volver</button>
-  </nav>
-  <div class="lwrap">
-    <div class="fcard" style="max-width:380px">
-      <div class="ftitle" style="color:var(--acc)">LOCAL</div>
-      <div class="fsub">Panel de solo lectura para el local</div>
-      <div class="fg"><label>Contraseña</label><input type="password" id="ld-pass" placeholder="Contraseña del local" onkeydown="if(event.key==='Enter')doLoginDisco()"></div>
-      <button class="sbtn" onclick="doLoginDisco()">Entrar</button>
-      <div class="lerr" id="ld-err">Contraseña incorrecta.</div>
-      <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--g2);text-align:center">
-        <button onclick="activarModoDemo()" style="background:none;border:none;color:var(--g3);font-size:11px;font-family:var(--fb);cursor:pointer;letter-spacing:1px">· · ·</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ PANEL DISCOTECA ══ -->
-<div class="page" id="p-discoteca">
-  <nav>
-    <span class="logo" onclick="show('p-home')">TICKETS</span>
-    <div style="display:flex;gap:8px;align-items:center">
-      <span style="font-size:12px;color:var(--mu)">Solo lectura</span>
-      <button class="nbtn" onclick="logoutDisco()">Cerrar sesión</button>
-    </div>
-  </nav>
-  <div style="padding:28px 24px;max-width:1000px;margin:0 auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-family:var(--fd);font-size:24px;letter-spacing:2px" id="disco-titulo">EVENTOS</div>
-        <div style="font-size:13px;color:var(--mu)" id="disco-subtitulo">Vista del local</div>
-      </div>
-      <div id="demo-banner" style="display:none;background:rgba(232,255,71,.12);border:1px solid var(--acc);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--acc);align-items:center;gap:10px">
-        <span>🎭 MODO DEMO</span>
-        <button onclick="desactivarModoDemo()" style="background:none;border:1px solid var(--acc);color:var(--acc);padding:3px 10px;border-radius:4px;font-size:11px;font-family:var(--fb);cursor:pointer;margin-left:8px">Salir</button>
-      </div>
-      <select id="disco-ev-sel" class="ev-selector" onchange="renderDiscoteca()">
-        <option value="">Todos los eventos</option>
-      </select>
-      <button class="ctabtn" style="padding:8px 16px;font-size:13px" onclick="exportarInformePDF()">📄 Informe PDF</button>
-    </div>
-    <div class="mgrid" id="disco-metrics" style="margin-bottom:16px"></div>
-    <!-- KPIs de negocio -->
-    <div class="mgrid" id="disco-kpis" style="margin-bottom:24px"></div>
-
-    <!-- GRÁFICOS DISCOTECA -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px" id="disco-charts-grid">
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px;display:flex;flex-direction:column">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Reservas por evento</div>
-        <div style="position:relative;flex:1;min-height:160px"><canvas id="chart-eventos"></canvas></div>
-      </div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Estado de reservas</div>
-        <div style="position:relative;height:180px;overflow:hidden"><canvas id="chart-estados"></canvas></div>
-      </div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Recaudación por RRPP</div>
-        <div style="position:relative;height:180px;overflow:hidden"><canvas id="chart-rrpp"></canvas></div>
-      </div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Reservas por día</div>
-        <div style="position:relative;height:180px;overflow:hidden"><canvas id="chart-dias"></canvas></div>
-      </div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Hora pico de reservas</div>
-        <div style="position:relative;height:180px;overflow:hidden"><canvas id="chart-horas"></canvas></div>
-      </div>
-      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:18px">
-        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Este mes vs mes anterior</div>
-        <div id="disco-comparativa-mes" style="padding:8px 0"></div>
-        <div style="position:relative;height:140px;overflow:hidden"><canvas id="chart-meses"></canvas></div>
-      </div>
-    </div>
-
-    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Comparativa de eventos</div>
-    <div id="disco-comparativa" style="margin-bottom:24px"></div>
-    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Rendimiento por RRPP</div>
-    <div id="disco-rrpp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px"></div>
-    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Lista de espera</div>
-    <div id="disco-waitlist" class="twrap" style="margin-bottom:24px"></div>
-    <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Reservas</div>
-    <div class="filter-bar">
-      <input type="text" id="disco-search" placeholder="Buscar nombre..." oninput="renderDiscoteca()">
-      <select id="disco-sort" onchange="renderDiscoteca()">
-        <option value="reciente">Más recientes</option>
-        <option value="az">A → Z</option>
-        <option value="za">Z → A</option>
-        <option value="ent-desc">Más entradas primero</option>
-        <option value="ent-asc">Menos entradas primero</option>
-        <option value="fecha-asc">Cita más próxima</option>
-        <option value="fecha-desc">Cita más lejana</option>
-      </select>
-    </div>
-    <div class="sel-bar" id="disco-sel-bar">
-      <span class="sel-count" id="disco-sel-count">0 seleccionadas</span>
-      <button class="acbtn del" onclick="bulkEliminar('disco')">Eliminar</button>
-      <button class="acbtn" onclick="clearSel('disco')">Deseleccionar</button>
-    </div>
-    <div class="twrap"><table class="tbl"><thead><tr class="mob-hide"><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('disco',this)"></th><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>Cita</th><th>Estado</th></tr></thead><tbody id="disco-tabla"></tbody></table></div>
-    <div class="mob-cards" id="disco-cards"></div>
-    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-      <button class="ctabtn" style="padding:10px 18px;font-size:13px" onclick="exportEmailsCSV()">Exportar emails</button>
-      <button class="ctabtn" style="padding:10px 18px;font-size:13px;background:var(--g2);color:var(--fg)" onclick="exportCSVDisco()">Exportar contabilidad</button>
     </div>
   </div>
 </div>
@@ -599,14 +504,14 @@ tr.selected td{background:rgba(232,255,71,.05)!important}
 // ════════════════════════════════════════
 const DEF_GLOBAL = {
   pass:'jon26', passDiscoteca:'discoteca2026', localNombre:'Entradas',
-  org1:'Org 1', wa1:'34600000001',
-  org2:'Org 2', wa2:'34600000002',
-  org3:'Org 3', wa3:'34600000003',
+  org1:'x', wa1:'1',
+  org2:'y', wa2:'2',
+  org3:'z', wa3:'3',
+  org4:'w', wa4:'4',
   orgsExtra:[]
 };
 
 // Flag modo demo — declarado aquí para que esté disponible en toda la app
-let modoDemo = false;
 
 const DEF_EVENTO = {
   nombre:'Nuevo Evento', fecha:'Próximamente', desc:'', precio:15, aforo:200,
@@ -619,7 +524,6 @@ let eventos = [];           // lista de eventos [{id, ...DEF_EVENTO}]
 let evActual = null;        // evento seleccionado por el comprador
 let evAdmin = null;         // evento seleccionado en el panel admin
 let loggedIn = false;
-let discoLoggedIn = false;
 let reservaActual = null;
 let slotSel = null;
 let filtroAdmin = 'todos';
@@ -638,7 +542,6 @@ async function guardarGlobal() {
 }
 
 async function guardarEvento(ev) {
-  if (modoDemo) return; // No guardar en Firebase durante el demo
   const data = { nombre:ev.nombre, fecha:ev.fecha, desc:ev.desc, precio:ev.precio, aforo:ev.aforo, activo:ev.activo, reservas:ev.reservas, slots:ev.slots, lugares:ev.lugares, turnoOrg:ev.turnoOrg, nextId:ev.nextId };
   try {
     const cache = JSON.parse(localStorage.getItem('fd_eventos')||'{}');
@@ -651,7 +554,6 @@ async function guardarEvento(ev) {
 function aplicarGlobal(d) { G = { ...DEF_GLOBAL, ...d }; }
 
 function aplicarEvento(id, d) {
-  if (modoDemo) return; // No sobreescribir eventos demo
   const idx = eventos.findIndex(e => e.id === id);
   const ev = { id, ...DEF_EVENTO, ...d };
   if (idx >= 0) eventos[idx] = ev; else eventos.push(ev);
@@ -660,7 +562,6 @@ function aplicarEvento(id, d) {
 function suscribir() {
   if (!window._db || !window._fb) return;
   window._fb.onSnapshot(window._fb.doc(window._db, GCOL, 'config'), snap => {
-    if (modoDemo) return; // No actualizar durante modo demo
     if (snap.exists()) { aplicarGlobal(snap.data()); guardarLocalGlobal(); renderHome(); if (loggedIn) renderAdmin(); }
   });
 }
@@ -783,7 +684,6 @@ async function init() {
 // ════════════════════════════════════════
 function show(id) {
   if (id === 'p-admin' && !loggedIn) { show('p-login'); return; }
-  if (id === 'p-discoteca' && !discoLoggedIn) { show('p-login-disco'); return; }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
@@ -791,7 +691,6 @@ function show(id) {
   if (id === 'p-evento')   renderEvento();
   if (id === 'p-reservar') renderSlots();
   if (id === 'p-admin')    { renderAdmin(); setTimeout(()=>renderChartsAdmin(evAdmin), 200); }
-  if (id === 'p-discoteca') { renderDiscoteca(); setTimeout(()=>renderDiscoteca(),200); }
   if (id === 'p-misreservas') { try{document.getElementById('mr-email').value='';document.getElementById('mr-result').innerHTML='';}catch(e){} }
 }
 
@@ -805,7 +704,6 @@ function seleccionarEvento(id) {
 // HOME
 // ════════════════════════════════════════
 function renderHome() {
-  if (modoDemo) return; // Durante el demo la home no se toca
   const el = document.getElementById('h-local-nombre');
   if (el) el.textContent = G.localNombre || 'ENTRADAS';
   const grid = document.getElementById('eventos-grid'); if (!grid) return;
@@ -948,7 +846,7 @@ function renderSlots() {
 }
 
 function getOrgs() {
-  const base=[{n:G.org1,w:G.wa1},{n:G.org2,w:G.wa2},{n:G.org3,w:G.wa3}].filter(o=>o.n&&o.n.trim());
+  const base=[{n:G.org1,w:G.wa1},{n:G.org2,w:G.wa2},{n:G.org3,w:G.wa3},{n:G.org4,w:G.wa4}].filter(o=>o.n&&o.n.trim());
   return [...base,...(G.orgsExtra||[]).filter(o=>o.n&&o.n.trim())];
 }
 
@@ -1172,15 +1070,6 @@ function doLogin() {
   else document.getElementById('l-err').style.display='block';
 }
 
-function doLoginDisco() {
-  const p = document.getElementById('ld-pass').value;
-  if (p===G.passDiscoteca) { discoLoggedIn=true; document.getElementById('ld-err').style.display='none'; document.getElementById('ld-pass').value=''; show('p-discoteca'); }
-  else document.getElementById('ld-err').style.display='block';
-}
-
-function logout() { loggedIn=false; document.getElementById('p-admin').innerHTML=''; show('p-home'); }
-function logoutDisco() { discoLoggedIn=false; show('p-home'); }
-
 // ════════════════════════════════════════
 // BUILD ADMIN
 // ════════════════════════════════════════
@@ -1201,7 +1090,6 @@ function buildAdmin() {
       <button class="d-link" onclick="aTabM('s-disp',this)">Disponibilidad</button>
       <button class="d-link" onclick="aTabM('s-cont',this)">Contabilidad</button>
       <button class="d-link" onclick="aTabM('s-bot',this)">TicketBot</button>
-      <button class="d-link" onclick="aTabM('s-emails',this)">Emails</button>
       <button class="d-link" onclick="aTabM('s-cfg',this)">Configuración</button>
     </nav>
     <div class="d-out">
@@ -1219,7 +1107,6 @@ function buildAdmin() {
       <button class="slink" onclick="aTab('s-disp',this)">Disponibilidad</button>
       <button class="slink" onclick="aTab('s-cont',this)">Contabilidad</button>
       <button class="slink" onclick="aTab('s-bot',this)">TicketBot</button>
-      <button class="slink" onclick="aTab('s-emails',this)">Emails</button>
       <button class="slink" onclick="aTab('s-cfg',this)">Configuración</button>
     </nav>
     <div class="sout">
@@ -1244,18 +1131,10 @@ function buildAdmin() {
       </div>
       <div class="abar-wrap"><span style="font-size:12px;color:var(--mu)">Aforo</span><div class="abar"><div class="abar-fill" id="a-bar" style="width:0%"></div></div><span style="font-size:12px;color:var(--mu)" id="a-pct">0%</span></div>
       <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Últimas reservas</div>
-      <div class="charts-admin-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
-        <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:16px">
-          <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Entradas por estado</div>
-          <div style="position:relative;height:180px;overflow:hidden">
-            <canvas id="admin-chart-estados"></canvas>
-          </div>
-        </div>
-        <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:16px">
-          <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Recaudación por RRPP</div>
-          <div style="position:relative;height:180px;overflow:hidden">
-            <canvas id="admin-chart-rrpp"></canvas>
-          </div>
+      <div style="background:var(--g1);border:1px solid var(--g2);border-radius:12px;padding:16px;margin-bottom:20px">
+        <div style="font-size:11px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Entradas por estado</div>
+        <div style="position:relative;height:200px;overflow:hidden">
+          <canvas id="admin-chart-estados"></canvas>
         </div>
       </div>
       <div class="sel-bar" id="dash-sel-bar">
@@ -1379,32 +1258,6 @@ function buildAdmin() {
       <div class="tbcard" id="bot-card" style="display:none"><h4>Texto para TicketBot</h4><p>Copia y pega en Telegram:</p><div class="botout" id="bot-out"></div><button class="copybtn" onclick="copyBot()">Copiar</button></div>
       <div class="tbcard"><h4>Pendientes de generar</h4><p>Cobradas sin entrada generada:</p><div id="bot-pend"></div></div>
     </section>
-    <section class="asec" id="s-emails">
-      <div class="ahead"><h2>Emails</h2><button class="ctabtn" style="padding:9px 16px;font-size:13px" onclick="exportEmailsCSV()">Exportar CSV</button></div>
-      <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Todos los compradores que han realizado una reserva en cualquier evento.</p>
-      <div class="sel-bar" id="emails-sel-bar">
-        <span class="sel-count" id="emails-sel-count">0 seleccionadas</span>
-        <button class="acbtn del" onclick="bulkEliminar('emails')">Eliminar</button>
-        <button class="acbtn" onclick="clearSel('emails')">Deseleccionar</button>
-      </div>
-      <div class="frow" id="emails-frow">
-        <button class="fchip on" onclick="filtrarEmails('todos',this)">Todos</button>
-        <button class="fchip" onclick="filtrarEmails('cobrado',this)">Cobrados</button>
-        <button class="fchip" onclick="filtrarEmails('pendiente',this)">Pendientes</button>
-      </div>
-      <div class="filter-bar">
-        <input type="text" id="emails-search" placeholder="Buscar nombre o email..." oninput="rEmails()">
-        <select id="emails-sort" onchange="rEmails()">
-          <option value="reciente">Más recientes</option>
-          <option value="az">A → Z</option>
-          <option value="za">Z → A</option>
-          <option value="ent-desc">Más entradas primero</option>
-          <option value="ent-asc">Menos entradas primero</option>
-        </select>
-      </div>
-      <div class="twrap res-table-wrap" id="emails-table"><table class="tbl"><thead><tr><th style="width:4%"><input type="checkbox" class="chk" onclick="selAll('emails',this)"></th><th style="width:18%">Nombre</th><th style="width:23%">Email</th><th style="width:16%">Evento</th><th style="width:9%">Entradas</th><th style="width:12%">Estado</th><th style="width:12%">Fecha</th></tr></thead><tbody id="emails-body"></tbody></table></div>
-      <div class="res-cards" id="emails-cards"></div>
-    </section>
     <section class="asec" id="s-cfg">
       <div class="ahead"><h2>Configuración</h2></div>
       <div class="cgrid">
@@ -1414,7 +1267,6 @@ function buildAdmin() {
         </div>
         <div class="ccard"><h4>Acceso</h4>
           <div class="crow2"><label>Contraseña panel</label><input class="cinput" type="password" id="c-pas" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
-          <div class="crow2"><label>Clave discoteca</label><input class="cinput" type="password" id="c-pdisco" onchange="saveCfg()" onfocus="this.type='text'" onblur="this.type='password'"></div>
           <div class="crow2"><label>Nombre del local</label><input class="cinput" id="c-local" onchange="saveCfg()"></div>
         </div>
         <div class="ccard"><h4>RRPP base</h4>
@@ -1424,6 +1276,8 @@ function buildAdmin() {
           <div class="crow2"><label>RRPP 2 WhatsApp</label><input class="cinput" id="c-w2" onchange="saveCfg()"></div>
           <div class="crow2"><label>RRPP 3 nombre</label><input class="cinput" id="c-o3" onchange="saveCfg()"></div>
           <div class="crow2"><label>RRPP 3 WhatsApp</label><input class="cinput" id="c-w3" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 4 nombre</label><input class="cinput" id="c-o4" onchange="saveCfg()"></div>
+          <div class="crow2"><label>RRPP 4 WhatsApp</label><input class="cinput" id="c-w4" onchange="saveCfg()"></div>
         </div>
         <div class="ccard"><h4>RRPP adicionales</h4>
           <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Se suman al reparto rotativo.</p>
@@ -1473,7 +1327,6 @@ function renderAdmin() {
   if(id==='s-disp') rDisp();
   if(id==='s-cont') rCont();
   if(id==='s-bot')  rBot();
-  if(id==='s-emails') rEmails();
   if(id==='s-cfg')  rCfg();
 }
 function cambiarEvAdmin(evId) {
@@ -1496,7 +1349,7 @@ function poblarSelectores() {
 // ════════════════════════════════════════
 // SELECCIÓN MÚLTIPLE Y ELIMINACIÓN
 // ════════════════════════════════════════
-const seleccionadas = { dash:new Set(), res:new Set(), cont:new Set(), emails:new Set(), disco:new Set() };
+const seleccionadas = { dash:new Set(), res:new Set(), cont:new Set() };
 let pendingDelete = { ctx:null, ids:[], evIds:[] };
 
 function toggleSel(ctx, id, evId) {
@@ -1512,14 +1365,14 @@ function selAll(ctx, chk) {
   if (chk.checked) rows.forEach(el => seleccionadas[ctx].add(el.dataset.key));
   updateSelBar(ctx);
   // re-render para reflejar estado visual
-  const fn = {dash:rDash,res:rRes,cont:rCont,emails:rEmails,disco:renderDiscoteca}[ctx];
+  const fn = {dash:rDash,res:rRes,cont:rCont}[ctx];
   if (fn) fn();
 }
 
 function clearSel(ctx) {
   seleccionadas[ctx].clear();
   updateSelBar(ctx);
-  const fn = {dash:rDash,res:rRes,cont:rCont,emails:rEmails,disco:renderDiscoteca}[ctx];
+  const fn = {dash:rDash,res:rRes,cont:rCont}[ctx];
   if (fn) fn();
 }
 
@@ -1819,21 +1672,23 @@ function markGen(evId,rId){const ev=eventos.find(e=>e.id===evId);if(!ev)return;c
 // ════════════════════════════════════════
 function rCfg() {
   const el=id=>document.getElementById(id); if(!el('c-pas')) return;
-  el('c-pas').value=G.pass; el('c-pdisco').value=G.passDiscoteca||'discoteca2026';
+  el('c-pas').value=G.pass;
   el('c-local').value=G.localNombre||'';
   el('c-o1').value=G.org1; el('c-w1').value=G.wa1;
   el('c-o2').value=G.org2; el('c-w2').value=G.wa2;
   el('c-o3').value=G.org3; el('c-w3').value=G.wa3;
+  if(el('c-o4')){el('c-o4').value=G.org4||''; el('c-w4').value=G.wa4||'';}
   rOrgsExtra(); rCfgEventos();
 }
 
 function saveCfg() {
   const el=id=>document.getElementById(id);
-  G.pass=el('c-pas').value; G.passDiscoteca=el('c-pdisco').value;
+  G.pass=el('c-pas').value;
   G.localNombre=el('c-local').value;
   G.org1=el('c-o1').value; G.wa1=el('c-w1').value;
   G.org2=el('c-o2').value; G.wa2=el('c-w2').value;
   G.org3=el('c-o3').value; G.wa3=el('c-w3').value;
+  if(el('c-o4')){G.org4=el('c-o4').value; G.wa4=el('c-w4').value;}
   guardarGlobal(); renderHome(); toast('Guardado');
 }
 
@@ -1865,7 +1720,7 @@ function rOrgsExtra() {
       <input value="${o.n}" placeholder="Nombre" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'n',this.value)">
       <input value="${o.w}" placeholder="WhatsApp" style="flex:1;font-size:12px;padding:5px 8px" onchange="editOrgExtra(${i},'w',this.value)">
       <button class="acbtn del" onclick="delOrgExtra(${i})">✕</button>
-    </div>`).join('')||`<p style="font-size:12px;color:var(--mu);padding:6px 0">Solo los 3 RRPP base</p>`;
+    </div>`).join('')||`<p style="font-size:12px;color:var(--mu);padding:6px 0">Solo los 4 RRPP base</p>`;
 }
 function addOrgExtra(){if(!G.orgsExtra)G.orgsExtra=[];G.orgsExtra.push({n:'',w:''});guardarGlobal();rOrgsExtra();toast('Añadido');}
 function editOrgExtra(i,c,v){if(!G.orgsExtra)return;G.orgsExtra[i][c]=v;guardarGlobal();}
@@ -1901,136 +1756,6 @@ function nfRender(){
 // PANEL DISCOTECA
 // ════════════════════════════════════════
 // ════════════════════════════════════════
-// ════════════════════════════════════════
-// MODO DEMO
-// ════════════════════════════════════════
-let eventosDemoBackup = null;
-
-function activarModoDemo() {
-  if (modoDemo) { desactivarModoDemo(); return; }
-  modoDemo = true;
-  eventosDemoBackup = JSON.parse(JSON.stringify(eventos));
-
-  const rrpps = [
-    {n:'Carlos',w:'34600000001'},{n:'Laura',w:'34600000002'},
-    {n:'Marcos',w:'34600000003'},{n:'Sara',w:'34600000004'}
-  ];
-  const lugares = ['Entrada facultad','La L','Puerta principal','Bar de abajo'];
-
-  function mkReserva(id, evId, evNombre, precio, fecha, slot, org, estado, cant, notas='') {
-    return {id, eventoId:evId, eventoNombre:evNombre, nombre:['Álvaro García','María López','Unai Etxeberria','Lucía Fernández','Jon Arizaga','Ane Goikoetxea','Pablo Martínez','Irene Sáez','Mikel Urrutia','Nora Bilbao','Diego Torres','Amaia Zubiaurre','Sergio Peña','Leire Mendez','Iñigo Ruiz','Cristina Vidal','Borja Alonso','Marta Eguia','Raul Castillo','Elena Aguirre'][id%20], email:`user${id}@demo.com`, cantidad:cant, importe:cant*precio, slot, lugar:lugares[id%4], org:org.n, orgWa:org.w, estado, fecha, entradaGenerada:estado==='cobrado', notas};
-  }
-
-  const hoy = new Date();
-  const fmt = d => d.toLocaleDateString('es-ES');
-  const d = (days) => { const x=new Date(hoy); x.setDate(x.getDate()-days); return fmt(x); };
-
-  // Evento 1 — Fiesta Uni Viernes (aforo casi lleno)
-  const ev1 = {
-    id:'demo-ev1', nombre:'Fiesta Uni Viernes', fecha:'Vie 20 Mar', precio:15, aforo:400,
-    activo:true, desc:'La noche más esperada del trimestre', turnoOrg:0, nextId:100,
-    slots:[{id:1,fecha:'Vie 20 Mar',hora:'22:00',lugar:'Entrada facultad',org:'Carlos',activo:true},{id:2,fecha:'Vie 20 Mar',hora:'23:00',lugar:'La L',org:'Laura',activo:true}],
-    lugares:['Entrada facultad','La L'],
-    reservas: [], waitlist:[]
-  };
-  let rid=0;
-  const slotsFri=['Vie 20 Mar, 22:00','Vie 20 Mar, 23:00'];
-  // 320 entradas vendidas aprox
-  [[0,'cobrado',8],[1,'cobrado',6],[2,'cobrado',5],[3,'cobrado',4],[4,'cobrado',7],[5,'cobrado',3],[6,'cobrado',6],[7,'cobrado',5],[8,'cobrado',8],[9,'cobrado',4],[10,'cobrado',7],[11,'cobrado',6],[12,'cobrado',5],[13,'cobrado',3],[14,'cobrado',8],[15,'cobrado',6],[16,'cobrado',4],[17,'cobrado',7],[18,'cobrado',5],[19,'cobrado',6],
-   [0,'cobrado',5],[1,'cobrado',4],[2,'cobrado',6],[3,'cobrado',8],[4,'cobrado',3],[5,'cobrado',7],[6,'cobrado',5],[7,'cobrado',4],[8,'cobrado',6],[9,'cobrado',8],[10,'cobrado',5],[11,'cobrado',4],[12,'cobrado',7],[13,'cobrado',6],[14,'cobrado',4],[15,'cobrado',5],[16,'cobrado',8],[17,'cobrado',3],[18,'cobrado',6],[19,'cobrado',7],
-   [0,'pendiente',3],[1,'pendiente',5],[2,'pendiente',2],[3,'pendiente',4],[4,'pendiente',6],[5,'pendiente',3],[6,'pendiente',2],[7,'pendiente',5],[8,'cancelado',4],[9,'cancelado',3]
-  ].forEach(([orgIdx,est,cant],i)=>{
-    ev1.reservas.push(mkReserva(rid++,'demo-ev1','Fiesta Uni Viernes',15,d(Math.floor(Math.random()*14)+1),slotsFri[i%2],rrpps[orgIdx%4],est,cant,i===0?'Paga la mitad ahora':''));
-  });
-
-  // Evento 2 — Sábado Tardeo (medio lleno)
-  const ev2 = {
-    id:'demo-ev2', nombre:'Sábado Tardeo', fecha:'Sáb 21 Mar', precio:10, aforo:300,
-    activo:true, desc:'Afterwork universitario desde las 6', turnoOrg:0, nextId:200,
-    slots:[{id:1,fecha:'Sáb 21 Mar',hora:'18:00',lugar:'Puerta principal',org:'Marcos',activo:true}],
-    lugares:['Puerta principal','Bar de abajo'],
-    reservas: [], waitlist:[]
-  };
-  [[0,'cobrado',4],[1,'cobrado',3],[2,'cobrado',5],[3,'cobrado',2],[4,'cobrado',6],[5,'cobrado',4],[6,'cobrado',3],[7,'cobrado',5],[8,'cobrado',4],[9,'cobrado',3],[10,'cobrado',2],[11,'cobrado',4],[12,'cobrado',6],[13,'cobrado',3],[14,'cobrado',5],[15,'cobrado',4],[16,'cobrado',3],[17,'cobrado',2],[18,'pendiente',5],[19,'pendiente',4],[0,'pendiente',3],[1,'pendiente',6],[2,'cancelado',2],[3,'cancelado',3]
-  ].forEach(([orgIdx,est,cant],i)=>{
-    ev2.reservas.push(mkReserva(rid++,'demo-ev2','Sábado Tardeo',10,d(Math.floor(Math.random()*10)+1),'Sáb 21 Mar, 18:00',rrpps[orgIdx%4],est,cant));
-  });
-
-  // Evento 3 — Fiesta Fin de Curso (recién abierto)
-  const ev3 = {
-    id:'demo-ev3', nombre:'Fiesta Fin de Curso', fecha:'Vie 3 Abr', precio:18, aforo:500,
-    activo:true, desc:'La fiesta del año. Solo una vez.', turnoOrg:0, nextId:300,
-    slots:[{id:1,fecha:'Vie 3 Abr',hora:'22:00',lugar:'Entrada facultad',org:'Sara',activo:true},{id:2,fecha:'Vie 3 Abr',hora:'23:30',lugar:'Bar de abajo',org:'Carlos',activo:true}],
-    lugares:['Entrada facultad','Bar de abajo'],
-    reservas: [], waitlist:[{nombre:'Alex Ruiz',email:'alex@demo.com',fecha:d(1)},{nombre:'Paula Vega',email:'paula@demo.com',fecha:d(0)}]
-  };
-  [[0,'cobrado',6],[1,'cobrado',4],[2,'cobrado',8],[3,'cobrado',3],[4,'cobrado',5],[5,'cobrado',7],[6,'cobrado',4],[7,'cobrado',6],[8,'pendiente',8],[9,'pendiente',5],[10,'pendiente',6],[11,'pendiente',4],[12,'pendiente',7],[13,'cancelado',3]
-  ].forEach(([orgIdx,est,cant],i)=>{
-    ev3.reservas.push(mkReserva(rid++,'demo-ev3','Fiesta Fin de Curso',18,d(Math.floor(Math.random()*5)),i%2===0?'Vie 3 Abr, 22:00':'Vie 3 Abr, 23:30',rrpps[orgIdx%4],est,cant));
-  });
-
-  // Inyectar en memoria (sin tocar Firebase)
-  eventos = [ev1, ev2, ev3];
-  evAdmin = ev1;
-  discoLoggedIn = true;
-  G.localNombre = 'Tu Discoteca';
-
-  // Mostrar banner demo
-  const banner = document.getElementById('demo-banner');
-  if (banner) banner.style.display = 'flex';
-  const titulo = document.getElementById('disco-titulo');
-  if (titulo) titulo.textContent = 'EVENTOS';
-
-  toast('🎭 Modo demo activado');
-  // Renderizar home con eventos demo
-  const elHome = document.getElementById('h-local-nombre');
-  if (elHome) elHome.textContent = 'TU DISCOTECA';
-  const grid = document.getElementById('eventos-grid');
-  if (grid) {
-    grid.innerHTML = [ev1,ev2,ev3].map(ev => {
-      const vend = (ev.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0);
-      const pct  = ev.aforo>0 ? Math.min(100,Math.round(vend/ev.aforo*100)) : 0;
-      const disp = Math.max(0, ev.aforo - vend);
-      const barColor = pct>=90?'var(--red)':pct>=70?'#f5a623':'var(--acc)';
-      return `<div class="evento-card" onclick="seleccionarEvento('${ev.id}')">
-        <div class="ev-nombre">${ev.nombre.toUpperCase()}</div>
-        <div class="ev-fecha">${ev.fecha}</div>
-        ${ev.desc?`<div class="ev-info">${ev.desc}</div>`:''}
-        <div class="ev-precio">${ev.precio} € / entrada</div>
-        <div class="ev-aforo">
-          ${disp<=20?`<div style="font-size:12px;color:var(--red);font-weight:500">🔥 ¡Solo quedan ${disp} entradas!</div>`:`<div style="font-size:12px;color:var(--mu)">${disp} entradas disponibles · ${pct}% reservado</div>`}
-          <div class="ev-bar-bg"><div class="ev-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-  show('p-discoteca');
-  setTimeout(()=>renderDiscoteca(),250);
-}
-
-function desactivarModoDemo() {
-  modoDemo = false;
-  if (eventosDemoBackup !== null) eventos = eventosDemoBackup;
-  eventosDemoBackup = null;
-  discoLoggedIn = false;
-  G.localNombre = '';
-  const banner = document.getElementById('demo-banner');
-  if (banner) banner.style.display = 'none';
-  const titulo = document.getElementById('disco-titulo');
-  if (titulo) titulo.textContent = 'EVENTOS';
-  show('p-home');
-  renderHome();
-  // Forzar recarga de eventos reales desde Firebase
-  if (window._db && window._fb) {
-    window._fb.getDocs(window._fb.collection(window._db, ECOL)).then(eSnap => {
-      eventos = [];
-      eSnap.forEach(d => { const data=d.data(); if(!data._deleted) aplicarEvento(d.id,data); });
-      renderHome();
-    }).catch(()=>{});
-  }
-  toast('Modo demo desactivado');
-}
-
 // GRÁFICOS (Chart.js)
 // ════════════════════════════════════════
 const chartInstances = {};
@@ -2052,129 +1777,6 @@ const GRN  = '#6dc96d';
 const BLUE = '#47b8ff';
 const PALETTE = [ACC, BLUE, ORG, GRN, RED, '#c947ff', '#47ffd4'];
 
-function renderChartsDisco(lista) {
-  const todasRes = lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre,evAforo:ev.aforo,evPrecio:ev.precio})));
-  const activas  = todasRes.filter(r=>r.estado!=='cancelado');
-  const cobradas = todasRes.filter(r=>r.estado==='cobrado');
-  const pendientes = todasRes.filter(r=>r.estado==='pendiente');
-  const canceladas = todasRes.filter(r=>r.estado==='cancelado');
-
-  // ── KPIs de negocio ──
-  const totalEnts   = activas.reduce((a,r)=>a+r.cantidad,0);
-  const totalRec    = cobradas.reduce((a,r)=>a+r.importe,0);
-  const ticketMedio = activas.length>0 ? Math.round(activas.reduce((a,r)=>a+r.importe,0)/activas.length) : 0;
-  const tasaConv    = (activas.length+canceladas.length)>0 ? Math.round(cobradas.length/(activas.length+canceladas.length)*100) : 0;
-  const aforoTotal  = lista.reduce((a,ev)=>a+ev.aforo,0);
-  // Proyección: usa precio medio cobrado si hay cobradas, si no usa precio medio de los eventos
-  const precioMedio = cobradas.length>0
-    ? totalRec/Math.max(cobradas.reduce((a,r)=>a+r.cantidad,0),1)
-    : lista.reduce((a,ev)=>a+ev.precio,0)/Math.max(lista.length,1);
-  const proyeccion  = Math.round(aforoTotal * precioMedio);
-  const pctOcup     = aforoTotal>0 ? Math.round(totalEnts/aforoTotal*100) : 0;
-
-  const kpisEl = document.getElementById('disco-kpis');
-  if (kpisEl) kpisEl.innerHTML = `
-    <div class="mcard"><div class="ml">Ticket medio</div><div class="mv" style="color:var(--acc)">${ticketMedio} €</div><div class="ms">por reserva</div></div>
-    <div class="mcard"><div class="ml">Tasa conversión</div><div class="mv" style="color:${tasaConv>=70?'#6dc96d':tasaConv>=40?'#f5a623':'#ff4747'}">${tasaConv}%</div><div class="ms">reservas cobradas</div></div>
-    <div class="mcard"><div class="ml">Proyección lleno</div><div class="mv" style="color:#47b8ff">${proyeccion} €</div><div class="ms">si se completa aforo</div></div>
-    <div class="mcard"><div class="ml">Ocupación</div><div class="mv" style="color:${pctOcup>=80?'#ff4747':pctOcup>=50?'#f5a623':'var(--acc)'}">${pctOcup}%</div><div class="ms">${totalEnts} de ${aforoTotal} plazas</div></div>`;
-
-  // ── Comparativa mes actual vs anterior ──
-  const ahora = new Date();
-  const mesAct = ahora.getMonth(); const anioAct = ahora.getFullYear();
-  const mesPas = mesAct===0?11:mesAct-1; const anioPas = mesAct===0?anioAct-1:anioAct;
-  const esEste = r => { const p=r.fecha?.split('/'); if(!p||p.length<3)return false; return parseInt(p[1])-1===mesAct&&parseInt(p[2])===anioAct; };
-  const esAnt  = r => { const p=r.fecha?.split('/'); if(!p||p.length<3)return false; return parseInt(p[1])-1===mesPas&&parseInt(p[2])===anioPas; };
-  const entsEste = activas.filter(esEste).reduce((a,r)=>a+r.cantidad,0);
-  const entsAnt  = activas.filter(esAnt).reduce((a,r)=>a+r.cantidad,0);
-  const recEste  = cobradas.filter(esEste).reduce((a,r)=>a+r.importe,0);
-  const recAnt   = cobradas.filter(esAnt).reduce((a,r)=>a+r.importe,0);
-  const diffPct  = entsAnt>0?Math.round((entsEste-entsAnt)/entsAnt*100):(entsEste>0?100:0);
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const compEl = document.getElementById('disco-comparativa-mes');
-  if (compEl) compEl.innerHTML = `
-    <div style="font-size:26px;font-weight:700;font-family:var(--fd);color:${diffPct>=0?'#6dc96d':'#ff4747'};letter-spacing:1px">
-      ${diffPct>=0?'+':''}${diffPct}%
-    </div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:8px">${meses[mesAct]}: ${entsEste} entradas · ${recEste}€ &nbsp;vs&nbsp; ${meses[mesPas]}: ${entsAnt} · ${recAnt}€</div>`;
-  crearOActualizar('chart-meses',{
-    type:'bar',
-    data:{
-      labels:[meses[mesPas].slice(0,3),meses[mesAct].slice(0,3)],
-      datasets:[
-        {label:'Entradas',data:[entsAnt,entsEste],backgroundColor:[ACC+'55',ACC+'cc'],borderColor:[ACC,ACC],borderWidth:1,borderRadius:6},
-        {label:'€ cobrado',data:[recAnt,recEste],backgroundColor:['#6dc96d55','#6dc96dcc'],borderColor:['#6dc96d','#6dc96d'],borderWidth:1,borderRadius:6,yAxisID:'y2'}
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{size:10},boxWidth:12,padding:8}}},scales:{x:{ticks:{color:'#888',font:{size:10}}},y:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5},beginAtZero:true},y2:{position:'right',ticks:{color:'#6dc96d',font:{size:10},maxTicksLimit:5},beginAtZero:true,grid:{display:false}}}}
-  });
-
-  // ── Reservas por evento ──
-  crearOActualizar('chart-eventos',{
-    type:'bar',
-    data:{
-      labels:lista.map(ev=>ev.nombre.length>10?ev.nombre.slice(0,10)+'…':ev.nombre),
-      datasets:[
-        {label:'Reservadas',data:lista.map(ev=>(ev.reservas||[]).filter(r=>r.estado!=='cancelado').reduce((a,r)=>a+r.cantidad,0)),backgroundColor:ACC+'99',borderColor:ACC,borderWidth:1,borderRadius:6},
-        {label:'Cobradas',data:lista.map(ev=>(ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0)),backgroundColor:'#6dc96d99',borderColor:'#6dc96d',borderWidth:1,borderRadius:6}
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{size:10},boxWidth:12,padding:8}}},scales:{x:{ticks:{color:'#888',font:{size:10}}},y:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5},beginAtZero:true}}}
-  });
-
-  // ── Donut estado ──
-  const cob2=cobradas.reduce((a,r)=>a+r.cantidad,0);
-  const pen2=pendientes.reduce((a,r)=>a+r.cantidad,0);
-  const can2=canceladas.reduce((a,r)=>a+r.cantidad,0);
-  crearOActualizar('chart-estados',{
-    type:'doughnut',
-    data:{labels:['Cobradas','Pendientes','Canceladas'],datasets:[{data:[cob2,pen2,can2],backgroundColor:['#6dc96dcc',ACC+'cc','#ff4747cc'],borderColor:['#0a0a0a'],borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#888',font:{size:10},boxWidth:12,padding:8}}}}
-  });
-
-  // ── Recaudación por RRPP ──
-  const statsRRPP={};
-  cobradas.forEach(r=>{statsRRPP[r.org]=(statsRRPP[r.org]||0)+r.importe;});
-  const rrppL=Object.keys(statsRRPP);
-  crearOActualizar('chart-rrpp',{
-    type:'bar',
-    data:{labels:rrppL.length?rrppL:['Sin datos'],datasets:[{label:'€ cobrado',data:rrppL.length?rrppL.map(n=>statsRRPP[n]):[0],backgroundColor:PALETTE.slice(0,rrppL.length).map(c=>c+'bb'),borderColor:PALETTE.slice(0,rrppL.length),borderWidth:1,borderRadius:6}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5}},y:{ticks:{color:'#888',font:{size:10}}}}}
-  });
-
-  // ── Reservas por día ──
-  const porDia={};
-  activas.forEach(r=>{const d=r.fecha||'Sin fecha';porDia[d]=(porDia[d]||0)+r.cantidad;});
-  const dias=Object.keys(porDia).sort();
-  crearOActualizar('chart-dias',{
-    type:'line',
-    data:{labels:dias,datasets:[{label:'Entradas',data:dias.map(d=>porDia[d]),borderColor:ACC,backgroundColor:ACC+'22',borderWidth:2,pointBackgroundColor:ACC,pointRadius:3,tension:0.3,fill:true}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5}},y:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5},beginAtZero:true}}}
-  });
-
-  // ── Hora pico — solo horas pares en móvil ──
-  const porHora = Array(24).fill(0);
-  activas.forEach(r=>{
-    const h = parseInt((r.slot||'').split(', ')[1]?.split(':')[0]);
-    if (!isNaN(h) && h>=0 && h<24) porHora[h]+=r.cantidad;
-  });
-  const horaMax = porHora.indexOf(Math.max(...porHora));
-  crearOActualizar('chart-horas',{
-    type:'bar',
-    data:{
-      labels:Array.from({length:24},(_,i)=>i%2===0?(i+'h'):''),
-      datasets:[{
-        label:'Reservas',
-        data:porHora,
-        backgroundColor:porHora.map((_,i)=>i===horaMax?ACC+'ee':ACC+'33'),
-        borderColor:porHora.map((_,i)=>i===horaMax?ACC:'transparent'),
-        borderWidth:1,borderRadius:3
-      }]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:t=>'A las '+t[0].dataIndex+'h',label:c=>c.raw+' entradas'}}},scales:{x:{ticks:{color:'#888',font:{size:9}}},y:{ticks:{color:'#888',font:{size:10},maxTicksLimit:5},beginAtZero:true}}}
-  });
-}
-
 function renderChartsAdmin(ev) {
   if (!ev) return;
   const res = ev.reservas||[];
@@ -2191,185 +1793,6 @@ function renderChartsAdmin(ev) {
     },
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#888',font:{size:11},padding:10}}}}
   });
-
-  // Recaudación por RRPP (barras)
-  const statsRRPP = {};
-  res.filter(r=>r.estado==='cobrado').forEach(r=>{ statsRRPP[r.org]=(statsRRPP[r.org]||0)+r.importe; });
-  const rrppLabels = Object.keys(statsRRPP);
-  crearOActualizar('admin-chart-rrpp', {
-    type: 'bar',
-    data: {
-      labels: rrppLabels.length ? rrppLabels : ['Sin datos'],
-      datasets:[{label:'€ cobrado', data: rrppLabels.length ? rrppLabels.map(n=>statsRRPP[n]) : [0], backgroundColor:PALETTE.slice(0,rrppLabels.length).map(c=>c+'bb'), borderColor:PALETTE.slice(0,rrppLabels.length), borderWidth:1, borderRadius:6}]
-    },
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888'}},y:{ticks:{color:'#888'}}}}
-  });
-}
-
-// ════════════════════════════════════════
-// INFORME PDF
-// ════════════════════════════════════════
-function exportarInformePDF() {
-  const sel = document.getElementById('disco-ev-sel');
-  const evId = sel ? sel.value : '';
-  const lista = evId ? [eventos.find(e=>e.id===evId)].filter(Boolean) : eventos;
-  const todasRes = lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
-  const activas  = todasRes.filter(r=>r.estado!=='cancelado');
-  const cobradas = todasRes.filter(r=>r.estado==='cobrado');
-  const canceladas = todasRes.filter(r=>r.estado==='cancelado');
-  const totalEnts = activas.reduce((a,r)=>a+r.cantidad,0);
-  const totalRec  = cobradas.reduce((a,r)=>a+r.importe,0);
-  const ticketMedio = activas.length>0?Math.round(activas.reduce((a,r)=>a+r.importe,0)/activas.length):0;
-  const tasaConv = (activas.length+canceladas.length)>0?Math.round(cobradas.length/(activas.length+canceladas.length)*100):0;
-  const aforoTotal = lista.reduce((a,ev)=>a+ev.aforo,0);
-  const pctOcup = aforoTotal>0?Math.round(totalEnts/aforoTotal*100):0;
-  const proyeccion = aforoTotal>0?Math.round(aforoTotal*(totalRec/Math.max(totalEnts,1))):0;
-  const fecha = new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
-  const localNombre = G.localNombre || 'Local';
-
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Helvetica Neue',Arial,sans-serif;background:#fff;color:#111;padding:40px}
-    .logo{font-size:28px;font-weight:900;letter-spacing:4px;margin-bottom:4px}
-    .sub{font-size:13px;color:#888;margin-bottom:32px}
-    h2{font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e8ff47}
-    .grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;margin-bottom:32px}
-    .kpi{background:#f5f5f5;border-radius:8px;padding:16px}
-    .kpi-val{font-size:28px;font-weight:900;margin-bottom:4px}
-    .kpi-lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}
-    .kpi-sub{font-size:11px;color:#aaa;margin-top:2px}
-    table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:32px}
-    th{background:#111;color:#e8ff47;padding:8px 12px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase}
-    td{padding:8px 12px;border-bottom:1px solid #eee}
-    tr:nth-child(even) td{background:#f9f9f9}
-    .footer{font-size:11px;color:#aaa;text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #eee}
-    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
-    .cobrado{background:#dcf5dc;color:#2d7a2d}
-    .pendiente{background:#fffbdc;color:#7a6a00}
-    .cancelado{background:#fde;color:#a00}
-  </style></head><body>
-  <div class="logo">${localNombre.toUpperCase()}</div>
-  <div class="sub">Informe de reservas · ${evId?lista[0]?.nombre:'Todos los eventos'} · Generado el ${fecha}</div>
-  <h2>Resumen ejecutivo</h2>
-  <div class="grid">
-    <div class="kpi"><div class="kpi-val">${totalEnts}</div><div class="kpi-lbl">Entradas reservadas</div><div class="kpi-sub">${pctOcup}% del aforo</div></div>
-    <div class="kpi"><div class="kpi-val">${totalRec} €</div><div class="kpi-lbl">Recaudado</div><div class="kpi-sub">${cobradas.length} reservas cobradas</div></div>
-    <div class="kpi"><div class="kpi-val">${ticketMedio} €</div><div class="kpi-lbl">Ticket medio</div><div class="kpi-sub">por reserva</div></div>
-    <div class="kpi"><div class="kpi-val">${tasaConv}%</div><div class="kpi-lbl">Tasa conversión</div><div class="kpi-sub">Proyección lleno: ${proyeccion}€</div></div>
-  </div>
-  <h2>Detalle de reservas</h2>
-  <table><thead><tr><th>Nombre</th><th>Evento</th><th>Entradas</th><th>Importe</th><th>RRPP</th><th>Estado</th></tr></thead><tbody>
-  ${activas.slice(0,30).map(r=>`<tr><td><strong>${r.nombre}</strong>${r.notas?`<br><span style="color:#aaa;font-size:11px">${r.notas}</span>`:''}</td><td>${r.evNombre}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td>${r.org}</td><td><span class="badge ${r.estado}">${r.estado}</span></td></tr>`).join('')}
-  </tbody></table>
-  <div class="footer">Generado por el sistema de reservas · ${localNombre} · ${fecha}</div>
-  </body></html>`;
-
-  const win = window.open('','_blank');
-  win.document.write(html);
-  win.document.close();
-  setTimeout(()=>{ win.print(); }, 500);
-}
-
-function renderDiscoteca() {
-  const sel=document.getElementById('disco-ev-sel');
-  const valorActual = sel ? sel.value : '';
-  if(sel){
-    sel.innerHTML=`<option value="">Todos los eventos</option>`+eventos.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');
-    if(valorActual) sel.value = valorActual;
-  }
-  const evId=sel?sel.value:'';
-  const lista=evId?[eventos.find(e=>e.id===evId)].filter(Boolean):eventos;
-  const todasResBase=lista.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
-  const todasRes = sortAndFilter(todasResBase,'disco-search','disco-sort');
-  const vend=todasResBase.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
-  const rec=todasResBase.filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
-  const aforo=lista.reduce((a,ev)=>a+ev.aforo,0);
-  const m=document.getElementById('disco-metrics');
-  if(m)m.innerHTML=`
-    <div class="mcard"><div class="ml">Entradas vendidas</div><div class="mv">${vend}</div><div class="ms">de ${aforo} aforo total</div></div>
-    <div class="mcard"><div class="ml">Recaudado</div><div class="mv">${rec} €</div></div>
-    <div class="mcard"><div class="ml">Pendientes</div><div class="mv">${todasResBase.filter(r=>r.estado==='pendiente').length}</div></div>
-    <div class="mcard"><div class="ml">Eventos activos</div><div class="mv">${eventos.filter(e=>e.activo).length}</div></div>`;
-  const t=document.getElementById('disco-tabla');
-  if(t) t.innerHTML=todasRes.length
-    ?todasRes.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.disco.has(key);return`<tr class="mob-hide${sel?' selected':''}" data-ctx="disco" data-key="${key}"><td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('disco',${r.id},'${r.eventoId||r.id}');renderDiscoteca()"></td><td>${nomCell(r)}</td><td style="color:var(--acc);font-size:12px">${r.evNombre||''}</td><td>${r.cantidad}</td><td>${r.importe} €</td><td style="color:var(--mu);font-size:12px">${r.slot}</td><td>${bdg(r.estado)}</td></tr>`}).join('')
-    :`<tr class="mob-hide"><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin reservas</td></tr>`;
-  const dc = document.getElementById('disco-cards');
-  if (dc) dc.innerHTML = todasRes.length
-    ? todasRes.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.disco.has(key);return`<div class="m-card${sel?' selected':''}" onclick="toggleSel('disco',${r.id},'${r.eventoId||r.id}');renderDiscoteca()">
-        <div class="m-card-top">
-          <div><div class="m-card-name">${r.nombre}</div><div class="m-card-sub" style="color:var(--acc)">${r.evNombre||''}</div><div class="m-card-sub">${r.slot}</div></div>
-          ${bdg(r.estado)}
-        </div>
-        <div class="m-card-row"><span>Entradas</span><span>${r.cantidad}</span></div>
-        <div class="m-card-row"><span>Importe</span><span style="color:var(--acc)">${r.importe} €</span></div>
-        <div class="m-card-row"><button class="acbtn del" style="font-size:11px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})">Eliminar</button></div>
-      </div>`}).join('')
-    : `<p style="color:var(--mu);font-size:13px;padding:8px">Sin reservas</p>`;
-  updateSelBar('disco');
-  // Comparativa de eventos
-  const comp = document.getElementById('disco-comparativa');
-  if (comp) {
-    const maxVend = Math.max(1, ...eventos.map(ev => (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0)));
-    comp.innerHTML = eventos.map(ev => {
-      const vEv   = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.cantidad,0);
-      const recEv = (ev.reservas||[]).filter(r=>r.estado==='cobrado').reduce((a,r)=>a+r.importe,0);
-      const pct   = Math.round(vEv / maxVend * 100);
-      const pctAf = ev.aforo>0 ? Math.round(vEv/ev.aforo*100) : 0;
-      return `<div style="margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
-          <span style="font-size:13px;font-weight:500">${ev.nombre}</span>
-          <span style="font-size:12px;color:var(--mu)">${vEv} entradas · ${recEv} € · ${pctAf}% aforo</span>
-        </div>
-        <div style="height:8px;background:var(--g2);border-radius:4px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:var(--acc);border-radius:4px;transition:width .5s"></div>
-        </div>
-      </div>`;
-    }).join('') || `<p style="font-size:13px;color:var(--mu)">Sin eventos para comparar.</p>`;
-  }
-
-  // Stats RRPP en discoteca
-  const rrppGrid = document.getElementById('disco-rrpp-grid');
-  if (rrppGrid) {
-    const todasParaStats = lista.flatMap(ev=>(ev.reservas||[]).filter(r=>r.estado!=='cancelado').map(r=>({...r,evPrecio:ev.precio})));
-    const stats = {};
-    todasParaStats.forEach(r => {
-      if (!stats[r.org]) stats[r.org] = { entradas:0, cobradas:0, importe:0, pendiente:0, reservas:0 };
-      stats[r.org].reservas++;
-      stats[r.org].entradas += r.cantidad;
-      if (r.estado==='cobrado') { stats[r.org].cobradas+=r.cantidad; stats[r.org].importe+=r.importe; }
-      else stats[r.org].pendiente += r.importe;
-    });
-    const totalEnts = todasParaStats.reduce((a,r)=>a+r.cantidad,0);
-    rrppGrid.innerHTML = Object.entries(stats).length
-      ? Object.entries(stats).map(([nombre,s]) => {
-          const pct = totalEnts>0 ? Math.round(s.entradas/totalEnts*100) : 0;
-          return `<div class="mcard">
-            <div style="font-family:var(--fd);font-size:18px;letter-spacing:1px;margin-bottom:8px;color:var(--acc)">${nombre}</div>
-            <div style="font-size:12px;color:var(--mu);margin-bottom:6px">${s.reservas} reserva${s.reservas!==1?'s':''} · ${s.entradas} entradas · ${pct}%</div>
-            <div style="height:3px;background:var(--g2);border-radius:2px;margin-bottom:8px"><div style="height:100%;width:${pct}%;background:var(--acc);border-radius:2px"></div></div>
-            <div style="font-size:13px;font-weight:500;color:#6dc96d">${s.importe} € cobrado</div>
-            <div style="font-size:12px;color:#f5a623">${s.pendiente} € pendiente</div>
-          </div>`;
-        }).join('')
-      : `<p style="font-size:13px;color:var(--mu)">Sin datos de RRPP.</p>`;
-  }
-
-  // Waitlist en discoteca
-  const discoWl = document.getElementById('disco-waitlist');
-  if (discoWl) {
-    const waitlist = lista.flatMap(ev=>(ev.waitlist||[]).map(w=>({...w,evNombre:ev.nombre,evId:ev.id})));
-    discoWl.innerHTML = waitlist.length
-      ? `<table class="tbl"><thead><tr><th>Nombre</th><th>Email</th><th>Evento</th><th>Fecha</th></tr></thead><tbody>${
-          waitlist.map(w=>`<tr><td style="font-weight:500">${w.nombre}</td><td style="color:var(--acc);font-size:12px">${w.email}</td><td style="color:var(--mu);font-size:12px">${w.evNombre}</td><td style="color:var(--mu);font-size:12px">${w.fecha}</td></tr>`).join('')
-        }</tbody></table>`
-      : `<p style="font-size:13px;color:var(--mu);padding:12px">No hay nadie en lista de espera.</p>`;
-  }
-
-  const ds=document.getElementById('disco-subtitulo');if(ds)ds.textContent=eventos.length+' eventos · Vista del local';
-  // Gráficos — pequeño delay para que el DOM esté listo
-  setTimeout(()=>renderChartsDisco(lista), 50);
 }
 
 // ════════════════════════════════════════
@@ -2383,84 +1806,12 @@ function exportCSV(){
   toast('CSV descargado');
 }
 
-function exportCSVDisco(){
-  const todasRes=eventos.flatMap(ev=>(ev.reservas||[]).map(r=>({...r,evNombre:ev.nombre})));
-  const h=['Evento','Nombre','Email','Entradas','Importe','Estado','Fecha'];
-  const rows=todasRes.map(r=>[r.evNombre,r.nombre,r.email||'',r.cantidad,r.importe,r.estado,r.fecha]);
-  dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`contabilidad_${new Date().toISOString().slice(0,10)}.csv`);
-  toast('CSV descargado');
-}
-
 // ════════════════════════════════════════
 // EMAILS
 // ════════════════════════════════════════
-let filtroEmails = 'todos';
 
-function rEmails() {
-  const todasRes = eventos.flatMap(ev =>
-    (ev.reservas||[]).filter(r => r.email).map(r => ({...r, evNombre:ev.nombre}))
-  );
-  const base = filtroEmails === 'todos' ? todasRes : todasRes.filter(r => r.estado === filtroEmails);
-  const lista = sortAndFilter(base,'emails-search','emails-sort');
 
-  const body = document.getElementById('emails-body');
-  if (body) body.innerHTML = lista.length
-    ? lista.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.emails.has(key);return`<tr class="${sel?'selected':''}" data-ctx="emails" data-key="${key}">
-        <td><input type="checkbox" class="chk" ${sel?'checked':''} onchange="toggleSel('emails',${r.id},'${r.eventoId||r.id}');rEmails()"></td>
-        <td style="font-weight:500">${r.nombre}</td>
-        <td style="color:var(--acc);font-size:12px">${r.email}</td>
-        <td style="color:var(--mu);font-size:12px">${r.evNombre}</td>
-        <td>${r.cantidad}</td>
-        <td>${bdg(r.estado)}</td>
-        <td style="color:var(--mu);font-size:12px">${r.fecha}</td>
-      </tr>`}).join('')
-    : `<tr><td colspan="7" style="text-align:center;color:var(--mu);padding:16px">Sin resultados</td></tr>`;
 
-  const cards = document.getElementById('emails-cards');
-  if (cards) cards.innerHTML = lista.length
-    ? lista.map(r=>{const key=`${r.eventoId||r.id}:${r.id}`;const sel=seleccionadas.emails.has(key);return`
-      <div class="res-card${sel?' selected':''}" onclick="toggleSel('emails',${r.id},'${r.eventoId||r.id}');rEmails()">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-          <div>
-            <div style="font-weight:500;font-size:14px;margin-bottom:2px">${r.nombre}</div>
-            <div style="font-size:12px;color:var(--acc);margin-bottom:2px">${r.email}</div>
-            <div style="font-size:12px;color:var(--mu)">${r.evNombre} · ${r.cantidad} entrada${r.cantidad>1?'s':''} · ${r.fecha}</div>
-          </div>
-          ${bdg(r.estado)}
-        </div>
-        <button class="acbtn del" style="font-size:11px;margin-top:4px" onclick="event.stopPropagation();eliminarUna('${r.eventoId||r.id}',${r.id})">Eliminar</button>
-      </div>`}).join('')
-    : `<p style="color:var(--mu);padding:16px;font-size:13px">Sin resultados</p>`;
-
-  updateSelBar('emails');
-
-  // Contador
-  const unicos = new Set(todasRes.map(r=>r.email)).size;
-  const frow = document.getElementById('emails-frow');
-  if (frow) {
-    const existing = document.getElementById('emails-total');
-    if (existing) existing.remove();
-    const span = document.createElement('span');
-    span.id = 'emails-total';
-    span.style.cssText = 'font-size:12px;color:var(--mu);margin-left:auto;align-self:center';
-    span.textContent = `${unicos} únicos · ${lista.length} reservas`;
-    frow.appendChild(span);
-  }
-}
-
-function filtrarEmails(f, btn) {
-  filtroEmails = f;
-  document.querySelectorAll('#emails-frow .fchip').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on'); rEmails();
-}
-
-function exportEmailsCSV(){
-  const todasRes=eventos.flatMap(ev=>(ev.reservas||[]).filter(r=>r.email).map(r=>({...r,evNombre:ev.nombre})));
-  const h=['Nombre','Email','Evento','Entradas','Estado'];
-  const rows=todasRes.map(r=>[r.nombre,r.email,r.evNombre,r.cantidad,r.estado]);
-  dl('\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n'),'text/csv',`emails_${new Date().toISOString().slice(0,10)}.csv`);
-  toast('Emails exportados');
-}
 
 function exportBackup(){
   dl(JSON.stringify({version:2,exportado:new Date().toISOString(),global:G,eventos:eventos},null,2),'application/json',`backup_${new Date().toISOString().slice(0,10)}.json`);
